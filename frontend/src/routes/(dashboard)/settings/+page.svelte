@@ -1,0 +1,208 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { api } from '$lib/api/client';
+	import type { components } from '$lib/api/types';
+	import { DashboardHeader, CalendarConnectionCard } from '$lib/components/dashboard';
+	import { Card, Button, Input, Spinner } from '$lib/components/ui';
+
+	type CalendarConnection = components['schemas']['CalendarConnection'];
+
+	let calendars = $state<CalendarConnection[]>([]);
+	let loading = $state(true);
+	let showAddForm = $state(false);
+	let submitting = $state(false);
+	let error = $state<string | null>(null);
+
+	// Form fields
+	let serverUrl = $state('');
+	let username = $state('');
+	let password = $state('');
+
+	onMount(async () => {
+		await loadCalendars();
+	});
+
+	async function loadCalendars() {
+		loading = true;
+		try {
+			const { data } = await api.GET('/calendars');
+			if (data) {
+				calendars = data;
+			}
+		} finally {
+			loading = false;
+		}
+	}
+
+	async function handleAddCalendar(event: Event) {
+		event.preventDefault();
+		submitting = true;
+		error = null;
+
+		try {
+			const { data, error: apiError } = await api.POST('/calendars', {
+				body: {
+					server_url: serverUrl,
+					username: username,
+					password: password
+				}
+			});
+
+			if (apiError) {
+				error = 'Failed to add calendar';
+				return;
+			}
+
+			if (data) {
+				calendars = [...calendars, data];
+				// Reset form
+				serverUrl = '';
+				username = '';
+				password = '';
+				showAddForm = false;
+			}
+		} catch (e) {
+			error = 'An unexpected error occurred';
+		} finally {
+			submitting = false;
+		}
+	}
+
+	async function handleDeleteCalendar(id: number) {
+		try {
+			await api.DELETE('/calendars/{id}', {
+				params: { path: { id } }
+			});
+			calendars = calendars.filter((c) => c.id !== id);
+		} catch (e) {
+			// Handle error silently for now
+		}
+	}
+
+	function cancelAddForm() {
+		showAddForm = false;
+		serverUrl = '';
+		username = '';
+		password = '';
+		error = null;
+	}
+</script>
+
+<DashboardHeader title="Settings" />
+
+{#if loading}
+	<div class="flex items-center justify-center py-12">
+		<Spinner size="lg" />
+	</div>
+{:else}
+	<div class="space-y-6">
+		<!-- Calendar Connections Section -->
+		<section>
+			<div class="flex items-center justify-between mb-4">
+				<div>
+					<h2 class="text-lg font-medium text-gray-900">Calendar Connections</h2>
+					<p class="text-sm text-gray-500">Connect your CalDAV calendars to check availability</p>
+				</div>
+				{#if !showAddForm}
+					<Button variant="primary" onclick={() => (showAddForm = true)}>
+						{#snippet children()}Add Calendar{/snippet}
+					</Button>
+				{/if}
+			</div>
+
+			<!-- Add Calendar Form -->
+			{#if showAddForm}
+				<Card class="mb-4">
+					{#snippet children()}
+						<form onsubmit={handleAddCalendar} class="space-y-4">
+							<h3 class="font-medium text-gray-900">Add CalDAV Calendar</h3>
+
+							{#if error}
+								<div class="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
+									{error}
+								</div>
+							{/if}
+
+							<Input
+								label="CalDAV URL"
+								name="server_url"
+								type="url"
+								bind:value={serverUrl}
+								placeholder="https://caldav.example.com/dav"
+								required
+								disabled={submitting}
+							/>
+
+							<Input
+								label="Username"
+								name="username"
+								type="text"
+								bind:value={username}
+								placeholder="your-username"
+								required
+								disabled={submitting}
+							/>
+
+							<Input
+								label="Password"
+								name="password"
+								type="password"
+								bind:value={password}
+								placeholder="your-password"
+								required
+								disabled={submitting}
+							/>
+
+							<div class="flex justify-end gap-3 pt-2">
+								<Button variant="secondary" type="button" onclick={cancelAddForm} disabled={submitting}>
+									{#snippet children()}Cancel{/snippet}
+								</Button>
+								<Button variant="primary" type="submit" loading={submitting} disabled={submitting}>
+									{#snippet children()}{submitting ? 'Adding...' : 'Add Calendar'}{/snippet}
+								</Button>
+							</div>
+						</form>
+					{/snippet}
+				</Card>
+			{/if}
+
+			<!-- Calendar List -->
+			{#if calendars.length === 0 && !showAddForm}
+				<Card>
+					{#snippet children()}
+						<div class="text-center py-8">
+							<svg
+								class="mx-auto h-12 w-12 text-gray-400"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+								/>
+							</svg>
+							<h3 class="mt-2 text-sm font-medium text-gray-900">No calendars connected</h3>
+							<p class="mt-1 text-sm text-gray-500">
+								Connect a CalDAV calendar to enable availability checking.
+							</p>
+							<div class="mt-6">
+								<Button variant="primary" onclick={() => (showAddForm = true)}>
+									{#snippet children()}Connect your first calendar{/snippet}
+								</Button>
+							</div>
+						</div>
+					{/snippet}
+				</Card>
+			{:else if calendars.length > 0}
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					{#each calendars as calendar (calendar.id)}
+						<CalendarConnectionCard {calendar} onDelete={handleDeleteCalendar} />
+					{/each}
+				</div>
+			{/if}
+		</section>
+	</div>
+{/if}
