@@ -73,9 +73,9 @@
 		<Spinner size="lg" />
 	</div>
 {:else}
-	<div class="space-y-6">
-		<!-- Stats -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+	<div class="space-y-4 sm:space-y-6">
+		<!-- Stats - stack on mobile, 3 columns on tablet and up -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 			<StatsCard label="Total Links" value={totalLinks}>
 				{#snippet icon()}
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
