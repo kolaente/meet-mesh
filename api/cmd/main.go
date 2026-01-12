@@ -56,6 +56,16 @@ func main() {
 		log.Fatalf("Failed to create server: %v", err)
 	}
 
-	log.Printf("Meet Mesh API starting on port %d...", cfg.Server.Port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.Port), server))
+	// Create a mux that routes /api/* to the API server
+	// and everything else to the static file server
+	mux := http.NewServeMux()
+
+	// API routes - the ogen server handles /api/v1/*
+	mux.Handle("/api/", server)
+
+	// Static file server for everything else
+	mux.Handle("/", api.NewStaticHandler())
+
+	log.Printf("Meet Mesh starting on port %d...", cfg.Server.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.Port), mux))
 }

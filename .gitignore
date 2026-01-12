@@ -1,0 +1,4 @@
+# Embedded frontend dist (built files)
+api/embedded/dist/
+!api/embedded/dist/.gitkeep
+/meet-mesh
