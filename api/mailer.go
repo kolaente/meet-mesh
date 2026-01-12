@@ -61,8 +61,8 @@ func (m *Mailer) SendBookingConfirmation(booking *Booking, link *Link) error {
 
 // SendBookingPending sends pending notification to organizer
 func (m *Mailer) SendBookingPending(booking *Booking, link *Link) error {
-	approveURL := fmt.Sprintf("%s/api/v1/actions/approve?token=%s", m.baseURL, booking.ActionToken)
-	declineURL := fmt.Sprintf("%s/api/v1/actions/decline?token=%s", m.baseURL, booking.ActionToken)
+	approveURL := fmt.Sprintf("%s/api/actions/approve?token=%s", m.baseURL, booking.ActionToken)
+	declineURL := fmt.Sprintf("%s/api/actions/decline?token=%s", m.baseURL, booking.ActionToken)
 
 	body := m.renderTemplate("booking_pending", map[string]any{
 		"LinkName":   link.Name,

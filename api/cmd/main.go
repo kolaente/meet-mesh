@@ -60,8 +60,8 @@ func main() {
 	// and everything else to the static file server
 	mux := http.NewServeMux()
 
-	// API routes - the ogen server handles /api/v1/*
-	mux.Handle("/api/v1/", server)
+	// API routes - the ogen server handles /api/*
+	mux.Handle("/api/", server)
 
 	// Static file server for everything else
 	mux.Handle("/", api.NewStaticHandler())
