@@ -97,7 +97,7 @@ func (h *Handler) AuthCallback(ctx context.Context, params gen.AuthCallbackParam
 	}
 
 	return &gen.AuthCallbackFound{
-		Location:  gen.NewOptString(h.config.Server.BaseURL + "/dashboard"),
+		Location:  gen.NewOptString(h.config.Server.BaseURL + "/"),
 		SetCookie: gen.NewOptString(cookie.String()),
 	}, nil
 }
