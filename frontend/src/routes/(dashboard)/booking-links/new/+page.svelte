@@ -3,23 +3,16 @@
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
 	import { DashboardHeader } from '$lib/components/dashboard';
-	import { Button, Card, Input, Select } from '$lib/components/ui';
+	import { Button, Card, Input } from '$lib/components/ui';
 
 	type CustomField = components['schemas']['CustomField'];
 	type CustomFieldType = components['schemas']['CustomFieldType'];
 
 	let name = $state('');
-	let linkType = $state<'1' | '2'>('1');
-	let slug = $state('');
 	let description = $state('');
 	let customFields = $state<CustomField[]>([]);
 	let saving = $state(false);
 	let error = $state('');
-
-	const typeOptions = [
-		{ value: '1', label: 'Booking' },
-		{ value: '2', label: 'Poll' }
-	];
 
 	const fieldTypeOptions = [
 		{ value: '1', label: 'Text' },
@@ -59,9 +52,8 @@
 		saving = true;
 
 		try {
-			const { data, error: apiError } = await api.POST('/links', {
+			const { data, error: apiError } = await api.POST('/booking-links', {
 				body: {
-					type: Number(linkType) as 1 | 2,
 					name,
 					description: description || undefined,
 					custom_fields: customFields.length > 0 ? customFields : undefined
@@ -69,12 +61,12 @@
 			});
 
 			if (apiError) {
-				error = 'Failed to create link';
+				error = 'Failed to create booking link';
 				return;
 			}
 
 			if (data) {
-				goto(`/links/${data.id}`);
+				goto(`/booking-links/${data.id}`);
 			}
 		} catch {
 			error = 'An unexpected error occurred';
@@ -84,7 +76,7 @@
 	}
 </script>
 
-<DashboardHeader title="Create New Link" />
+<DashboardHeader title="Create Booking Link" />
 
 <Card class="max-w-2xl">
 	{#snippet children()}
@@ -97,21 +89,6 @@
 
 			<Input label="Name" name="name" bind:value={name} required placeholder="30 Minute Meeting" />
 
-			<Select
-				label="Type"
-				name="type"
-				options={typeOptions}
-				bind:value={linkType}
-			/>
-
-			<Input
-				label="URL Slug"
-				name="slug"
-				bind:value={slug}
-				placeholder="30-min-meeting"
-				description="Optional. Leave blank to auto-generate from name."
-			/>
-
 			<div class="space-y-1.5">
 				<label for="description" class="block text-sm font-medium text-gray-700">Description</label>
 				<textarea
@@ -120,7 +97,7 @@
 					bind:value={description}
 					rows="3"
 					class="block w-full rounded-[var(--radius-md)] border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
-					placeholder="A brief description of this scheduling link..."
+					placeholder="A brief description of this booking link..."
 				></textarea>
 			</div>
 
@@ -228,11 +205,11 @@
 			</div>
 
 			<div class="flex justify-end gap-3 pt-4">
-				<Button variant="secondary" type="button" onclick={() => goto('/links')}>
+				<Button variant="secondary" type="button" onclick={() => goto('/booking-links')}>
 					{#snippet children()}Cancel{/snippet}
 				</Button>
 				<Button variant="primary" type="submit" loading={saving}>
-					{#snippet children()}Create Link{/snippet}
+					{#snippet children()}Create Booking Link{/snippet}
 				</Button>
 			</div>
 		</form>

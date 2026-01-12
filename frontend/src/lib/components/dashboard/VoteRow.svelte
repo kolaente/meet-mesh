@@ -3,11 +3,12 @@
 
 	type Vote = components['schemas']['Vote'];
 	type Slot = components['schemas']['Slot'];
+	type PollOption = components['schemas']['PollOption'];
 	type VoteResponse = components['schemas']['VoteResponse'];
 
 	interface Props {
 		vote: Vote;
-		slots: Slot[];
+		slots: (Slot | PollOption)[];
 	}
 
 	let { vote, slots }: Props = $props();

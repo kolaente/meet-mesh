@@ -3,15 +3,15 @@
 	import type { components } from '$lib/api/types';
 	import { Button, Card } from '$lib/components/ui';
 
-	type Slot = components['schemas']['Slot'];
+	type PollOption = components['schemas']['PollOption'];
 	type SlotType = components['schemas']['SlotType'];
 
 	interface Props {
-		linkId: number;
-		slots: Slot[];
+		pollId: number;
+		options: PollOption[];
 	}
 
-	let { linkId, slots = $bindable([]) }: Props = $props();
+	let { pollId, options = $bindable([]) }: Props = $props();
 
 	let showAddForm = $state(false);
 	let adding = $state(false);
@@ -19,29 +19,29 @@
 	let error = $state('');
 
 	// Form state
-	let slotType = $state<SlotType>(1);
+	let optionType = $state<SlotType>(1);
 	let date = $state('');
 	let startTime = $state('09:00');
 	let endTime = $state('10:00');
 
-	const slotTypeOptions = [
+	const optionTypeOptions = [
 		{ value: 1, label: 'Time Slot' },
 		{ value: 2, label: 'Full Day' },
 		{ value: 3, label: 'Multi Day' }
 	];
 
-	function formatSlot(slot: Slot): string {
-		const start = new Date(slot.start_time);
-		const end = new Date(slot.end_time);
+	function formatOption(option: PollOption): string {
+		const start = new Date(option.start_time);
+		const end = new Date(option.end_time);
 
-		if (slot.type === 2) {
+		if (option.type === 2) {
 			// Full day
 			return start.toLocaleDateString(undefined, {
 				weekday: 'long',
 				month: 'short',
 				day: 'numeric'
 			}) + ' (Full Day)';
-		} else if (slot.type === 3) {
+		} else if (option.type === 3) {
 			// Multi day
 			return start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) +
 				' - ' +
@@ -60,7 +60,7 @@
 	}
 
 	function resetForm() {
-		slotType = 1;
+		optionType = 1;
 		date = '';
 		startTime = '09:00';
 		endTime = '10:00';
@@ -80,11 +80,11 @@
 			let startDateTime: string;
 			let endDateTime: string;
 
-			if (slotType === 2) {
+			if (optionType === 2) {
 				// Full day: use midnight to midnight
 				startDateTime = `${date}T00:00:00Z`;
 				endDateTime = `${date}T23:59:59Z`;
-			} else if (slotType === 3) {
+			} else if (optionType === 3) {
 				// Multi day: use start and end dates
 				startDateTime = `${date}T00:00:00Z`;
 				endDateTime = `${endTime}T23:59:59Z`; // endTime is used as end date here
@@ -94,22 +94,22 @@
 				endDateTime = `${date}T${endTime}:00Z`;
 			}
 
-			const { data, error: apiError } = await api.POST('/links/{id}/slots', {
-				params: { path: { id: linkId } },
+			const { data, error: apiError } = await api.POST('/polls/{id}/options', {
+				params: { path: { id: pollId } },
 				body: {
-					type: slotType,
+					type: optionType,
 					start_time: startDateTime,
 					end_time: endDateTime
 				}
 			});
 
 			if (apiError) {
-				error = 'Failed to add slot';
+				error = 'Failed to add option';
 				return;
 			}
 
 			if (data) {
-				slots = [...slots, data];
+				options = [...options, data];
 				showAddForm = false;
 				resetForm();
 			}
@@ -120,17 +120,17 @@
 		}
 	}
 
-	async function handleDelete(slotId: number) {
-		deletingId = slotId;
+	async function handleDelete(optionId: number) {
+		deletingId = optionId;
 
 		try {
-			await api.DELETE('/links/{id}/slots/{slotId}', {
-				params: { path: { id: linkId, slotId } }
+			await api.DELETE('/polls/{id}/options/{optionId}', {
+				params: { path: { id: pollId, optionId } }
 			});
 
-			slots = slots.filter((s) => s.id !== slotId);
+			options = options.filter((o) => o.id !== optionId);
 		} catch {
-			error = 'Failed to delete slot';
+			error = 'Failed to delete option';
 		} finally {
 			deletingId = null;
 		}
@@ -141,11 +141,11 @@
 	{#snippet header()}
 		<div class="flex items-center justify-between">
 			<h2 class="text-lg font-medium text-gray-900">
-				Time Slots ({slots.length})
+				Poll Options ({options.length})
 			</h2>
 			{#if !showAddForm}
 				<Button variant="secondary" size="sm" onclick={() => (showAddForm = true)}>
-					{#snippet children()}Add Slot{/snippet}
+					{#snippet children()}Add Option{/snippet}
 				</Button>
 			{/if}
 		</div>
@@ -162,26 +162,26 @@
 			<div class="mb-4 p-4 bg-gray-50 rounded-lg space-y-4">
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
-						<label for="slot-type" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="option-type" class="block text-sm font-medium text-gray-700 mb-1">
 							Type
 						</label>
 						<select
-							id="slot-type"
-							bind:value={slotType}
+							id="option-type"
+							bind:value={optionType}
 							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 						>
-							{#each slotTypeOptions as option (option.value)}
+							{#each optionTypeOptions as option (option.value)}
 								<option value={option.value}>{option.label}</option>
 							{/each}
 						</select>
 					</div>
 
 					<div>
-						<label for="slot-date" class="block text-sm font-medium text-gray-700 mb-1">
-							{slotType === 3 ? 'Start Date' : 'Date'}
+						<label for="option-date" class="block text-sm font-medium text-gray-700 mb-1">
+							{optionType === 3 ? 'Start Date' : 'Date'}
 						</label>
 						<input
-							id="slot-date"
+							id="option-date"
 							type="date"
 							bind:value={date}
 							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -189,7 +189,7 @@
 					</div>
 				</div>
 
-				{#if slotType === 1}
+				{#if optionType === 1}
 					<div class="grid grid-cols-2 gap-4">
 						<div>
 							<label for="start-time" class="block text-sm font-medium text-gray-700 mb-1">
@@ -214,7 +214,7 @@
 							/>
 						</div>
 					</div>
-				{:else if slotType === 3}
+				{:else if optionType === 3}
 					<div>
 						<label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">
 							End Date
@@ -233,19 +233,19 @@
 						{#snippet children()}Cancel{/snippet}
 					</Button>
 					<Button size="sm" loading={adding} onclick={handleAdd}>
-						{#snippet children()}Add Slot{/snippet}
+						{#snippet children()}Add Option{/snippet}
 					</Button>
 				</div>
 			</div>
 		{/if}
 
-		{#if slots.length === 0}
+		{#if options.length === 0}
 			<p class="text-gray-500 text-center py-4">
-				No time slots yet. Add slots for people to vote on.
+				No options yet. Add options for people to vote on.
 			</p>
 		{:else}
 			<div class="divide-y divide-gray-100">
-				{#each slots as slot (slot.id)}
+				{#each options as option (option.id)}
 					<div class="flex items-center justify-between py-3">
 						<div class="flex items-center gap-3">
 							<div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
@@ -253,16 +253,16 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 								</svg>
 							</div>
-							<span class="text-gray-900">{formatSlot(slot)}</span>
+							<span class="text-gray-900">{formatOption(option)}</span>
 						</div>
 						<button
 							type="button"
-							onclick={() => handleDelete(slot.id)}
-							disabled={deletingId === slot.id}
+							onclick={() => handleDelete(option.id)}
+							disabled={deletingId === option.id}
 							class="p-1 text-gray-400 hover:text-red-500 disabled:opacity-50"
-							aria-label="Delete slot"
+							aria-label="Delete option"
 						>
-							{#if deletingId === slot.id}
+							{#if deletingId === option.id}
 								<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
 									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

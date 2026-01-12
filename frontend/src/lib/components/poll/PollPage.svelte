@@ -71,7 +71,7 @@
 				}
 			}
 
-			const { data: responseData, error: responseError } = await api.POST('/p/{slug}/vote', {
+			const { data: responseData, error: responseError } = await api.POST('/p/poll/{slug}/vote', {
 				params: { path: { slug } },
 				body: {
 					guest_name: data.name,
@@ -92,7 +92,7 @@
 			// If show_results is enabled, redirect to results page after a moment
 			if (link.show_results) {
 				setTimeout(() => {
-					goto(`/p/${slug}/results`);
+					goto(`/p/poll/${slug}/results`);
 				}, 2000);
 			}
 		} catch (err) {

@@ -104,7 +104,7 @@
 		error = undefined;
 
 		try {
-			const response = await api.POST('/p/{slug}/book', {
+			const response = await api.POST('/p/booking/{slug}/book', {
 				params: { path: { slug } },
 				body: {
 					slot_id: selectedSlot.id,
@@ -121,7 +121,7 @@
 			}
 
 			// Redirect to confirmed page
-			goto(`/p/${slug}/confirmed`);
+			goto(`/p/booking/${slug}/confirmed`);
 		} catch (err) {
 			error = 'An unexpected error occurred. Please try again.';
 			submitting = false;

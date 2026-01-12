@@ -7,21 +7,23 @@
 	import { DashboardHeader } from '$lib/components/dashboard';
 	import { Button, Card, Input, Select, Spinner } from '$lib/components/ui';
 
-	type Link = components['schemas']['Link'];
+	type Poll = components['schemas']['Poll'];
 	type CustomField = components['schemas']['CustomField'];
 	type CustomFieldType = components['schemas']['CustomFieldType'];
 	type LinkStatus = components['schemas']['LinkStatus'];
 
-	let link = $state<Link | null>(null);
+	let poll = $state<Poll | null>(null);
 	let name = $state('');
 	let status = $state<'1' | '2'>('1');
 	let description = $state('');
+	let showResults = $state(false);
+	let requireEmail = $state(false);
 	let customFields = $state<CustomField[]>([]);
 	let loading = $state(true);
 	let saving = $state(false);
 	let error = $state('');
 
-	const linkId = $derived(Number($page.params.id));
+	const pollId = $derived(Number($page.params.id));
 
 	const statusOptions = [
 		{ value: '1', label: 'Active' },
@@ -38,19 +40,21 @@
 
 	onMount(async () => {
 		try {
-			const { data } = await api.GET('/links/{id}', {
-				params: { path: { id: linkId } }
+			const { data } = await api.GET('/polls/{id}', {
+				params: { path: { id: pollId } }
 			});
 
 			if (!data) {
-				goto('/links');
+				goto('/polls');
 				return;
 			}
 
-			link = data;
+			poll = data;
 			name = data.name;
 			status = String(data.status) as '1' | '2';
 			description = data.description || '';
+			showResults = data.show_results || false;
+			requireEmail = data.require_email || false;
 			customFields = data.custom_fields || [];
 		} finally {
 			loading = false;
@@ -87,23 +91,25 @@
 		saving = true;
 
 		try {
-			const { data, error: apiError } = await api.PUT('/links/{id}', {
-				params: { path: { id: linkId } },
+			const { data, error: apiError } = await api.PUT('/polls/{id}', {
+				params: { path: { id: pollId } },
 				body: {
 					name,
 					status: Number(status) as LinkStatus,
 					description: description || undefined,
+					show_results: showResults,
+					require_email: requireEmail,
 					custom_fields: customFields.length > 0 ? customFields : undefined
 				}
 			});
 
 			if (apiError) {
-				error = 'Failed to update link';
+				error = 'Failed to update poll';
 				return;
 			}
 
 			if (data) {
-				goto(`/links/${linkId}`);
+				goto(`/polls/${pollId}`);
 			}
 		} catch {
 			error = 'An unexpected error occurred';
@@ -117,8 +123,8 @@
 	<div class="flex items-center justify-center py-12">
 		<Spinner size="lg" />
 	</div>
-{:else if link}
-	<DashboardHeader title="Edit Link" />
+{:else if poll}
+	<DashboardHeader title="Edit Poll" />
 
 	<Card class="max-w-2xl">
 		{#snippet children()}
@@ -129,7 +135,7 @@
 					</div>
 				{/if}
 
-				<Input label="Name" name="name" bind:value={name} required placeholder="30 Minute Meeting" />
+				<Input label="Name" name="name" bind:value={name} required placeholder="Team Meeting Poll" />
 
 				<Select label="Status" name="status" options={statusOptions} bind:value={status} />
 
@@ -141,8 +147,29 @@
 						bind:value={description}
 						rows="3"
 						class="block w-full rounded-[var(--radius-md)] border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
-						placeholder="A brief description of this scheduling link..."
+						placeholder="A brief description of this poll..."
 					></textarea>
+				</div>
+
+				<!-- Poll-specific options -->
+				<div class="space-y-4">
+					<label class="flex items-center gap-2 text-sm text-gray-700">
+						<input
+							type="checkbox"
+							bind:checked={showResults}
+							class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+						/>
+						Show results to voters
+					</label>
+
+					<label class="flex items-center gap-2 text-sm text-gray-700">
+						<input
+							type="checkbox"
+							bind:checked={requireEmail}
+							class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+						/>
+						Require email from voters
+					</label>
 				</div>
 
 				<!-- Custom Fields -->
@@ -245,13 +272,13 @@
 						</div>
 					{:else}
 						<p class="text-sm text-gray-500">
-							No custom fields. Add fields to collect additional information from guests.
+							No custom fields. Add fields to collect additional information from voters.
 						</p>
 					{/if}
 				</div>
 
 				<div class="flex justify-end gap-3 pt-4">
-					<Button variant="secondary" type="button" onclick={() => goto(`/links/${linkId}`)}>
+					<Button variant="secondary" type="button" onclick={() => goto(`/polls/${pollId}`)}>
 						{#snippet children()}Cancel{/snippet}
 					</Button>
 					<Button variant="primary" type="submit" loading={saving}>
