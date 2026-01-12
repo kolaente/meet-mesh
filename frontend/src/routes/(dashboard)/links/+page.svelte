@@ -58,7 +58,8 @@
 		</div>
 	</div>
 {:else}
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+	<!-- 1 column mobile, 2 columns tablet (sm:), 3 columns desktop (lg:) -->
+	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 		{#each links as link (link.id)}
 			<LinkCard {link} />
 		{/each}
