@@ -2,3 +2,5 @@
 api/embedded/dist/
 !api/embedded/dist/.gitkeep
 /meet-mesh
+/config.yaml
+/data
