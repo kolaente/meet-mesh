@@ -25,7 +25,9 @@ func InitDatabase(cfg *DatabaseConfig) (*gorm.DB, error) {
 	if err := db.AutoMigrate(
 		&User{},
 		&CalendarConnection{},
-		&Link{},
+		&BookingLink{},
+		&Poll{},
+		&PollOption{},
 		&Slot{},
 		&Booking{},
 		&Vote{},
