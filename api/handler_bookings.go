@@ -9,35 +9,17 @@ import (
 	"github.com/ogen-go/ogen/ogenerrors"
 )
 
-// GetLinkBookings returns bookings for a link
-func (h *Handler) GetLinkBookings(ctx context.Context, params gen.GetLinkBookingsParams) ([]gen.Booking, error) {
-	userID, _ := GetUserID(ctx)
-
-	// Verify link ownership
-	var link Link
-	if err := h.db.Where("id = ? AND user_id = ?", params.ID, userID).First(&link).Error; err != nil {
-		return nil, err
-	}
-
-	var bookings []Booking
-	if err := h.db.Preload("Slot").Where("link_id = ?", params.ID).Order("created_at DESC").Find(&bookings).Error; err != nil {
-		return nil, err
-	}
-
-	return mapBookingsToGen(bookings), nil
-}
-
 // ApproveBooking approves a booking
 func (h *Handler) ApproveBooking(ctx context.Context, params gen.ApproveBookingParams) (*gen.Booking, error) {
 	userID, _ := GetUserID(ctx)
 
 	var booking Booking
-	if err := h.db.Preload("Link").Preload("Slot").First(&booking, params.ID).Error; err != nil {
+	if err := h.db.Preload("BookingLink").Preload("Slot").First(&booking, params.ID).Error; err != nil {
 		return nil, err
 	}
 
 	// Verify ownership
-	if booking.Link.UserID != userID {
+	if booking.BookingLink.UserID != userID {
 		return nil, &ogenerrors.DecodeBodyError{
 			ContentType: "application/json",
 			Body:        nil,
@@ -52,12 +34,12 @@ func (h *Handler) ApproveBooking(ctx context.Context, params gen.ApproveBookingP
 
 	// Send confirmation email
 	if h.mailer != nil {
-		h.mailer.SendBookingApproved(&booking, &booking.Link)
+		h.mailer.SendBookingApproved(&booking, &booking.BookingLink)
 	}
 
 	// Create calendar event
 	if h.caldav != nil {
-		h.caldav.CreateEvent(ctx, booking.Link.UserID, &booking, &booking.Slot, booking.Link.EventTemplate)
+		h.caldav.CreateBookingEvent(ctx, booking.BookingLink.UserID, &booking, &booking.Slot, booking.BookingLink.EventTemplate)
 	}
 
 	return mapBookingToGen(&booking), nil
@@ -68,12 +50,12 @@ func (h *Handler) DeclineBooking(ctx context.Context, params gen.DeclineBookingP
 	userID, _ := GetUserID(ctx)
 
 	var booking Booking
-	if err := h.db.Preload("Link").Preload("Slot").First(&booking, params.ID).Error; err != nil {
+	if err := h.db.Preload("BookingLink").Preload("Slot").First(&booking, params.ID).Error; err != nil {
 		return nil, err
 	}
 
 	// Verify ownership
-	if booking.Link.UserID != userID {
+	if booking.BookingLink.UserID != userID {
 		return nil, &ogenerrors.DecodeBodyError{
 			ContentType: "application/json",
 			Body:        nil,
@@ -88,7 +70,7 @@ func (h *Handler) DeclineBooking(ctx context.Context, params gen.DeclineBookingP
 
 	// Send decline email
 	if h.mailer != nil {
-		h.mailer.SendBookingDeclined(&booking, &booking.Link)
+		h.mailer.SendBookingDeclined(&booking, &booking.BookingLink)
 	}
 
 	return mapBookingToGen(&booking), nil
