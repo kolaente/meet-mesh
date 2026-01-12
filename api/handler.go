@@ -29,6 +29,5 @@ func NewHandler(db *gorm.DB, auth *AuthService, caldav *CalDAVClient, mailer *Ma
 	}
 }
 
-// Placeholder types for CalDAVClient and Mailer that will be implemented later
-type CalDAVClient struct{}
+// Placeholder type for Mailer that will be implemented later
 type Mailer struct{}
