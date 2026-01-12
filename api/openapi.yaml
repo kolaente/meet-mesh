@@ -5,7 +5,7 @@ info:
   description: Self-hosted scheduling API
 
 servers:
-  - url: /api/v1
+  - url: /api
 
 components:
   securitySchemes:
