@@ -26,11 +26,6 @@ components:
         message:
           type: string
 
-    LinkType:
-      type: integer
-      enum: [1, 2]
-      description: "1=booking, 2=poll"
-
     SlotType:
       type: integer
       enum: [1, 2, 3]
@@ -128,16 +123,14 @@ components:
         write_url:
           type: string
 
-    Link:
+    BookingLink:
       type: object
-      required: [id, slug, type, name, status]
+      required: [id, slug, name, status]
       properties:
         id:
           type: integer
         slug:
           type: string
-        type:
-          $ref: '#/components/schemas/LinkType'
         name:
           type: string
         description:
@@ -145,8 +138,6 @@ components:
         status:
           $ref: '#/components/schemas/LinkStatus'
         auto_confirm:
-          type: boolean
-        show_results:
           type: boolean
         require_email:
           type: boolean
@@ -161,6 +152,47 @@ components:
         event_template:
           $ref: '#/components/schemas/EventTemplate'
         created_at:
+          type: string
+          format: date-time
+
+    Poll:
+      type: object
+      required: [id, slug, name, status]
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/LinkStatus'
+        show_results:
+          type: boolean
+        require_email:
+          type: boolean
+        custom_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+        created_at:
+          type: string
+          format: date-time
+
+    PollOption:
+      type: object
+      required: [id, type, start_time, end_time]
+      properties:
+        id:
+          type: integer
+        type:
+          $ref: '#/components/schemas/SlotType'
+        start_time:
+          type: string
+          format: date-time
+        end_time:
           type: string
           format: date-time
 
@@ -225,9 +257,9 @@ components:
 
     VoteTally:
       type: object
-      required: [slot_id, yes_count, no_count, maybe_count]
+      required: [option_id, yes_count, no_count, maybe_count]
       properties:
-        slot_id:
+        option_id:
           type: integer
         yes_count:
           type: integer
@@ -383,25 +415,26 @@ paths:
         '204':
           description: Calendar removed
 
-  /links:
+  # Booking Links endpoints
+  /booking-links:
     get:
-      operationId: listLinks
-      summary: List all links
+      operationId: listBookingLinks
+      summary: List all booking links
       security:
         - cookieAuth: []
       responses:
         '200':
-          description: Links
+          description: Booking links
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Link'
+                  $ref: '#/components/schemas/BookingLink'
 
     post:
-      operationId: createLink
-      summary: Create a link
+      operationId: createBookingLink
+      summary: Create a booking link
       security:
         - cookieAuth: []
       requestBody:
@@ -410,17 +443,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [type, name]
+              required: [name]
               properties:
-                type:
-                  $ref: '#/components/schemas/LinkType'
                 name:
                   type: string
                 description:
                   type: string
                 auto_confirm:
-                  type: boolean
-                show_results:
                   type: boolean
                 require_email:
                   type: boolean
@@ -436,16 +465,16 @@ paths:
                   $ref: '#/components/schemas/EventTemplate'
       responses:
         '201':
-          description: Link created
+          description: Booking link created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Link'
+                $ref: '#/components/schemas/BookingLink'
 
-  /links/{id}:
+  /booking-links/{id}:
     get:
-      operationId: getLink
-      summary: Get link details
+      operationId: getBookingLink
+      summary: Get booking link details
       security:
         - cookieAuth: []
       parameters:
@@ -456,15 +485,15 @@ paths:
             type: integer
       responses:
         '200':
-          description: Link details
+          description: Booking link details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Link'
+                $ref: '#/components/schemas/BookingLink'
 
     put:
-      operationId: updateLink
-      summary: Update a link
+      operationId: updateBookingLink
+      summary: Update a booking link
       security:
         - cookieAuth: []
       parameters:
@@ -488,8 +517,6 @@ paths:
                   $ref: '#/components/schemas/LinkStatus'
                 auto_confirm:
                   type: boolean
-                show_results:
-                  type: boolean
                 require_email:
                   type: boolean
                 availability_rules:
@@ -504,15 +531,15 @@ paths:
                   $ref: '#/components/schemas/EventTemplate'
       responses:
         '200':
-          description: Link updated
+          description: Booking link updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Link'
+                $ref: '#/components/schemas/BookingLink'
 
     delete:
-      operationId: deleteLink
-      summary: Delete a link
+      operationId: deleteBookingLink
+      summary: Delete a booking link
       security:
         - cookieAuth: []
       parameters:
@@ -523,12 +550,12 @@ paths:
             type: integer
       responses:
         '204':
-          description: Link deleted
+          description: Booking link deleted
 
-  /links/{id}/slots:
+  /booking-links/{id}/bookings:
     get:
-      operationId: getLinkSlots
-      summary: Get slots for a link
+      operationId: getBookingLinkBookings
+      summary: Get bookings for a booking link
       security:
         - cookieAuth: []
       parameters:
@@ -539,17 +566,164 @@ paths:
             type: integer
       responses:
         '200':
-          description: Slots
+          description: Bookings
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Slot'
+                  $ref: '#/components/schemas/Booking'
+
+  # Poll endpoints
+  /polls:
+    get:
+      operationId: listPolls
+      summary: List all polls
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Polls
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Poll'
 
     post:
-      operationId: addSlot
-      summary: Add a slot to a link
+      operationId: createPoll
+      summary: Create a poll
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                show_results:
+                  type: boolean
+                require_email:
+                  type: boolean
+                custom_fields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomField'
+      responses:
+        '201':
+          description: Poll created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+
+  /polls/{id}:
+    get:
+      operationId: getPoll
+      summary: Get poll details
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Poll details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+
+    put:
+      operationId: updatePoll
+      summary: Update a poll
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                status:
+                  $ref: '#/components/schemas/LinkStatus'
+                show_results:
+                  type: boolean
+                require_email:
+                  type: boolean
+                custom_fields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomField'
+      responses:
+        '200':
+          description: Poll updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+
+    delete:
+      operationId: deletePoll
+      summary: Delete a poll
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Poll deleted
+
+  /polls/{id}/options:
+    get:
+      operationId: getPollOptions
+      summary: Get options for a poll
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Poll options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollOption'
+
+    post:
+      operationId: addPollOption
+      summary: Add an option to a poll
       security:
         - cookieAuth: []
       parameters:
@@ -576,16 +750,16 @@ paths:
                   format: date-time
       responses:
         '201':
-          description: Slot added
+          description: Option added
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Slot'
+                $ref: '#/components/schemas/PollOption'
 
-  /links/{id}/slots/{slotId}:
+  /polls/{id}/options/{optionId}:
     delete:
-      operationId: deleteSlot
-      summary: Delete a slot from a link
+      operationId: deletePollOption
+      summary: Delete an option from a poll
       security:
         - cookieAuth: []
       parameters:
@@ -594,40 +768,18 @@ paths:
           required: true
           schema:
             type: integer
-        - name: slotId
+        - name: optionId
           in: path
           required: true
           schema:
             type: integer
       responses:
         '204':
-          description: Slot deleted
+          description: Option deleted
 
-  /links/{id}/bookings:
+  /polls/{id}/votes:
     get:
-      operationId: getLinkBookings
-      summary: Get bookings for a link
-      security:
-        - cookieAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Bookings
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Booking'
-
-  /links/{id}/votes:
-    get:
-      operationId: getLinkVotes
+      operationId: getPollVotes
       summary: Get votes for a poll
       security:
         - cookieAuth: []
@@ -647,10 +799,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Vote'
 
-  /links/{id}/pick-winner:
+  /polls/{id}/pick-winner:
     post:
       operationId: pickPollWinner
-      summary: Pick winning slot for poll
+      summary: Pick winning option for poll
       security:
         - cookieAuth: []
       parameters:
@@ -665,14 +817,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [slot_id]
+              required: [option_id]
               properties:
-                slot_id:
+                option_id:
                   type: integer
       responses:
         '200':
           description: Winner picked
 
+  # Booking management endpoints
   /bookings/{id}/approve:
     post:
       operationId: approveBooking
@@ -713,10 +866,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Booking'
 
-  /p/{slug}:
+  # Public booking endpoints
+  /p/booking/{slug}:
     get:
-      operationId: getPublicLink
-      summary: Get public link info
+      operationId: getPublicBookingLink
+      summary: Get public booking link info
       parameters:
         - name: slug
           in: path
@@ -725,15 +879,13 @@ paths:
             type: string
       responses:
         '200':
-          description: Link info
+          description: Booking link info
           content:
             application/json:
               schema:
                 type: object
-                required: [type, name, slots]
+                required: [name]
                 properties:
-                  type:
-                    $ref: '#/components/schemas/LinkType'
                   name:
                     type: string
                   description:
@@ -742,25 +894,19 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CustomField'
-                  slots:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Slot'
-                  show_results:
-                    type: boolean
                   require_email:
                     type: boolean
         '404':
-          description: Link not found
+          description: Not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /p/{slug}/availability:
+  /p/booking/{slug}/availability:
     get:
-      operationId: getAvailability
-      summary: Get real-time availability
+      operationId: getBookingAvailability
+      summary: Get real-time availability for booking link
       parameters:
         - name: slug
           in: path
@@ -793,7 +939,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Slot'
 
-  /p/{slug}/book:
+  /p/booking/{slug}/book:
     post:
       operationId: createBooking
       summary: Create a booking
@@ -842,7 +988,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /p/{slug}/vote:
+  # Public poll endpoints
+  /p/poll/{slug}:
+    get:
+      operationId: getPublicPoll
+      summary: Get public poll info
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Poll info
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, options]
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  custom_fields:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomField'
+                  options:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PollOption'
+                  show_results:
+                    type: boolean
+                  require_email:
+                    type: boolean
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /p/poll/{slug}/vote:
     post:
       operationId: submitVote
       summary: Submit poll vote
@@ -881,7 +1070,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Vote'
 
-  /p/{slug}/results:
+  /p/poll/{slug}/results:
     get:
       operationId: getPollResults
       summary: Get poll results
@@ -915,6 +1104,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  # Email action endpoints
   /actions/approve:
     get:
       operationId: approveViaEmail
