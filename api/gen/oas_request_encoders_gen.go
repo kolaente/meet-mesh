@@ -24,8 +24,8 @@ func encodeAddCalendarRequest(
 	return nil
 }
 
-func encodeAddSlotRequest(
-	req *AddSlotReq,
+func encodeAddPollOptionRequest(
+	req *AddPollOptionReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -52,8 +52,22 @@ func encodeCreateBookingRequest(
 	return nil
 }
 
-func encodeCreateLinkRequest(
-	req *CreateLinkReq,
+func encodeCreateBookingLinkRequest(
+	req *CreateBookingLinkReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeCreatePollRequest(
+	req *CreatePollReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
@@ -94,8 +108,22 @@ func encodeSubmitVoteRequest(
 	return nil
 }
 
-func encodeUpdateLinkRequest(
-	req *UpdateLinkReq,
+func encodeUpdateBookingLinkRequest(
+	req *UpdateBookingLinkReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeUpdatePollRequest(
+	req *UpdatePollReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

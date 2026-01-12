@@ -27,7 +27,7 @@ func encodeAddCalendarResponse(response *CalendarConnection, w http.ResponseWrit
 	return nil
 }
 
-func encodeAddSlotResponse(response *Slot, w http.ResponseWriter, span trace.Span) error {
+func encodeAddPollOptionResponse(response *PollOption, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(201)
 	span.SetStatus(codes.Ok, http.StatusText(201))
@@ -181,7 +181,21 @@ func encodeCreateBookingResponse(response CreateBookingRes, w http.ResponseWrite
 	}
 }
 
-func encodeCreateLinkResponse(response *Link, w http.ResponseWriter, span trace.Span) error {
+func encodeCreateBookingLinkResponse(response *BookingLink, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(201)
+	span.SetStatus(codes.Ok, http.StatusText(201))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeCreatePollResponse(response *Poll, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(201)
 	span.SetStatus(codes.Ok, http.StatusText(201))
@@ -242,27 +256,66 @@ func encodeDeclineViaEmailResponse(response DeclineViaEmailRes, w http.ResponseW
 	}
 }
 
-func encodeDeleteLinkResponse(response *DeleteLinkNoContent, w http.ResponseWriter, span trace.Span) error {
+func encodeDeleteBookingLinkResponse(response *DeleteBookingLinkNoContent, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(204)
 	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodeDeleteSlotResponse(response *DeleteSlotNoContent, w http.ResponseWriter, span trace.Span) error {
+func encodeDeletePollResponse(response *DeletePollNoContent, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(204)
 	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodeGetAvailabilityResponse(response *GetAvailabilityOK, w http.ResponseWriter, span trace.Span) error {
+func encodeDeletePollOptionResponse(response *DeletePollOptionNoContent, w http.ResponseWriter, span trace.Span) error {
+	w.WriteHeader(204)
+	span.SetStatus(codes.Ok, http.StatusText(204))
+
+	return nil
+}
+
+func encodeGetBookingAvailabilityResponse(response *GetBookingAvailabilityOK, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeGetBookingLinkResponse(response *BookingLink, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeGetBookingLinkBookingsResponse(response []Booking, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	e.ArrStart()
+	for _, elem := range response {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
 	if _, err := e.WriteTo(w); err != nil {
 		return errors.Wrap(err, "write")
 	}
@@ -303,7 +356,7 @@ func encodeGetCurrentUserResponse(response GetCurrentUserRes, w http.ResponseWri
 	}
 }
 
-func encodeGetLinkResponse(response *Link, w http.ResponseWriter, span trace.Span) error {
+func encodeGetPollResponse(response *Poll, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
@@ -317,43 +370,7 @@ func encodeGetLinkResponse(response *Link, w http.ResponseWriter, span trace.Spa
 	return nil
 }
 
-func encodeGetLinkBookingsResponse(response []Booking, w http.ResponseWriter, span trace.Span) error {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
-
-	e := new(jx.Encoder)
-	e.ArrStart()
-	for _, elem := range response {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-	if _, err := e.WriteTo(w); err != nil {
-		return errors.Wrap(err, "write")
-	}
-
-	return nil
-}
-
-func encodeGetLinkSlotsResponse(response []Slot, w http.ResponseWriter, span trace.Span) error {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
-
-	e := new(jx.Encoder)
-	e.ArrStart()
-	for _, elem := range response {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-	if _, err := e.WriteTo(w); err != nil {
-		return errors.Wrap(err, "write")
-	}
-
-	return nil
-}
-
-func encodeGetLinkVotesResponse(response []Vote, w http.ResponseWriter, span trace.Span) error {
+func encodeGetPollOptionsResponse(response []PollOption, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
@@ -404,9 +421,60 @@ func encodeGetPollResultsResponse(response GetPollResultsRes, w http.ResponseWri
 	}
 }
 
-func encodeGetPublicLinkResponse(response GetPublicLinkRes, w http.ResponseWriter, span trace.Span) error {
+func encodeGetPollVotesResponse(response []Vote, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	e.ArrStart()
+	for _, elem := range response {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeGetPublicBookingLinkResponse(response GetPublicBookingLinkRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *GetPublicLinkOK:
+	case *GetPublicBookingLinkOK:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeGetPublicPollResponse(response GetPublicPollRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *GetPublicPollOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -478,6 +546,24 @@ func encodeInitiateLoginResponse(response *InitiateLoginFound, w http.ResponseWr
 	return nil
 }
 
+func encodeListBookingLinksResponse(response []BookingLink, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	e.ArrStart()
+	for _, elem := range response {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
 func encodeListCalendarsResponse(response []CalendarConnection, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
@@ -496,7 +582,7 @@ func encodeListCalendarsResponse(response []CalendarConnection, w http.ResponseW
 	return nil
 }
 
-func encodeListLinksResponse(response []Link, w http.ResponseWriter, span trace.Span) error {
+func encodeListPollsResponse(response []Poll, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
@@ -549,7 +635,21 @@ func encodeSubmitVoteResponse(response *Vote, w http.ResponseWriter, span trace.
 	return nil
 }
 
-func encodeUpdateLinkResponse(response *Link, w http.ResponseWriter, span trace.Span) error {
+func encodeUpdateBookingLinkResponse(response *BookingLink, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeUpdatePollResponse(response *Poll, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))

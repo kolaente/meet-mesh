@@ -25,6 +25,10 @@ type GetPollResultsRes interface {
 	getPollResultsRes()
 }
 
-type GetPublicLinkRes interface {
-	getPublicLinkRes()
+type GetPublicBookingLinkRes interface {
+	getPublicBookingLinkRes()
+}
+
+type GetPublicPollRes interface {
+	getPublicPollRes()
 }

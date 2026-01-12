@@ -15,12 +15,12 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-// AddSlotParams is parameters of addSlot operation.
-type AddSlotParams struct {
+// AddPollOptionParams is parameters of addPollOption operation.
+type AddPollOptionParams struct {
 	ID int
 }
 
-func unpackAddSlotParams(packed middleware.Parameters) (params AddSlotParams) {
+func unpackAddPollOptionParams(packed middleware.Parameters) (params AddPollOptionParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -31,7 +31,7 @@ func unpackAddSlotParams(packed middleware.Parameters) (params AddSlotParams) {
 	return params
 }
 
-func decodeAddSlotParams(args [1]string, argsEscaped bool, r *http.Request) (params AddSlotParams, _ error) {
+func decodeAddPollOptionParams(args [1]string, argsEscaped bool, r *http.Request) (params AddPollOptionParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -376,12 +376,12 @@ func decodeDeclineBookingParams(args [1]string, argsEscaped bool, r *http.Reques
 	return params, nil
 }
 
-// DeleteLinkParams is parameters of deleteLink operation.
-type DeleteLinkParams struct {
+// DeleteBookingLinkParams is parameters of deleteBookingLink operation.
+type DeleteBookingLinkParams struct {
 	ID int
 }
 
-func unpackDeleteLinkParams(packed middleware.Parameters) (params DeleteLinkParams) {
+func unpackDeleteBookingLinkParams(packed middleware.Parameters) (params DeleteBookingLinkParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -392,7 +392,7 @@ func unpackDeleteLinkParams(packed middleware.Parameters) (params DeleteLinkPara
 	return params
 }
 
-func decodeDeleteLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params DeleteLinkParams, _ error) {
+func decodeDeleteBookingLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params DeleteBookingLinkParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -441,13 +441,12 @@ func decodeDeleteLinkParams(args [1]string, argsEscaped bool, r *http.Request) (
 	return params, nil
 }
 
-// DeleteSlotParams is parameters of deleteSlot operation.
-type DeleteSlotParams struct {
-	ID     int
-	SlotId int
+// DeletePollParams is parameters of deletePoll operation.
+type DeletePollParams struct {
+	ID int
 }
 
-func unpackDeleteSlotParams(packed middleware.Parameters) (params DeleteSlotParams) {
+func unpackDeletePollParams(packed middleware.Parameters) (params DeletePollParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -455,17 +454,10 @@ func unpackDeleteSlotParams(packed middleware.Parameters) (params DeleteSlotPara
 		}
 		params.ID = packed[key].(int)
 	}
-	{
-		key := middleware.ParameterKey{
-			Name: "slotId",
-			In:   "path",
-		}
-		params.SlotId = packed[key].(int)
-	}
 	return params
 }
 
-func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (params DeleteSlotParams, _ error) {
+func decodeDeletePollParams(args [1]string, argsEscaped bool, r *http.Request) (params DeletePollParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -511,7 +503,80 @@ func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (
 			Err:  err,
 		}
 	}
-	// Decode path: slotId.
+	return params, nil
+}
+
+// DeletePollOptionParams is parameters of deletePollOption operation.
+type DeletePollOptionParams struct {
+	ID       int
+	OptionId int
+}
+
+func unpackDeletePollOptionParams(packed middleware.Parameters) (params DeletePollOptionParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(int)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "optionId",
+			In:   "path",
+		}
+		params.OptionId = packed[key].(int)
+	}
+	return params
+}
+
+func decodeDeletePollOptionParams(args [2]string, argsEscaped bool, r *http.Request) (params DeletePollOptionParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode path: optionId.
 	if err := func() error {
 		param := args[1]
 		if argsEscaped {
@@ -523,7 +588,7 @@ func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (
 		}
 		if len(param) > 0 {
 			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "slotId",
+				Param:   "optionId",
 				Value:   param,
 				Style:   uri.PathStyleSimple,
 				Explode: false,
@@ -540,7 +605,7 @@ func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (
 					return err
 				}
 
-				params.SlotId = c
+				params.OptionId = c
 				return nil
 			}(); err != nil {
 				return err
@@ -551,7 +616,7 @@ func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "slotId",
+			Name: "optionId",
 			In:   "path",
 			Err:  err,
 		}
@@ -559,14 +624,14 @@ func decodeDeleteSlotParams(args [2]string, argsEscaped bool, r *http.Request) (
 	return params, nil
 }
 
-// GetAvailabilityParams is parameters of getAvailability operation.
-type GetAvailabilityParams struct {
+// GetBookingAvailabilityParams is parameters of getBookingAvailability operation.
+type GetBookingAvailabilityParams struct {
 	Slug  string
 	Start time.Time
 	End   time.Time
 }
 
-func unpackGetAvailabilityParams(packed middleware.Parameters) (params GetAvailabilityParams) {
+func unpackGetBookingAvailabilityParams(packed middleware.Parameters) (params GetBookingAvailabilityParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "slug",
@@ -591,7 +656,7 @@ func unpackGetAvailabilityParams(packed middleware.Parameters) (params GetAvaila
 	return params
 }
 
-func decodeGetAvailabilityParams(args [1]string, argsEscaped bool, r *http.Request) (params GetAvailabilityParams, _ error) {
+func decodeGetBookingAvailabilityParams(args [1]string, argsEscaped bool, r *http.Request) (params GetBookingAvailabilityParams, _ error) {
 	q := uri.NewQueryDecoder(r.URL.Query())
 	// Decode path: slug.
 	if err := func() error {
@@ -713,12 +778,12 @@ func decodeGetAvailabilityParams(args [1]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// GetLinkParams is parameters of getLink operation.
-type GetLinkParams struct {
+// GetBookingLinkParams is parameters of getBookingLink operation.
+type GetBookingLinkParams struct {
 	ID int
 }
 
-func unpackGetLinkParams(packed middleware.Parameters) (params GetLinkParams) {
+func unpackGetBookingLinkParams(packed middleware.Parameters) (params GetBookingLinkParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -729,7 +794,7 @@ func unpackGetLinkParams(packed middleware.Parameters) (params GetLinkParams) {
 	return params
 }
 
-func decodeGetLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params GetLinkParams, _ error) {
+func decodeGetBookingLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params GetBookingLinkParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -778,12 +843,12 @@ func decodeGetLinkParams(args [1]string, argsEscaped bool, r *http.Request) (par
 	return params, nil
 }
 
-// GetLinkBookingsParams is parameters of getLinkBookings operation.
-type GetLinkBookingsParams struct {
+// GetBookingLinkBookingsParams is parameters of getBookingLinkBookings operation.
+type GetBookingLinkBookingsParams struct {
 	ID int
 }
 
-func unpackGetLinkBookingsParams(packed middleware.Parameters) (params GetLinkBookingsParams) {
+func unpackGetBookingLinkBookingsParams(packed middleware.Parameters) (params GetBookingLinkBookingsParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -794,7 +859,7 @@ func unpackGetLinkBookingsParams(packed middleware.Parameters) (params GetLinkBo
 	return params
 }
 
-func decodeGetLinkBookingsParams(args [1]string, argsEscaped bool, r *http.Request) (params GetLinkBookingsParams, _ error) {
+func decodeGetBookingLinkBookingsParams(args [1]string, argsEscaped bool, r *http.Request) (params GetBookingLinkBookingsParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -843,12 +908,12 @@ func decodeGetLinkBookingsParams(args [1]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// GetLinkSlotsParams is parameters of getLinkSlots operation.
-type GetLinkSlotsParams struct {
+// GetPollParams is parameters of getPoll operation.
+type GetPollParams struct {
 	ID int
 }
 
-func unpackGetLinkSlotsParams(packed middleware.Parameters) (params GetLinkSlotsParams) {
+func unpackGetPollParams(packed middleware.Parameters) (params GetPollParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -859,7 +924,7 @@ func unpackGetLinkSlotsParams(packed middleware.Parameters) (params GetLinkSlots
 	return params
 }
 
-func decodeGetLinkSlotsParams(args [1]string, argsEscaped bool, r *http.Request) (params GetLinkSlotsParams, _ error) {
+func decodeGetPollParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPollParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -908,12 +973,12 @@ func decodeGetLinkSlotsParams(args [1]string, argsEscaped bool, r *http.Request)
 	return params, nil
 }
 
-// GetLinkVotesParams is parameters of getLinkVotes operation.
-type GetLinkVotesParams struct {
+// GetPollOptionsParams is parameters of getPollOptions operation.
+type GetPollOptionsParams struct {
 	ID int
 }
 
-func unpackGetLinkVotesParams(packed middleware.Parameters) (params GetLinkVotesParams) {
+func unpackGetPollOptionsParams(packed middleware.Parameters) (params GetPollOptionsParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -924,7 +989,7 @@ func unpackGetLinkVotesParams(packed middleware.Parameters) (params GetLinkVotes
 	return params
 }
 
-func decodeGetLinkVotesParams(args [1]string, argsEscaped bool, r *http.Request) (params GetLinkVotesParams, _ error) {
+func decodeGetPollOptionsParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPollOptionsParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -1038,12 +1103,77 @@ func decodeGetPollResultsParams(args [1]string, argsEscaped bool, r *http.Reques
 	return params, nil
 }
 
-// GetPublicLinkParams is parameters of getPublicLink operation.
-type GetPublicLinkParams struct {
+// GetPollVotesParams is parameters of getPollVotes operation.
+type GetPollVotesParams struct {
+	ID int
+}
+
+func unpackGetPollVotesParams(packed middleware.Parameters) (params GetPollVotesParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(int)
+	}
+	return params
+}
+
+func decodeGetPollVotesParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPollVotesParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// GetPublicBookingLinkParams is parameters of getPublicBookingLink operation.
+type GetPublicBookingLinkParams struct {
 	Slug string
 }
 
-func unpackGetPublicLinkParams(packed middleware.Parameters) (params GetPublicLinkParams) {
+func unpackGetPublicBookingLinkParams(packed middleware.Parameters) (params GetPublicBookingLinkParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "slug",
@@ -1054,7 +1184,72 @@ func unpackGetPublicLinkParams(packed middleware.Parameters) (params GetPublicLi
 	return params
 }
 
-func decodeGetPublicLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPublicLinkParams, _ error) {
+func decodeGetPublicBookingLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPublicBookingLinkParams, _ error) {
+	// Decode path: slug.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "slug",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Slug = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "slug",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// GetPublicPollParams is parameters of getPublicPoll operation.
+type GetPublicPollParams struct {
+	Slug string
+}
+
+func unpackGetPublicPollParams(packed middleware.Parameters) (params GetPublicPollParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "slug",
+			In:   "path",
+		}
+		params.Slug = packed[key].(string)
+	}
+	return params
+}
+
+func decodeGetPublicPollParams(args [1]string, argsEscaped bool, r *http.Request) (params GetPublicPollParams, _ error) {
 	// Decode path: slug.
 	if err := func() error {
 		param := args[0]
@@ -1298,12 +1493,12 @@ func decodeSubmitVoteParams(args [1]string, argsEscaped bool, r *http.Request) (
 	return params, nil
 }
 
-// UpdateLinkParams is parameters of updateLink operation.
-type UpdateLinkParams struct {
+// UpdateBookingLinkParams is parameters of updateBookingLink operation.
+type UpdateBookingLinkParams struct {
 	ID int
 }
 
-func unpackUpdateLinkParams(packed middleware.Parameters) (params UpdateLinkParams) {
+func unpackUpdateBookingLinkParams(packed middleware.Parameters) (params UpdateBookingLinkParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -1314,7 +1509,72 @@ func unpackUpdateLinkParams(packed middleware.Parameters) (params UpdateLinkPara
 	return params
 }
 
-func decodeUpdateLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params UpdateLinkParams, _ error) {
+func decodeUpdateBookingLinkParams(args [1]string, argsEscaped bool, r *http.Request) (params UpdateBookingLinkParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// UpdatePollParams is parameters of updatePoll operation.
+type UpdatePollParams struct {
+	ID int
+}
+
+func unpackUpdatePollParams(packed middleware.Parameters) (params UpdatePollParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(int)
+	}
+	return params
+}
+
+func decodeUpdatePollParams(args [1]string, argsEscaped bool, r *http.Request) (params UpdatePollParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]

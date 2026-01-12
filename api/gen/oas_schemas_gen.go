@@ -89,39 +89,39 @@ func (s *AddCalendarReq) SetWriteURL(val OptString) {
 	s.WriteURL = val
 }
 
-type AddSlotReq struct {
+type AddPollOptionReq struct {
 	Type      SlotType  `json:"type"`
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 }
 
 // GetType returns the value of Type.
-func (s *AddSlotReq) GetType() SlotType {
+func (s *AddPollOptionReq) GetType() SlotType {
 	return s.Type
 }
 
 // GetStartTime returns the value of StartTime.
-func (s *AddSlotReq) GetStartTime() time.Time {
+func (s *AddPollOptionReq) GetStartTime() time.Time {
 	return s.StartTime
 }
 
 // GetEndTime returns the value of EndTime.
-func (s *AddSlotReq) GetEndTime() time.Time {
+func (s *AddPollOptionReq) GetEndTime() time.Time {
 	return s.EndTime
 }
 
 // SetType sets the value of Type.
-func (s *AddSlotReq) SetType(val SlotType) {
+func (s *AddPollOptionReq) SetType(val SlotType) {
 	s.Type = val
 }
 
 // SetStartTime sets the value of StartTime.
-func (s *AddSlotReq) SetStartTime(val time.Time) {
+func (s *AddPollOptionReq) SetStartTime(val time.Time) {
 	s.StartTime = val
 }
 
 // SetEndTime sets the value of EndTime.
-func (s *AddSlotReq) SetEndTime(val time.Time) {
+func (s *AddPollOptionReq) SetEndTime(val time.Time) {
 	s.EndTime = val
 }
 
@@ -298,6 +298,131 @@ func (s *BookingCustomFields) init() BookingCustomFields {
 	return m
 }
 
+// Ref: #/components/schemas/BookingLink
+type BookingLink struct {
+	ID                int                `json:"id"`
+	Slug              string             `json:"slug"`
+	Name              string             `json:"name"`
+	Description       OptString          `json:"description"`
+	Status            LinkStatus         `json:"status"`
+	AutoConfirm       OptBool            `json:"auto_confirm"`
+	RequireEmail      OptBool            `json:"require_email"`
+	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
+	CustomFields      []CustomField      `json:"custom_fields"`
+	EventTemplate     OptEventTemplate   `json:"event_template"`
+	CreatedAt         OptDateTime        `json:"created_at"`
+}
+
+// GetID returns the value of ID.
+func (s *BookingLink) GetID() int {
+	return s.ID
+}
+
+// GetSlug returns the value of Slug.
+func (s *BookingLink) GetSlug() string {
+	return s.Slug
+}
+
+// GetName returns the value of Name.
+func (s *BookingLink) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *BookingLink) GetDescription() OptString {
+	return s.Description
+}
+
+// GetStatus returns the value of Status.
+func (s *BookingLink) GetStatus() LinkStatus {
+	return s.Status
+}
+
+// GetAutoConfirm returns the value of AutoConfirm.
+func (s *BookingLink) GetAutoConfirm() OptBool {
+	return s.AutoConfirm
+}
+
+// GetRequireEmail returns the value of RequireEmail.
+func (s *BookingLink) GetRequireEmail() OptBool {
+	return s.RequireEmail
+}
+
+// GetAvailabilityRules returns the value of AvailabilityRules.
+func (s *BookingLink) GetAvailabilityRules() []AvailabilityRule {
+	return s.AvailabilityRules
+}
+
+// GetCustomFields returns the value of CustomFields.
+func (s *BookingLink) GetCustomFields() []CustomField {
+	return s.CustomFields
+}
+
+// GetEventTemplate returns the value of EventTemplate.
+func (s *BookingLink) GetEventTemplate() OptEventTemplate {
+	return s.EventTemplate
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *BookingLink) GetCreatedAt() OptDateTime {
+	return s.CreatedAt
+}
+
+// SetID sets the value of ID.
+func (s *BookingLink) SetID(val int) {
+	s.ID = val
+}
+
+// SetSlug sets the value of Slug.
+func (s *BookingLink) SetSlug(val string) {
+	s.Slug = val
+}
+
+// SetName sets the value of Name.
+func (s *BookingLink) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *BookingLink) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetStatus sets the value of Status.
+func (s *BookingLink) SetStatus(val LinkStatus) {
+	s.Status = val
+}
+
+// SetAutoConfirm sets the value of AutoConfirm.
+func (s *BookingLink) SetAutoConfirm(val OptBool) {
+	s.AutoConfirm = val
+}
+
+// SetRequireEmail sets the value of RequireEmail.
+func (s *BookingLink) SetRequireEmail(val OptBool) {
+	s.RequireEmail = val
+}
+
+// SetAvailabilityRules sets the value of AvailabilityRules.
+func (s *BookingLink) SetAvailabilityRules(val []AvailabilityRule) {
+	s.AvailabilityRules = val
+}
+
+// SetCustomFields sets the value of CustomFields.
+func (s *BookingLink) SetCustomFields(val []CustomField) {
+	s.CustomFields = val
+}
+
+// SetEventTemplate sets the value of EventTemplate.
+func (s *BookingLink) SetEventTemplate(val OptEventTemplate) {
+	s.EventTemplate = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *BookingLink) SetCreatedAt(val OptDateTime) {
+	s.CreatedAt = val
+}
+
 // 1=pending, 2=confirmed, 3=declined.
 // Ref: #/components/schemas/BookingStatus
 type BookingStatus int
@@ -428,6 +553,86 @@ func (s *CreateBookingCreated) SetMessage(val OptString) {
 
 func (*CreateBookingCreated) createBookingRes() {}
 
+type CreateBookingLinkReq struct {
+	Name              string             `json:"name"`
+	Description       OptString          `json:"description"`
+	AutoConfirm       OptBool            `json:"auto_confirm"`
+	RequireEmail      OptBool            `json:"require_email"`
+	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
+	CustomFields      []CustomField      `json:"custom_fields"`
+	EventTemplate     OptEventTemplate   `json:"event_template"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateBookingLinkReq) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *CreateBookingLinkReq) GetDescription() OptString {
+	return s.Description
+}
+
+// GetAutoConfirm returns the value of AutoConfirm.
+func (s *CreateBookingLinkReq) GetAutoConfirm() OptBool {
+	return s.AutoConfirm
+}
+
+// GetRequireEmail returns the value of RequireEmail.
+func (s *CreateBookingLinkReq) GetRequireEmail() OptBool {
+	return s.RequireEmail
+}
+
+// GetAvailabilityRules returns the value of AvailabilityRules.
+func (s *CreateBookingLinkReq) GetAvailabilityRules() []AvailabilityRule {
+	return s.AvailabilityRules
+}
+
+// GetCustomFields returns the value of CustomFields.
+func (s *CreateBookingLinkReq) GetCustomFields() []CustomField {
+	return s.CustomFields
+}
+
+// GetEventTemplate returns the value of EventTemplate.
+func (s *CreateBookingLinkReq) GetEventTemplate() OptEventTemplate {
+	return s.EventTemplate
+}
+
+// SetName sets the value of Name.
+func (s *CreateBookingLinkReq) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *CreateBookingLinkReq) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetAutoConfirm sets the value of AutoConfirm.
+func (s *CreateBookingLinkReq) SetAutoConfirm(val OptBool) {
+	s.AutoConfirm = val
+}
+
+// SetRequireEmail sets the value of RequireEmail.
+func (s *CreateBookingLinkReq) SetRequireEmail(val OptBool) {
+	s.RequireEmail = val
+}
+
+// SetAvailabilityRules sets the value of AvailabilityRules.
+func (s *CreateBookingLinkReq) SetAvailabilityRules(val []AvailabilityRule) {
+	s.AvailabilityRules = val
+}
+
+// SetCustomFields sets the value of CustomFields.
+func (s *CreateBookingLinkReq) SetCustomFields(val []CustomField) {
+	s.CustomFields = val
+}
+
+// SetEventTemplate sets the value of EventTemplate.
+func (s *CreateBookingLinkReq) SetEventTemplate(val OptEventTemplate) {
+	s.EventTemplate = val
+}
+
 type CreateBookingReq struct {
 	SlotID       int                             `json:"slot_id"`
 	GuestEmail   string                          `json:"guest_email"`
@@ -486,106 +691,62 @@ func (s *CreateBookingReqCustomFields) init() CreateBookingReqCustomFields {
 	return m
 }
 
-type CreateLinkReq struct {
-	Type              LinkType           `json:"type"`
-	Name              string             `json:"name"`
-	Description       OptString          `json:"description"`
-	AutoConfirm       OptBool            `json:"auto_confirm"`
-	ShowResults       OptBool            `json:"show_results"`
-	RequireEmail      OptBool            `json:"require_email"`
-	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
-	CustomFields      []CustomField      `json:"custom_fields"`
-	EventTemplate     OptEventTemplate   `json:"event_template"`
-}
-
-// GetType returns the value of Type.
-func (s *CreateLinkReq) GetType() LinkType {
-	return s.Type
+type CreatePollReq struct {
+	Name         string        `json:"name"`
+	Description  OptString     `json:"description"`
+	ShowResults  OptBool       `json:"show_results"`
+	RequireEmail OptBool       `json:"require_email"`
+	CustomFields []CustomField `json:"custom_fields"`
 }
 
 // GetName returns the value of Name.
-func (s *CreateLinkReq) GetName() string {
+func (s *CreatePollReq) GetName() string {
 	return s.Name
 }
 
 // GetDescription returns the value of Description.
-func (s *CreateLinkReq) GetDescription() OptString {
+func (s *CreatePollReq) GetDescription() OptString {
 	return s.Description
 }
 
-// GetAutoConfirm returns the value of AutoConfirm.
-func (s *CreateLinkReq) GetAutoConfirm() OptBool {
-	return s.AutoConfirm
-}
-
 // GetShowResults returns the value of ShowResults.
-func (s *CreateLinkReq) GetShowResults() OptBool {
+func (s *CreatePollReq) GetShowResults() OptBool {
 	return s.ShowResults
 }
 
 // GetRequireEmail returns the value of RequireEmail.
-func (s *CreateLinkReq) GetRequireEmail() OptBool {
+func (s *CreatePollReq) GetRequireEmail() OptBool {
 	return s.RequireEmail
 }
 
-// GetAvailabilityRules returns the value of AvailabilityRules.
-func (s *CreateLinkReq) GetAvailabilityRules() []AvailabilityRule {
-	return s.AvailabilityRules
-}
-
 // GetCustomFields returns the value of CustomFields.
-func (s *CreateLinkReq) GetCustomFields() []CustomField {
+func (s *CreatePollReq) GetCustomFields() []CustomField {
 	return s.CustomFields
 }
 
-// GetEventTemplate returns the value of EventTemplate.
-func (s *CreateLinkReq) GetEventTemplate() OptEventTemplate {
-	return s.EventTemplate
-}
-
-// SetType sets the value of Type.
-func (s *CreateLinkReq) SetType(val LinkType) {
-	s.Type = val
-}
-
 // SetName sets the value of Name.
-func (s *CreateLinkReq) SetName(val string) {
+func (s *CreatePollReq) SetName(val string) {
 	s.Name = val
 }
 
 // SetDescription sets the value of Description.
-func (s *CreateLinkReq) SetDescription(val OptString) {
+func (s *CreatePollReq) SetDescription(val OptString) {
 	s.Description = val
 }
 
-// SetAutoConfirm sets the value of AutoConfirm.
-func (s *CreateLinkReq) SetAutoConfirm(val OptBool) {
-	s.AutoConfirm = val
-}
-
 // SetShowResults sets the value of ShowResults.
-func (s *CreateLinkReq) SetShowResults(val OptBool) {
+func (s *CreatePollReq) SetShowResults(val OptBool) {
 	s.ShowResults = val
 }
 
 // SetRequireEmail sets the value of RequireEmail.
-func (s *CreateLinkReq) SetRequireEmail(val OptBool) {
+func (s *CreatePollReq) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
 }
 
-// SetAvailabilityRules sets the value of AvailabilityRules.
-func (s *CreateLinkReq) SetAvailabilityRules(val []AvailabilityRule) {
-	s.AvailabilityRules = val
-}
-
 // SetCustomFields sets the value of CustomFields.
-func (s *CreateLinkReq) SetCustomFields(val []CustomField) {
+func (s *CreatePollReq) SetCustomFields(val []CustomField) {
 	s.CustomFields = val
-}
-
-// SetEventTemplate sets the value of EventTemplate.
-func (s *CreateLinkReq) SetEventTemplate(val OptEventTemplate) {
-	s.EventTemplate = val
 }
 
 // Ref: #/components/schemas/CustomField
@@ -686,11 +847,14 @@ func (s *DeclineViaEmailOK) SetMessage(val OptString) {
 
 func (*DeclineViaEmailOK) declineViaEmailRes() {}
 
-// DeleteLinkNoContent is response for DeleteLink operation.
-type DeleteLinkNoContent struct{}
+// DeleteBookingLinkNoContent is response for DeleteBookingLink operation.
+type DeleteBookingLinkNoContent struct{}
 
-// DeleteSlotNoContent is response for DeleteSlot operation.
-type DeleteSlotNoContent struct{}
+// DeletePollNoContent is response for DeletePoll operation.
+type DeletePollNoContent struct{}
+
+// DeletePollOptionNoContent is response for DeletePollOption operation.
+type DeletePollOptionNoContent struct{}
 
 // Ref: #/components/schemas/Error
 type Error struct {
@@ -707,13 +871,14 @@ func (s *Error) SetMessage(val string) {
 	s.Message = val
 }
 
-func (*Error) approveViaEmailRes() {}
-func (*Error) authCallbackRes()    {}
-func (*Error) createBookingRes()   {}
-func (*Error) declineViaEmailRes() {}
-func (*Error) getCurrentUserRes()  {}
-func (*Error) getPollResultsRes()  {}
-func (*Error) getPublicLinkRes()   {}
+func (*Error) approveViaEmailRes()      {}
+func (*Error) authCallbackRes()         {}
+func (*Error) createBookingRes()        {}
+func (*Error) declineViaEmailRes()      {}
+func (*Error) getCurrentUserRes()       {}
+func (*Error) getPollResultsRes()       {}
+func (*Error) getPublicBookingLinkRes() {}
+func (*Error) getPublicPollRes()        {}
 
 // Ref: #/components/schemas/EventTemplate
 type EventTemplate struct {
@@ -752,17 +917,17 @@ func (s *EventTemplate) SetLocation(val OptString) {
 	s.Location = val
 }
 
-type GetAvailabilityOK struct {
+type GetBookingAvailabilityOK struct {
 	Slots []Slot `json:"slots"`
 }
 
 // GetSlots returns the value of Slots.
-func (s *GetAvailabilityOK) GetSlots() []Slot {
+func (s *GetBookingAvailabilityOK) GetSlots() []Slot {
 	return s.Slots
 }
 
 // SetSlots sets the value of Slots.
-func (s *GetAvailabilityOK) SetSlots(val []Slot) {
+func (s *GetBookingAvailabilityOK) SetSlots(val []Slot) {
 	s.Slots = val
 }
 
@@ -793,87 +958,125 @@ func (s *GetPollResultsOK) SetVotes(val []Vote) {
 
 func (*GetPollResultsOK) getPollResultsRes() {}
 
-type GetPublicLinkOK struct {
-	Type         LinkType      `json:"type"`
+type GetPublicBookingLinkOK struct {
 	Name         string        `json:"name"`
 	Description  OptString     `json:"description"`
 	CustomFields []CustomField `json:"custom_fields"`
-	Slots        []Slot        `json:"slots"`
-	ShowResults  OptBool       `json:"show_results"`
 	RequireEmail OptBool       `json:"require_email"`
 }
 
-// GetType returns the value of Type.
-func (s *GetPublicLinkOK) GetType() LinkType {
-	return s.Type
-}
-
 // GetName returns the value of Name.
-func (s *GetPublicLinkOK) GetName() string {
+func (s *GetPublicBookingLinkOK) GetName() string {
 	return s.Name
 }
 
 // GetDescription returns the value of Description.
-func (s *GetPublicLinkOK) GetDescription() OptString {
+func (s *GetPublicBookingLinkOK) GetDescription() OptString {
 	return s.Description
 }
 
 // GetCustomFields returns the value of CustomFields.
-func (s *GetPublicLinkOK) GetCustomFields() []CustomField {
+func (s *GetPublicBookingLinkOK) GetCustomFields() []CustomField {
 	return s.CustomFields
 }
 
-// GetSlots returns the value of Slots.
-func (s *GetPublicLinkOK) GetSlots() []Slot {
-	return s.Slots
-}
-
-// GetShowResults returns the value of ShowResults.
-func (s *GetPublicLinkOK) GetShowResults() OptBool {
-	return s.ShowResults
-}
-
 // GetRequireEmail returns the value of RequireEmail.
-func (s *GetPublicLinkOK) GetRequireEmail() OptBool {
+func (s *GetPublicBookingLinkOK) GetRequireEmail() OptBool {
 	return s.RequireEmail
 }
 
-// SetType sets the value of Type.
-func (s *GetPublicLinkOK) SetType(val LinkType) {
-	s.Type = val
-}
-
 // SetName sets the value of Name.
-func (s *GetPublicLinkOK) SetName(val string) {
+func (s *GetPublicBookingLinkOK) SetName(val string) {
 	s.Name = val
 }
 
 // SetDescription sets the value of Description.
-func (s *GetPublicLinkOK) SetDescription(val OptString) {
+func (s *GetPublicBookingLinkOK) SetDescription(val OptString) {
 	s.Description = val
 }
 
 // SetCustomFields sets the value of CustomFields.
-func (s *GetPublicLinkOK) SetCustomFields(val []CustomField) {
+func (s *GetPublicBookingLinkOK) SetCustomFields(val []CustomField) {
 	s.CustomFields = val
 }
 
-// SetSlots sets the value of Slots.
-func (s *GetPublicLinkOK) SetSlots(val []Slot) {
-	s.Slots = val
+// SetRequireEmail sets the value of RequireEmail.
+func (s *GetPublicBookingLinkOK) SetRequireEmail(val OptBool) {
+	s.RequireEmail = val
+}
+
+func (*GetPublicBookingLinkOK) getPublicBookingLinkRes() {}
+
+type GetPublicPollOK struct {
+	Name         string        `json:"name"`
+	Description  OptString     `json:"description"`
+	CustomFields []CustomField `json:"custom_fields"`
+	Options      []PollOption  `json:"options"`
+	ShowResults  OptBool       `json:"show_results"`
+	RequireEmail OptBool       `json:"require_email"`
+}
+
+// GetName returns the value of Name.
+func (s *GetPublicPollOK) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GetPublicPollOK) GetDescription() OptString {
+	return s.Description
+}
+
+// GetCustomFields returns the value of CustomFields.
+func (s *GetPublicPollOK) GetCustomFields() []CustomField {
+	return s.CustomFields
+}
+
+// GetOptions returns the value of Options.
+func (s *GetPublicPollOK) GetOptions() []PollOption {
+	return s.Options
+}
+
+// GetShowResults returns the value of ShowResults.
+func (s *GetPublicPollOK) GetShowResults() OptBool {
+	return s.ShowResults
+}
+
+// GetRequireEmail returns the value of RequireEmail.
+func (s *GetPublicPollOK) GetRequireEmail() OptBool {
+	return s.RequireEmail
+}
+
+// SetName sets the value of Name.
+func (s *GetPublicPollOK) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GetPublicPollOK) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetCustomFields sets the value of CustomFields.
+func (s *GetPublicPollOK) SetCustomFields(val []CustomField) {
+	s.CustomFields = val
+}
+
+// SetOptions sets the value of Options.
+func (s *GetPublicPollOK) SetOptions(val []PollOption) {
+	s.Options = val
 }
 
 // SetShowResults sets the value of ShowResults.
-func (s *GetPublicLinkOK) SetShowResults(val OptBool) {
+func (s *GetPublicPollOK) SetShowResults(val OptBool) {
 	s.ShowResults = val
 }
 
 // SetRequireEmail sets the value of RequireEmail.
-func (s *GetPublicLinkOK) SetRequireEmail(val OptBool) {
+func (s *GetPublicPollOK) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
 }
 
-func (*GetPublicLinkOK) getPublicLinkRes() {}
+func (*GetPublicPollOK) getPublicPollRes() {}
 
 // InitiateLoginFound is response for InitiateLogin operation.
 type InitiateLoginFound struct {
@@ -901,153 +1104,6 @@ func (s *InitiateLoginFound) SetSetCookie(val OptString) {
 	s.SetCookie = val
 }
 
-// Ref: #/components/schemas/Link
-type Link struct {
-	ID                int                `json:"id"`
-	Slug              string             `json:"slug"`
-	Type              LinkType           `json:"type"`
-	Name              string             `json:"name"`
-	Description       OptString          `json:"description"`
-	Status            LinkStatus         `json:"status"`
-	AutoConfirm       OptBool            `json:"auto_confirm"`
-	ShowResults       OptBool            `json:"show_results"`
-	RequireEmail      OptBool            `json:"require_email"`
-	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
-	CustomFields      []CustomField      `json:"custom_fields"`
-	EventTemplate     OptEventTemplate   `json:"event_template"`
-	CreatedAt         OptDateTime        `json:"created_at"`
-}
-
-// GetID returns the value of ID.
-func (s *Link) GetID() int {
-	return s.ID
-}
-
-// GetSlug returns the value of Slug.
-func (s *Link) GetSlug() string {
-	return s.Slug
-}
-
-// GetType returns the value of Type.
-func (s *Link) GetType() LinkType {
-	return s.Type
-}
-
-// GetName returns the value of Name.
-func (s *Link) GetName() string {
-	return s.Name
-}
-
-// GetDescription returns the value of Description.
-func (s *Link) GetDescription() OptString {
-	return s.Description
-}
-
-// GetStatus returns the value of Status.
-func (s *Link) GetStatus() LinkStatus {
-	return s.Status
-}
-
-// GetAutoConfirm returns the value of AutoConfirm.
-func (s *Link) GetAutoConfirm() OptBool {
-	return s.AutoConfirm
-}
-
-// GetShowResults returns the value of ShowResults.
-func (s *Link) GetShowResults() OptBool {
-	return s.ShowResults
-}
-
-// GetRequireEmail returns the value of RequireEmail.
-func (s *Link) GetRequireEmail() OptBool {
-	return s.RequireEmail
-}
-
-// GetAvailabilityRules returns the value of AvailabilityRules.
-func (s *Link) GetAvailabilityRules() []AvailabilityRule {
-	return s.AvailabilityRules
-}
-
-// GetCustomFields returns the value of CustomFields.
-func (s *Link) GetCustomFields() []CustomField {
-	return s.CustomFields
-}
-
-// GetEventTemplate returns the value of EventTemplate.
-func (s *Link) GetEventTemplate() OptEventTemplate {
-	return s.EventTemplate
-}
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *Link) GetCreatedAt() OptDateTime {
-	return s.CreatedAt
-}
-
-// SetID sets the value of ID.
-func (s *Link) SetID(val int) {
-	s.ID = val
-}
-
-// SetSlug sets the value of Slug.
-func (s *Link) SetSlug(val string) {
-	s.Slug = val
-}
-
-// SetType sets the value of Type.
-func (s *Link) SetType(val LinkType) {
-	s.Type = val
-}
-
-// SetName sets the value of Name.
-func (s *Link) SetName(val string) {
-	s.Name = val
-}
-
-// SetDescription sets the value of Description.
-func (s *Link) SetDescription(val OptString) {
-	s.Description = val
-}
-
-// SetStatus sets the value of Status.
-func (s *Link) SetStatus(val LinkStatus) {
-	s.Status = val
-}
-
-// SetAutoConfirm sets the value of AutoConfirm.
-func (s *Link) SetAutoConfirm(val OptBool) {
-	s.AutoConfirm = val
-}
-
-// SetShowResults sets the value of ShowResults.
-func (s *Link) SetShowResults(val OptBool) {
-	s.ShowResults = val
-}
-
-// SetRequireEmail sets the value of RequireEmail.
-func (s *Link) SetRequireEmail(val OptBool) {
-	s.RequireEmail = val
-}
-
-// SetAvailabilityRules sets the value of AvailabilityRules.
-func (s *Link) SetAvailabilityRules(val []AvailabilityRule) {
-	s.AvailabilityRules = val
-}
-
-// SetCustomFields sets the value of CustomFields.
-func (s *Link) SetCustomFields(val []CustomField) {
-	s.CustomFields = val
-}
-
-// SetEventTemplate sets the value of EventTemplate.
-func (s *Link) SetEventTemplate(val OptEventTemplate) {
-	s.EventTemplate = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *Link) SetCreatedAt(val OptDateTime) {
-	s.CreatedAt = val
-}
-
 // 1=active, 2=closed.
 // Ref: #/components/schemas/LinkStatus
 type LinkStatus int
@@ -1062,23 +1118,6 @@ func (LinkStatus) AllValues() []LinkStatus {
 	return []LinkStatus{
 		LinkStatus1,
 		LinkStatus2,
-	}
-}
-
-// 1=booking, 2=poll.
-// Ref: #/components/schemas/LinkType
-type LinkType int
-
-const (
-	LinkType1 LinkType = 1
-	LinkType2 LinkType = 2
-)
-
-// AllValues returns all LinkType values.
-func (LinkType) AllValues() []LinkType {
-	return []LinkType{
-		LinkType1,
-		LinkType2,
 	}
 }
 
@@ -1503,17 +1542,168 @@ func (o OptVoteCustomFields) Or(d VoteCustomFields) VoteCustomFields {
 type PickPollWinnerOK struct{}
 
 type PickPollWinnerReq struct {
-	SlotID int `json:"slot_id"`
+	OptionID int `json:"option_id"`
 }
 
-// GetSlotID returns the value of SlotID.
-func (s *PickPollWinnerReq) GetSlotID() int {
-	return s.SlotID
+// GetOptionID returns the value of OptionID.
+func (s *PickPollWinnerReq) GetOptionID() int {
+	return s.OptionID
 }
 
-// SetSlotID sets the value of SlotID.
-func (s *PickPollWinnerReq) SetSlotID(val int) {
-	s.SlotID = val
+// SetOptionID sets the value of OptionID.
+func (s *PickPollWinnerReq) SetOptionID(val int) {
+	s.OptionID = val
+}
+
+// Ref: #/components/schemas/Poll
+type Poll struct {
+	ID           int           `json:"id"`
+	Slug         string        `json:"slug"`
+	Name         string        `json:"name"`
+	Description  OptString     `json:"description"`
+	Status       LinkStatus    `json:"status"`
+	ShowResults  OptBool       `json:"show_results"`
+	RequireEmail OptBool       `json:"require_email"`
+	CustomFields []CustomField `json:"custom_fields"`
+	CreatedAt    OptDateTime   `json:"created_at"`
+}
+
+// GetID returns the value of ID.
+func (s *Poll) GetID() int {
+	return s.ID
+}
+
+// GetSlug returns the value of Slug.
+func (s *Poll) GetSlug() string {
+	return s.Slug
+}
+
+// GetName returns the value of Name.
+func (s *Poll) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *Poll) GetDescription() OptString {
+	return s.Description
+}
+
+// GetStatus returns the value of Status.
+func (s *Poll) GetStatus() LinkStatus {
+	return s.Status
+}
+
+// GetShowResults returns the value of ShowResults.
+func (s *Poll) GetShowResults() OptBool {
+	return s.ShowResults
+}
+
+// GetRequireEmail returns the value of RequireEmail.
+func (s *Poll) GetRequireEmail() OptBool {
+	return s.RequireEmail
+}
+
+// GetCustomFields returns the value of CustomFields.
+func (s *Poll) GetCustomFields() []CustomField {
+	return s.CustomFields
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *Poll) GetCreatedAt() OptDateTime {
+	return s.CreatedAt
+}
+
+// SetID sets the value of ID.
+func (s *Poll) SetID(val int) {
+	s.ID = val
+}
+
+// SetSlug sets the value of Slug.
+func (s *Poll) SetSlug(val string) {
+	s.Slug = val
+}
+
+// SetName sets the value of Name.
+func (s *Poll) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *Poll) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetStatus sets the value of Status.
+func (s *Poll) SetStatus(val LinkStatus) {
+	s.Status = val
+}
+
+// SetShowResults sets the value of ShowResults.
+func (s *Poll) SetShowResults(val OptBool) {
+	s.ShowResults = val
+}
+
+// SetRequireEmail sets the value of RequireEmail.
+func (s *Poll) SetRequireEmail(val OptBool) {
+	s.RequireEmail = val
+}
+
+// SetCustomFields sets the value of CustomFields.
+func (s *Poll) SetCustomFields(val []CustomField) {
+	s.CustomFields = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *Poll) SetCreatedAt(val OptDateTime) {
+	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/PollOption
+type PollOption struct {
+	ID        int       `json:"id"`
+	Type      SlotType  `json:"type"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+}
+
+// GetID returns the value of ID.
+func (s *PollOption) GetID() int {
+	return s.ID
+}
+
+// GetType returns the value of Type.
+func (s *PollOption) GetType() SlotType {
+	return s.Type
+}
+
+// GetStartTime returns the value of StartTime.
+func (s *PollOption) GetStartTime() time.Time {
+	return s.StartTime
+}
+
+// GetEndTime returns the value of EndTime.
+func (s *PollOption) GetEndTime() time.Time {
+	return s.EndTime
+}
+
+// SetID sets the value of ID.
+func (s *PollOption) SetID(val int) {
+	s.ID = val
+}
+
+// SetType sets the value of Type.
+func (s *PollOption) SetType(val SlotType) {
+	s.Type = val
+}
+
+// SetStartTime sets the value of StartTime.
+func (s *PollOption) SetStartTime(val time.Time) {
+	s.StartTime = val
+}
+
+// SetEndTime sets the value of EndTime.
+func (s *PollOption) SetEndTime(val time.Time) {
+	s.EndTime = val
 }
 
 // RemoveCalendarNoContent is response for RemoveCalendar operation.
@@ -1655,12 +1845,11 @@ func (s *SubmitVoteReqResponses) init() SubmitVoteReqResponses {
 	return m
 }
 
-type UpdateLinkReq struct {
+type UpdateBookingLinkReq struct {
 	Name              OptString          `json:"name"`
 	Description       OptString          `json:"description"`
 	Status            OptLinkStatus      `json:"status"`
 	AutoConfirm       OptBool            `json:"auto_confirm"`
-	ShowResults       OptBool            `json:"show_results"`
 	RequireEmail      OptBool            `json:"require_email"`
 	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
 	CustomFields      []CustomField      `json:"custom_fields"`
@@ -1668,93 +1857,152 @@ type UpdateLinkReq struct {
 }
 
 // GetName returns the value of Name.
-func (s *UpdateLinkReq) GetName() OptString {
+func (s *UpdateBookingLinkReq) GetName() OptString {
 	return s.Name
 }
 
 // GetDescription returns the value of Description.
-func (s *UpdateLinkReq) GetDescription() OptString {
+func (s *UpdateBookingLinkReq) GetDescription() OptString {
 	return s.Description
 }
 
 // GetStatus returns the value of Status.
-func (s *UpdateLinkReq) GetStatus() OptLinkStatus {
+func (s *UpdateBookingLinkReq) GetStatus() OptLinkStatus {
 	return s.Status
 }
 
 // GetAutoConfirm returns the value of AutoConfirm.
-func (s *UpdateLinkReq) GetAutoConfirm() OptBool {
+func (s *UpdateBookingLinkReq) GetAutoConfirm() OptBool {
 	return s.AutoConfirm
 }
 
-// GetShowResults returns the value of ShowResults.
-func (s *UpdateLinkReq) GetShowResults() OptBool {
-	return s.ShowResults
-}
-
 // GetRequireEmail returns the value of RequireEmail.
-func (s *UpdateLinkReq) GetRequireEmail() OptBool {
+func (s *UpdateBookingLinkReq) GetRequireEmail() OptBool {
 	return s.RequireEmail
 }
 
 // GetAvailabilityRules returns the value of AvailabilityRules.
-func (s *UpdateLinkReq) GetAvailabilityRules() []AvailabilityRule {
+func (s *UpdateBookingLinkReq) GetAvailabilityRules() []AvailabilityRule {
 	return s.AvailabilityRules
 }
 
 // GetCustomFields returns the value of CustomFields.
-func (s *UpdateLinkReq) GetCustomFields() []CustomField {
+func (s *UpdateBookingLinkReq) GetCustomFields() []CustomField {
 	return s.CustomFields
 }
 
 // GetEventTemplate returns the value of EventTemplate.
-func (s *UpdateLinkReq) GetEventTemplate() OptEventTemplate {
+func (s *UpdateBookingLinkReq) GetEventTemplate() OptEventTemplate {
 	return s.EventTemplate
 }
 
 // SetName sets the value of Name.
-func (s *UpdateLinkReq) SetName(val OptString) {
+func (s *UpdateBookingLinkReq) SetName(val OptString) {
 	s.Name = val
 }
 
 // SetDescription sets the value of Description.
-func (s *UpdateLinkReq) SetDescription(val OptString) {
+func (s *UpdateBookingLinkReq) SetDescription(val OptString) {
 	s.Description = val
 }
 
 // SetStatus sets the value of Status.
-func (s *UpdateLinkReq) SetStatus(val OptLinkStatus) {
+func (s *UpdateBookingLinkReq) SetStatus(val OptLinkStatus) {
 	s.Status = val
 }
 
 // SetAutoConfirm sets the value of AutoConfirm.
-func (s *UpdateLinkReq) SetAutoConfirm(val OptBool) {
+func (s *UpdateBookingLinkReq) SetAutoConfirm(val OptBool) {
 	s.AutoConfirm = val
 }
 
-// SetShowResults sets the value of ShowResults.
-func (s *UpdateLinkReq) SetShowResults(val OptBool) {
-	s.ShowResults = val
-}
-
 // SetRequireEmail sets the value of RequireEmail.
-func (s *UpdateLinkReq) SetRequireEmail(val OptBool) {
+func (s *UpdateBookingLinkReq) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
 }
 
 // SetAvailabilityRules sets the value of AvailabilityRules.
-func (s *UpdateLinkReq) SetAvailabilityRules(val []AvailabilityRule) {
+func (s *UpdateBookingLinkReq) SetAvailabilityRules(val []AvailabilityRule) {
 	s.AvailabilityRules = val
 }
 
 // SetCustomFields sets the value of CustomFields.
-func (s *UpdateLinkReq) SetCustomFields(val []CustomField) {
+func (s *UpdateBookingLinkReq) SetCustomFields(val []CustomField) {
 	s.CustomFields = val
 }
 
 // SetEventTemplate sets the value of EventTemplate.
-func (s *UpdateLinkReq) SetEventTemplate(val OptEventTemplate) {
+func (s *UpdateBookingLinkReq) SetEventTemplate(val OptEventTemplate) {
 	s.EventTemplate = val
+}
+
+type UpdatePollReq struct {
+	Name         OptString     `json:"name"`
+	Description  OptString     `json:"description"`
+	Status       OptLinkStatus `json:"status"`
+	ShowResults  OptBool       `json:"show_results"`
+	RequireEmail OptBool       `json:"require_email"`
+	CustomFields []CustomField `json:"custom_fields"`
+}
+
+// GetName returns the value of Name.
+func (s *UpdatePollReq) GetName() OptString {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *UpdatePollReq) GetDescription() OptString {
+	return s.Description
+}
+
+// GetStatus returns the value of Status.
+func (s *UpdatePollReq) GetStatus() OptLinkStatus {
+	return s.Status
+}
+
+// GetShowResults returns the value of ShowResults.
+func (s *UpdatePollReq) GetShowResults() OptBool {
+	return s.ShowResults
+}
+
+// GetRequireEmail returns the value of RequireEmail.
+func (s *UpdatePollReq) GetRequireEmail() OptBool {
+	return s.RequireEmail
+}
+
+// GetCustomFields returns the value of CustomFields.
+func (s *UpdatePollReq) GetCustomFields() []CustomField {
+	return s.CustomFields
+}
+
+// SetName sets the value of Name.
+func (s *UpdatePollReq) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *UpdatePollReq) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetStatus sets the value of Status.
+func (s *UpdatePollReq) SetStatus(val OptLinkStatus) {
+	s.Status = val
+}
+
+// SetShowResults sets the value of ShowResults.
+func (s *UpdatePollReq) SetShowResults(val OptBool) {
+	s.ShowResults = val
+}
+
+// SetRequireEmail sets the value of RequireEmail.
+func (s *UpdatePollReq) SetRequireEmail(val OptBool) {
+	s.RequireEmail = val
+}
+
+// SetCustomFields sets the value of CustomFields.
+func (s *UpdatePollReq) SetCustomFields(val []CustomField) {
+	s.CustomFields = val
 }
 
 // Ref: #/components/schemas/User
@@ -1909,15 +2157,15 @@ func (s *VoteResponses) init() VoteResponses {
 
 // Ref: #/components/schemas/VoteTally
 type VoteTally struct {
-	SlotID     int `json:"slot_id"`
+	OptionID   int `json:"option_id"`
 	YesCount   int `json:"yes_count"`
 	NoCount    int `json:"no_count"`
 	MaybeCount int `json:"maybe_count"`
 }
 
-// GetSlotID returns the value of SlotID.
-func (s *VoteTally) GetSlotID() int {
-	return s.SlotID
+// GetOptionID returns the value of OptionID.
+func (s *VoteTally) GetOptionID() int {
+	return s.OptionID
 }
 
 // GetYesCount returns the value of YesCount.
@@ -1935,9 +2183,9 @@ func (s *VoteTally) GetMaybeCount() int {
 	return s.MaybeCount
 }
 
-// SetSlotID sets the value of SlotID.
-func (s *VoteTally) SetSlotID(val int) {
-	s.SlotID = val
+// SetOptionID sets the value of OptionID.
+func (s *VoteTally) SetOptionID(val int) {
+	s.OptionID = val
 }
 
 // SetYesCount sets the value of YesCount.

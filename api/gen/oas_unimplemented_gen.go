@@ -22,12 +22,12 @@ func (UnimplementedHandler) AddCalendar(ctx context.Context, req *AddCalendarReq
 	return r, ht.ErrNotImplemented
 }
 
-// AddSlot implements addSlot operation.
+// AddPollOption implements addPollOption operation.
 //
-// Add a slot to a link.
+// Add an option to a poll.
 //
-// POST /links/{id}/slots
-func (UnimplementedHandler) AddSlot(ctx context.Context, req *AddSlotReq, params AddSlotParams) (r *Slot, _ error) {
+// POST /polls/{id}/options
+func (UnimplementedHandler) AddPollOption(ctx context.Context, req *AddPollOptionReq, params AddPollOptionParams) (r *PollOption, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -62,17 +62,26 @@ func (UnimplementedHandler) AuthCallback(ctx context.Context, params AuthCallbac
 //
 // Create a booking.
 //
-// POST /p/{slug}/book
+// POST /p/booking/{slug}/book
 func (UnimplementedHandler) CreateBooking(ctx context.Context, req *CreateBookingReq, params CreateBookingParams) (r CreateBookingRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// CreateLink implements createLink operation.
+// CreateBookingLink implements createBookingLink operation.
 //
-// Create a link.
+// Create a booking link.
 //
-// POST /links
-func (UnimplementedHandler) CreateLink(ctx context.Context, req *CreateLinkReq) (r *Link, _ error) {
+// POST /booking-links
+func (UnimplementedHandler) CreateBookingLink(ctx context.Context, req *CreateBookingLinkReq) (r *BookingLink, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// CreatePoll implements createPoll operation.
+//
+// Create a poll.
+//
+// POST /polls
+func (UnimplementedHandler) CreatePoll(ctx context.Context, req *CreatePollReq) (r *Poll, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -94,30 +103,57 @@ func (UnimplementedHandler) DeclineViaEmail(ctx context.Context) (r DeclineViaEm
 	return r, ht.ErrNotImplemented
 }
 
-// DeleteLink implements deleteLink operation.
+// DeleteBookingLink implements deleteBookingLink operation.
 //
-// Delete a link.
+// Delete a booking link.
 //
-// DELETE /links/{id}
-func (UnimplementedHandler) DeleteLink(ctx context.Context, params DeleteLinkParams) error {
+// DELETE /booking-links/{id}
+func (UnimplementedHandler) DeleteBookingLink(ctx context.Context, params DeleteBookingLinkParams) error {
 	return ht.ErrNotImplemented
 }
 
-// DeleteSlot implements deleteSlot operation.
+// DeletePoll implements deletePoll operation.
 //
-// Delete a slot from a link.
+// Delete a poll.
 //
-// DELETE /links/{id}/slots/{slotId}
-func (UnimplementedHandler) DeleteSlot(ctx context.Context, params DeleteSlotParams) error {
+// DELETE /polls/{id}
+func (UnimplementedHandler) DeletePoll(ctx context.Context, params DeletePollParams) error {
 	return ht.ErrNotImplemented
 }
 
-// GetAvailability implements getAvailability operation.
+// DeletePollOption implements deletePollOption operation.
 //
-// Get real-time availability.
+// Delete an option from a poll.
 //
-// GET /p/{slug}/availability
-func (UnimplementedHandler) GetAvailability(ctx context.Context, params GetAvailabilityParams) (r *GetAvailabilityOK, _ error) {
+// DELETE /polls/{id}/options/{optionId}
+func (UnimplementedHandler) DeletePollOption(ctx context.Context, params DeletePollOptionParams) error {
+	return ht.ErrNotImplemented
+}
+
+// GetBookingAvailability implements getBookingAvailability operation.
+//
+// Get real-time availability for booking link.
+//
+// GET /p/booking/{slug}/availability
+func (UnimplementedHandler) GetBookingAvailability(ctx context.Context, params GetBookingAvailabilityParams) (r *GetBookingAvailabilityOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetBookingLink implements getBookingLink operation.
+//
+// Get booking link details.
+//
+// GET /booking-links/{id}
+func (UnimplementedHandler) GetBookingLink(ctx context.Context, params GetBookingLinkParams) (r *BookingLink, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetBookingLinkBookings implements getBookingLinkBookings operation.
+//
+// Get bookings for a booking link.
+//
+// GET /booking-links/{id}/bookings
+func (UnimplementedHandler) GetBookingLinkBookings(ctx context.Context, params GetBookingLinkBookingsParams) (r []Booking, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -130,39 +166,21 @@ func (UnimplementedHandler) GetCurrentUser(ctx context.Context) (r GetCurrentUse
 	return r, ht.ErrNotImplemented
 }
 
-// GetLink implements getLink operation.
+// GetPoll implements getPoll operation.
 //
-// Get link details.
+// Get poll details.
 //
-// GET /links/{id}
-func (UnimplementedHandler) GetLink(ctx context.Context, params GetLinkParams) (r *Link, _ error) {
+// GET /polls/{id}
+func (UnimplementedHandler) GetPoll(ctx context.Context, params GetPollParams) (r *Poll, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// GetLinkBookings implements getLinkBookings operation.
+// GetPollOptions implements getPollOptions operation.
 //
-// Get bookings for a link.
+// Get options for a poll.
 //
-// GET /links/{id}/bookings
-func (UnimplementedHandler) GetLinkBookings(ctx context.Context, params GetLinkBookingsParams) (r []Booking, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetLinkSlots implements getLinkSlots operation.
-//
-// Get slots for a link.
-//
-// GET /links/{id}/slots
-func (UnimplementedHandler) GetLinkSlots(ctx context.Context, params GetLinkSlotsParams) (r []Slot, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetLinkVotes implements getLinkVotes operation.
-//
-// Get votes for a poll.
-//
-// GET /links/{id}/votes
-func (UnimplementedHandler) GetLinkVotes(ctx context.Context, params GetLinkVotesParams) (r []Vote, _ error) {
+// GET /polls/{id}/options
+func (UnimplementedHandler) GetPollOptions(ctx context.Context, params GetPollOptionsParams) (r []PollOption, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -170,17 +188,35 @@ func (UnimplementedHandler) GetLinkVotes(ctx context.Context, params GetLinkVote
 //
 // Get poll results.
 //
-// GET /p/{slug}/results
+// GET /p/poll/{slug}/results
 func (UnimplementedHandler) GetPollResults(ctx context.Context, params GetPollResultsParams) (r GetPollResultsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// GetPublicLink implements getPublicLink operation.
+// GetPollVotes implements getPollVotes operation.
 //
-// Get public link info.
+// Get votes for a poll.
 //
-// GET /p/{slug}
-func (UnimplementedHandler) GetPublicLink(ctx context.Context, params GetPublicLinkParams) (r GetPublicLinkRes, _ error) {
+// GET /polls/{id}/votes
+func (UnimplementedHandler) GetPollVotes(ctx context.Context, params GetPollVotesParams) (r []Vote, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetPublicBookingLink implements getPublicBookingLink operation.
+//
+// Get public booking link info.
+//
+// GET /p/booking/{slug}
+func (UnimplementedHandler) GetPublicBookingLink(ctx context.Context, params GetPublicBookingLinkParams) (r GetPublicBookingLinkRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetPublicPoll implements getPublicPoll operation.
+//
+// Get public poll info.
+//
+// GET /p/poll/{slug}
+func (UnimplementedHandler) GetPublicPoll(ctx context.Context, params GetPublicPollParams) (r GetPublicPollRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -193,6 +229,15 @@ func (UnimplementedHandler) InitiateLogin(ctx context.Context) (r *InitiateLogin
 	return r, ht.ErrNotImplemented
 }
 
+// ListBookingLinks implements listBookingLinks operation.
+//
+// List all booking links.
+//
+// GET /booking-links
+func (UnimplementedHandler) ListBookingLinks(ctx context.Context) (r []BookingLink, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ListCalendars implements listCalendars operation.
 //
 // List calendar connections.
@@ -202,12 +247,12 @@ func (UnimplementedHandler) ListCalendars(ctx context.Context) (r []CalendarConn
 	return r, ht.ErrNotImplemented
 }
 
-// ListLinks implements listLinks operation.
+// ListPolls implements listPolls operation.
 //
-// List all links.
+// List all polls.
 //
-// GET /links
-func (UnimplementedHandler) ListLinks(ctx context.Context) (r []Link, _ error) {
+// GET /polls
+func (UnimplementedHandler) ListPolls(ctx context.Context) (r []Poll, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -222,9 +267,9 @@ func (UnimplementedHandler) Logout(ctx context.Context) error {
 
 // PickPollWinner implements pickPollWinner operation.
 //
-// Pick winning slot for poll.
+// Pick winning option for poll.
 //
-// POST /links/{id}/pick-winner
+// POST /polls/{id}/pick-winner
 func (UnimplementedHandler) PickPollWinner(ctx context.Context, req *PickPollWinnerReq, params PickPollWinnerParams) error {
 	return ht.ErrNotImplemented
 }
@@ -242,16 +287,25 @@ func (UnimplementedHandler) RemoveCalendar(ctx context.Context, params RemoveCal
 //
 // Submit poll vote.
 //
-// POST /p/{slug}/vote
+// POST /p/poll/{slug}/vote
 func (UnimplementedHandler) SubmitVote(ctx context.Context, req *SubmitVoteReq, params SubmitVoteParams) (r *Vote, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// UpdateLink implements updateLink operation.
+// UpdateBookingLink implements updateBookingLink operation.
 //
-// Update a link.
+// Update a booking link.
 //
-// PUT /links/{id}
-func (UnimplementedHandler) UpdateLink(ctx context.Context, req *UpdateLinkReq, params UpdateLinkParams) (r *Link, _ error) {
+// PUT /booking-links/{id}
+func (UnimplementedHandler) UpdateBookingLink(ctx context.Context, req *UpdateBookingLinkReq, params UpdateBookingLinkParams) (r *BookingLink, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdatePoll implements updatePoll operation.
+//
+// Update a poll.
+//
+// PUT /polls/{id}
+func (UnimplementedHandler) UpdatePoll(ctx context.Context, req *UpdatePollReq, params UpdatePollParams) (r *Poll, _ error) {
 	return r, ht.ErrNotImplemented
 }

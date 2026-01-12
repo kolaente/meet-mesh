@@ -218,22 +218,22 @@ func (s *Server) handleAddCalendarRequest(args [0]string, argsEscaped bool, w ht
 	}
 }
 
-// handleAddSlotRequest handles addSlot operation.
+// handleAddPollOptionRequest handles addPollOption operation.
 //
-// Add a slot to a link.
+// Add an option to a poll.
 //
-// POST /links/{id}/slots
-func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /polls/{id}/options
+func (s *Server) handleAddPollOptionRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("addSlot"),
+		otelogen.OperationID("addPollOption"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/links/{id}/slots"),
+		semconv.HTTPRouteKey.String("/polls/{id}/options"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), AddSlotOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AddPollOptionOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -288,15 +288,15 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: AddSlotOperation,
-			ID:   "addSlot",
+			Name: AddPollOptionOperation,
+			ID:   "addPollOption",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, AddSlotOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, AddPollOptionOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -336,7 +336,7 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 			return
 		}
 	}
-	params, err := decodeAddSlotParams(args, argsEscaped, r)
+	params, err := decodeAddPollOptionParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -348,7 +348,7 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 	}
 
 	var rawBody []byte
-	request, rawBody, close, err := s.decodeAddSlotRequest(r)
+	request, rawBody, close, err := s.decodeAddPollOptionRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -364,13 +364,13 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 		}
 	}()
 
-	var response *Slot
+	var response *PollOption
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    AddSlotOperation,
-			OperationSummary: "Add a slot to a link",
-			OperationID:      "addSlot",
+			OperationName:    AddPollOptionOperation,
+			OperationSummary: "Add an option to a poll",
+			OperationID:      "addPollOption",
 			Body:             request,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -383,9 +383,9 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 		}
 
 		type (
-			Request  = *AddSlotReq
-			Params   = AddSlotParams
-			Response = *Slot
+			Request  = *AddPollOptionReq
+			Params   = AddPollOptionParams
+			Response = *PollOption
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -394,14 +394,14 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 		](
 			m,
 			mreq,
-			unpackAddSlotParams,
+			unpackAddPollOptionParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.AddSlot(ctx, request, params)
+				response, err = s.h.AddPollOption(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.AddSlot(ctx, request, params)
+		response, err = s.h.AddPollOption(ctx, request, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -409,7 +409,7 @@ func (s *Server) handleAddSlotRequest(args [1]string, argsEscaped bool, w http.R
 		return
 	}
 
-	if err := encodeAddSlotResponse(response, w, span); err != nil {
+	if err := encodeAddPollOptionResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -922,14 +922,14 @@ func (s *Server) handleAuthCallbackRequest(args [0]string, argsEscaped bool, w h
 //
 // Create a booking.
 //
-// POST /p/{slug}/book
+// POST /p/booking/{slug}/book
 func (s *Server) handleCreateBookingRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("createBooking"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/p/{slug}/book"),
+		semconv.HTTPRouteKey.String("/p/booking/{slug}/book"),
 	}
 
 	// Start a span for this request.
@@ -1074,22 +1074,22 @@ func (s *Server) handleCreateBookingRequest(args [1]string, argsEscaped bool, w 
 	}
 }
 
-// handleCreateLinkRequest handles createLink operation.
+// handleCreateBookingLinkRequest handles createBookingLink operation.
 //
-// Create a link.
+// Create a booking link.
 //
-// POST /links
-func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /booking-links
+func (s *Server) handleCreateBookingLinkRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("createLink"),
+		otelogen.OperationID("createBookingLink"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/links"),
+		semconv.HTTPRouteKey.String("/booking-links"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), CreateLinkOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), CreateBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1144,15 +1144,15 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: CreateLinkOperation,
-			ID:   "createLink",
+			Name: CreateBookingLinkOperation,
+			ID:   "createBookingLink",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, CreateLinkOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, CreateBookingLinkOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -1194,7 +1194,7 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 	}
 
 	var rawBody []byte
-	request, rawBody, close, err := s.decodeCreateLinkRequest(r)
+	request, rawBody, close, err := s.decodeCreateBookingLinkRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -1210,13 +1210,13 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 		}
 	}()
 
-	var response *Link
+	var response *BookingLink
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    CreateLinkOperation,
-			OperationSummary: "Create a link",
-			OperationID:      "createLink",
+			OperationName:    CreateBookingLinkOperation,
+			OperationSummary: "Create a booking link",
+			OperationID:      "createBookingLink",
 			Body:             request,
 			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
@@ -1224,9 +1224,9 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 		}
 
 		type (
-			Request  = *CreateLinkReq
+			Request  = *CreateBookingLinkReq
 			Params   = struct{}
-			Response = *Link
+			Response = *BookingLink
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1237,12 +1237,12 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.CreateLink(ctx, request)
+				response, err = s.h.CreateBookingLink(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.CreateLink(ctx, request)
+		response, err = s.h.CreateBookingLink(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1250,7 +1250,192 @@ func (s *Server) handleCreateLinkRequest(args [0]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeCreateLinkResponse(response, w, span); err != nil {
+	if err := encodeCreateBookingLinkResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleCreatePollRequest handles createPoll operation.
+//
+// Create a poll.
+//
+// POST /polls
+func (s *Server) handleCreatePollRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("createPoll"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/polls"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), CreatePollOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: CreatePollOperation,
+			ID:   "createPoll",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, CreatePollOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeCreatePollRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response *Poll
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    CreatePollOperation,
+			OperationSummary: "Create a poll",
+			OperationID:      "createPoll",
+			Body:             request,
+			RawBody:          rawBody,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = *CreatePollReq
+			Params   = struct{}
+			Response = *Poll
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.CreatePoll(ctx, request)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.CreatePoll(ctx, request)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeCreatePollResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1614,22 +1799,22 @@ func (s *Server) handleDeclineViaEmailRequest(args [0]string, argsEscaped bool, 
 	}
 }
 
-// handleDeleteLinkRequest handles deleteLink operation.
+// handleDeleteBookingLinkRequest handles deleteBookingLink operation.
 //
-// Delete a link.
+// Delete a booking link.
 //
-// DELETE /links/{id}
-func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// DELETE /booking-links/{id}
+func (s *Server) handleDeleteBookingLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteLink"),
+		otelogen.OperationID("deleteBookingLink"),
 		semconv.HTTPRequestMethodKey.String("DELETE"),
-		semconv.HTTPRouteKey.String("/links/{id}"),
+		semconv.HTTPRouteKey.String("/booking-links/{id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), DeleteLinkOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), DeleteBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1684,15 +1869,15 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: DeleteLinkOperation,
-			ID:   "deleteLink",
+			Name: DeleteBookingLinkOperation,
+			ID:   "deleteBookingLink",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, DeleteLinkOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, DeleteBookingLinkOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -1732,7 +1917,7 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 			return
 		}
 	}
-	params, err := decodeDeleteLinkParams(args, argsEscaped, r)
+	params, err := decodeDeleteBookingLinkParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -1745,13 +1930,13 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 
 	var rawBody []byte
 
-	var response *DeleteLinkNoContent
+	var response *DeleteBookingLinkNoContent
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    DeleteLinkOperation,
-			OperationSummary: "Delete a link",
-			OperationID:      "deleteLink",
+			OperationName:    DeleteBookingLinkOperation,
+			OperationSummary: "Delete a booking link",
+			OperationID:      "deleteBookingLink",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -1765,8 +1950,8 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 
 		type (
 			Request  = struct{}
-			Params   = DeleteLinkParams
-			Response = *DeleteLinkNoContent
+			Params   = DeleteBookingLinkParams
+			Response = *DeleteBookingLinkNoContent
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1775,14 +1960,14 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 		](
 			m,
 			mreq,
-			unpackDeleteLinkParams,
+			unpackDeleteBookingLinkParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.DeleteLink(ctx, params)
+				err = s.h.DeleteBookingLink(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.DeleteLink(ctx, params)
+		err = s.h.DeleteBookingLink(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1790,7 +1975,7 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeDeleteLinkResponse(response, w, span); err != nil {
+	if err := encodeDeleteBookingLinkResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1799,22 +1984,22 @@ func (s *Server) handleDeleteLinkRequest(args [1]string, argsEscaped bool, w htt
 	}
 }
 
-// handleDeleteSlotRequest handles deleteSlot operation.
+// handleDeletePollRequest handles deletePoll operation.
 //
-// Delete a slot from a link.
+// Delete a poll.
 //
-// DELETE /links/{id}/slots/{slotId}
-func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// DELETE /polls/{id}
+func (s *Server) handleDeletePollRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteSlot"),
+		otelogen.OperationID("deletePoll"),
 		semconv.HTTPRequestMethodKey.String("DELETE"),
-		semconv.HTTPRouteKey.String("/links/{id}/slots/{slotId}"),
+		semconv.HTTPRouteKey.String("/polls/{id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), DeleteSlotOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), DeletePollOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1869,15 +2054,15 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: DeleteSlotOperation,
-			ID:   "deleteSlot",
+			Name: DeletePollOperation,
+			ID:   "deletePoll",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, DeleteSlotOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, DeletePollOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -1917,7 +2102,7 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 			return
 		}
 	}
-	params, err := decodeDeleteSlotParams(args, argsEscaped, r)
+	params, err := decodeDeletePollParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -1930,13 +2115,13 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 
 	var rawBody []byte
 
-	var response *DeleteSlotNoContent
+	var response *DeletePollNoContent
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    DeleteSlotOperation,
-			OperationSummary: "Delete a slot from a link",
-			OperationID:      "deleteSlot",
+			OperationName:    DeletePollOperation,
+			OperationSummary: "Delete a poll",
+			OperationID:      "deletePoll",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -1944,18 +2129,14 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 					Name: "id",
 					In:   "path",
 				}: params.ID,
-				{
-					Name: "slotId",
-					In:   "path",
-				}: params.SlotId,
 			},
 			Raw: r,
 		}
 
 		type (
 			Request  = struct{}
-			Params   = DeleteSlotParams
-			Response = *DeleteSlotNoContent
+			Params   = DeletePollParams
+			Response = *DeletePollNoContent
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1964,14 +2145,14 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 		](
 			m,
 			mreq,
-			unpackDeleteSlotParams,
+			unpackDeletePollParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.DeleteSlot(ctx, params)
+				err = s.h.DeletePoll(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.DeleteSlot(ctx, params)
+		err = s.h.DeletePoll(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1979,7 +2160,7 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeDeleteSlotResponse(response, w, span); err != nil {
+	if err := encodeDeletePollResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1988,22 +2169,211 @@ func (s *Server) handleDeleteSlotRequest(args [2]string, argsEscaped bool, w htt
 	}
 }
 
-// handleGetAvailabilityRequest handles getAvailability operation.
+// handleDeletePollOptionRequest handles deletePollOption operation.
 //
-// Get real-time availability.
+// Delete an option from a poll.
 //
-// GET /p/{slug}/availability
-func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// DELETE /polls/{id}/options/{optionId}
+func (s *Server) handleDeletePollOptionRequest(args [2]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getAvailability"),
+		otelogen.OperationID("deletePollOption"),
+		semconv.HTTPRequestMethodKey.String("DELETE"),
+		semconv.HTTPRouteKey.String("/polls/{id}/options/{optionId}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), DeletePollOptionOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: DeletePollOptionOperation,
+			ID:   "deletePollOption",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, DeletePollOptionOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeDeletePollOptionParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+
+	var response *DeletePollOptionNoContent
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    DeletePollOptionOperation,
+			OperationSummary: "Delete an option from a poll",
+			OperationID:      "deletePollOption",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+				{
+					Name: "optionId",
+					In:   "path",
+				}: params.OptionId,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = DeletePollOptionParams
+			Response = *DeletePollOptionNoContent
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackDeletePollOptionParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				err = s.h.DeletePollOption(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		err = s.h.DeletePollOption(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeDeletePollOptionResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetBookingAvailabilityRequest handles getBookingAvailability operation.
+//
+// Get real-time availability for booking link.
+//
+// GET /p/booking/{slug}/availability
+func (s *Server) handleGetBookingAvailabilityRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getBookingAvailability"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/p/{slug}/availability"),
+		semconv.HTTPRouteKey.String("/p/booking/{slug}/availability"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetAvailabilityOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetBookingAvailabilityOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2058,11 +2428,11 @@ func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, 
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetAvailabilityOperation,
-			ID:   "getAvailability",
+			Name: GetBookingAvailabilityOperation,
+			ID:   "getBookingAvailability",
 		}
 	)
-	params, err := decodeGetAvailabilityParams(args, argsEscaped, r)
+	params, err := decodeGetBookingAvailabilityParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -2075,13 +2445,13 @@ func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, 
 
 	var rawBody []byte
 
-	var response *GetAvailabilityOK
+	var response *GetBookingAvailabilityOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetAvailabilityOperation,
-			OperationSummary: "Get real-time availability",
-			OperationID:      "getAvailability",
+			OperationName:    GetBookingAvailabilityOperation,
+			OperationSummary: "Get real-time availability for booking link",
+			OperationID:      "getBookingAvailability",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -2103,8 +2473,8 @@ func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, 
 
 		type (
 			Request  = struct{}
-			Params   = GetAvailabilityParams
-			Response = *GetAvailabilityOK
+			Params   = GetBookingAvailabilityParams
+			Response = *GetBookingAvailabilityOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2113,14 +2483,14 @@ func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, 
 		](
 			m,
 			mreq,
-			unpackGetAvailabilityParams,
+			unpackGetBookingAvailabilityParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetAvailability(ctx, params)
+				response, err = s.h.GetBookingAvailability(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetAvailability(ctx, params)
+		response, err = s.h.GetBookingAvailability(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2128,7 +2498,377 @@ func (s *Server) handleGetAvailabilityRequest(args [1]string, argsEscaped bool, 
 		return
 	}
 
-	if err := encodeGetAvailabilityResponse(response, w, span); err != nil {
+	if err := encodeGetBookingAvailabilityResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetBookingLinkRequest handles getBookingLink operation.
+//
+// Get booking link details.
+//
+// GET /booking-links/{id}
+func (s *Server) handleGetBookingLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getBookingLink"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/booking-links/{id}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetBookingLinkOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: GetBookingLinkOperation,
+			ID:   "getBookingLink",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, GetBookingLinkOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeGetBookingLinkParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+
+	var response *BookingLink
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    GetBookingLinkOperation,
+			OperationSummary: "Get booking link details",
+			OperationID:      "getBookingLink",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetBookingLinkParams
+			Response = *BookingLink
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetBookingLinkParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetBookingLink(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetBookingLink(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetBookingLinkResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetBookingLinkBookingsRequest handles getBookingLinkBookings operation.
+//
+// Get bookings for a booking link.
+//
+// GET /booking-links/{id}/bookings
+func (s *Server) handleGetBookingLinkBookingsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getBookingLinkBookings"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/booking-links/{id}/bookings"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetBookingLinkBookingsOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: GetBookingLinkBookingsOperation,
+			ID:   "getBookingLinkBookings",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, GetBookingLinkBookingsOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeGetBookingLinkBookingsParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+
+	var response []Booking
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    GetBookingLinkBookingsOperation,
+			OperationSummary: "Get bookings for a booking link",
+			OperationID:      "getBookingLinkBookings",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetBookingLinkBookingsParams
+			Response = []Booking
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetBookingLinkBookingsParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetBookingLinkBookings(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetBookingLinkBookings(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetBookingLinkBookingsResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2307,22 +3047,22 @@ func (s *Server) handleGetCurrentUserRequest(args [0]string, argsEscaped bool, w
 	}
 }
 
-// handleGetLinkRequest handles getLink operation.
+// handleGetPollRequest handles getPoll operation.
 //
-// Get link details.
+// Get poll details.
 //
-// GET /links/{id}
-func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /polls/{id}
+func (s *Server) handleGetPollRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLink"),
+		otelogen.OperationID("getPoll"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/links/{id}"),
+		semconv.HTTPRouteKey.String("/polls/{id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetLinkOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPollOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2377,15 +3117,15 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetLinkOperation,
-			ID:   "getLink",
+			Name: GetPollOperation,
+			ID:   "getPoll",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, GetLinkOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, GetPollOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -2425,7 +3165,7 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 			return
 		}
 	}
-	params, err := decodeGetLinkParams(args, argsEscaped, r)
+	params, err := decodeGetPollParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -2438,13 +3178,13 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 
 	var rawBody []byte
 
-	var response *Link
+	var response *Poll
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetLinkOperation,
-			OperationSummary: "Get link details",
-			OperationID:      "getLink",
+			OperationName:    GetPollOperation,
+			OperationSummary: "Get poll details",
+			OperationID:      "getPoll",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -2458,8 +3198,8 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 
 		type (
 			Request  = struct{}
-			Params   = GetLinkParams
-			Response = *Link
+			Params   = GetPollParams
+			Response = *Poll
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2468,14 +3208,14 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 		](
 			m,
 			mreq,
-			unpackGetLinkParams,
+			unpackGetPollParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetLink(ctx, params)
+				response, err = s.h.GetPoll(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetLink(ctx, params)
+		response, err = s.h.GetPoll(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2483,7 +3223,7 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 		return
 	}
 
-	if err := encodeGetLinkResponse(response, w, span); err != nil {
+	if err := encodeGetPollResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2492,22 +3232,22 @@ func (s *Server) handleGetLinkRequest(args [1]string, argsEscaped bool, w http.R
 	}
 }
 
-// handleGetLinkBookingsRequest handles getLinkBookings operation.
+// handleGetPollOptionsRequest handles getPollOptions operation.
 //
-// Get bookings for a link.
+// Get options for a poll.
 //
-// GET /links/{id}/bookings
-func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /polls/{id}/options
+func (s *Server) handleGetPollOptionsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkBookings"),
+		otelogen.OperationID("getPollOptions"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/links/{id}/bookings"),
+		semconv.HTTPRouteKey.String("/polls/{id}/options"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetLinkBookingsOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPollOptionsOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2562,15 +3302,15 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetLinkBookingsOperation,
-			ID:   "getLinkBookings",
+			Name: GetPollOptionsOperation,
+			ID:   "getPollOptions",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, GetLinkBookingsOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, GetPollOptionsOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -2610,7 +3350,7 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 			return
 		}
 	}
-	params, err := decodeGetLinkBookingsParams(args, argsEscaped, r)
+	params, err := decodeGetPollOptionsParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -2623,13 +3363,13 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 
 	var rawBody []byte
 
-	var response []Booking
+	var response []PollOption
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetLinkBookingsOperation,
-			OperationSummary: "Get bookings for a link",
-			OperationID:      "getLinkBookings",
+			OperationName:    GetPollOptionsOperation,
+			OperationSummary: "Get options for a poll",
+			OperationID:      "getPollOptions",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -2643,8 +3383,8 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 
 		type (
 			Request  = struct{}
-			Params   = GetLinkBookingsParams
-			Response = []Booking
+			Params   = GetPollOptionsParams
+			Response = []PollOption
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2653,14 +3393,14 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 		](
 			m,
 			mreq,
-			unpackGetLinkBookingsParams,
+			unpackGetPollOptionsParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetLinkBookings(ctx, params)
+				response, err = s.h.GetPollOptions(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetLinkBookings(ctx, params)
+		response, err = s.h.GetPollOptions(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2668,377 +3408,7 @@ func (s *Server) handleGetLinkBookingsRequest(args [1]string, argsEscaped bool, 
 		return
 	}
 
-	if err := encodeGetLinkBookingsResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleGetLinkSlotsRequest handles getLinkSlots operation.
-//
-// Get slots for a link.
-//
-// GET /links/{id}/slots
-func (s *Server) handleGetLinkSlotsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkSlots"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/links/{id}/slots"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetLinkSlotsOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code < 100 || code >= 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: GetLinkSlotsOperation,
-			ID:   "getLinkSlots",
-		}
-	)
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			sctx, ok, err := s.securityCookieAuth(ctx, GetLinkSlotsOperation, r)
-			if err != nil {
-				err = &ogenerrors.SecurityError{
-					OperationContext: opErrContext,
-					Security:         "CookieAuth",
-					Err:              err,
-				}
-				defer recordError("Security:CookieAuth", err)
-				s.cfg.ErrorHandler(ctx, w, r, err)
-				return
-			}
-			if ok {
-				satisfied[0] |= 1 << 0
-				ctx = sctx
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			err = &ogenerrors.SecurityError{
-				OperationContext: opErrContext,
-				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
-			}
-			defer recordError("Security", err)
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-	}
-	params, err := decodeGetLinkSlotsParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var rawBody []byte
-
-	var response []Slot
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    GetLinkSlotsOperation,
-			OperationSummary: "Get slots for a link",
-			OperationID:      "getLinkSlots",
-			Body:             nil,
-			RawBody:          rawBody,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = GetLinkSlotsParams
-			Response = []Slot
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackGetLinkSlotsParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetLinkSlots(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.GetLinkSlots(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeGetLinkSlotsResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleGetLinkVotesRequest handles getLinkVotes operation.
-//
-// Get votes for a poll.
-//
-// GET /links/{id}/votes
-func (s *Server) handleGetLinkVotesRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkVotes"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/links/{id}/votes"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetLinkVotesOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code < 100 || code >= 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: GetLinkVotesOperation,
-			ID:   "getLinkVotes",
-		}
-	)
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			sctx, ok, err := s.securityCookieAuth(ctx, GetLinkVotesOperation, r)
-			if err != nil {
-				err = &ogenerrors.SecurityError{
-					OperationContext: opErrContext,
-					Security:         "CookieAuth",
-					Err:              err,
-				}
-				defer recordError("Security:CookieAuth", err)
-				s.cfg.ErrorHandler(ctx, w, r, err)
-				return
-			}
-			if ok {
-				satisfied[0] |= 1 << 0
-				ctx = sctx
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			err = &ogenerrors.SecurityError{
-				OperationContext: opErrContext,
-				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
-			}
-			defer recordError("Security", err)
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-	}
-	params, err := decodeGetLinkVotesParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var rawBody []byte
-
-	var response []Vote
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    GetLinkVotesOperation,
-			OperationSummary: "Get votes for a poll",
-			OperationID:      "getLinkVotes",
-			Body:             nil,
-			RawBody:          rawBody,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = GetLinkVotesParams
-			Response = []Vote
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackGetLinkVotesParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetLinkVotes(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.GetLinkVotes(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeGetLinkVotesResponse(response, w, span); err != nil {
+	if err := encodeGetPollOptionsResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3051,14 +3421,14 @@ func (s *Server) handleGetLinkVotesRequest(args [1]string, argsEscaped bool, w h
 //
 // Get poll results.
 //
-// GET /p/{slug}/results
+// GET /p/poll/{slug}/results
 func (s *Server) handleGetPollResultsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getPollResults"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/p/{slug}/results"),
+		semconv.HTTPRouteKey.String("/p/poll/{slug}/results"),
 	}
 
 	// Start a span for this request.
@@ -3188,22 +3558,22 @@ func (s *Server) handleGetPollResultsRequest(args [1]string, argsEscaped bool, w
 	}
 }
 
-// handleGetPublicLinkRequest handles getPublicLink operation.
+// handleGetPollVotesRequest handles getPollVotes operation.
 //
-// Get public link info.
+// Get votes for a poll.
 //
-// GET /p/{slug}
-func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /polls/{id}/votes
+func (s *Server) handleGetPollVotesRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getPublicLink"),
+		otelogen.OperationID("getPollVotes"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/p/{slug}"),
+		semconv.HTTPRouteKey.String("/polls/{id}/votes"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPublicLinkOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPollVotesOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -3258,11 +3628,55 @@ func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w 
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetPublicLinkOperation,
-			ID:   "getPublicLink",
+			Name: GetPollVotesOperation,
+			ID:   "getPollVotes",
 		}
 	)
-	params, err := decodeGetPublicLinkParams(args, argsEscaped, r)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, GetPollVotesOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeGetPollVotesParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -3275,13 +3689,154 @@ func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w 
 
 	var rawBody []byte
 
-	var response GetPublicLinkRes
+	var response []Vote
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetPublicLinkOperation,
-			OperationSummary: "Get public link info",
-			OperationID:      "getPublicLink",
+			OperationName:    GetPollVotesOperation,
+			OperationSummary: "Get votes for a poll",
+			OperationID:      "getPollVotes",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetPollVotesParams
+			Response = []Vote
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetPollVotesParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetPollVotes(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetPollVotes(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetPollVotesResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetPublicBookingLinkRequest handles getPublicBookingLink operation.
+//
+// Get public booking link info.
+//
+// GET /p/booking/{slug}
+func (s *Server) handleGetPublicBookingLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getPublicBookingLink"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/p/booking/{slug}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPublicBookingLinkOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: GetPublicBookingLinkOperation,
+			ID:   "getPublicBookingLink",
+		}
+	)
+	params, err := decodeGetPublicBookingLinkParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+
+	var response GetPublicBookingLinkRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    GetPublicBookingLinkOperation,
+			OperationSummary: "Get public booking link info",
+			OperationID:      "getPublicBookingLink",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -3295,8 +3850,8 @@ func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w 
 
 		type (
 			Request  = struct{}
-			Params   = GetPublicLinkParams
-			Response = GetPublicLinkRes
+			Params   = GetPublicBookingLinkParams
+			Response = GetPublicBookingLinkRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -3305,14 +3860,14 @@ func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w 
 		](
 			m,
 			mreq,
-			unpackGetPublicLinkParams,
+			unpackGetPublicBookingLinkParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetPublicLink(ctx, params)
+				response, err = s.h.GetPublicBookingLink(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetPublicLink(ctx, params)
+		response, err = s.h.GetPublicBookingLink(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -3320,7 +3875,148 @@ func (s *Server) handleGetPublicLinkRequest(args [1]string, argsEscaped bool, w 
 		return
 	}
 
-	if err := encodeGetPublicLinkResponse(response, w, span); err != nil {
+	if err := encodeGetPublicBookingLinkResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetPublicPollRequest handles getPublicPoll operation.
+//
+// Get public poll info.
+//
+// GET /p/poll/{slug}
+func (s *Server) handleGetPublicPollRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getPublicPoll"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/p/poll/{slug}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetPublicPollOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: GetPublicPollOperation,
+			ID:   "getPublicPoll",
+		}
+	)
+	params, err := decodeGetPublicPollParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+
+	var response GetPublicPollRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    GetPublicPollOperation,
+			OperationSummary: "Get public poll info",
+			OperationID:      "getPublicPoll",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "slug",
+					In:   "path",
+				}: params.Slug,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetPublicPollParams
+			Response = GetPublicPollRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetPublicPollParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetPublicPoll(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetPublicPoll(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetPublicPollResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3443,6 +4139,176 @@ func (s *Server) handleInitiateLoginRequest(args [0]string, argsEscaped bool, w 
 	}
 
 	if err := encodeInitiateLoginResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleListBookingLinksRequest handles listBookingLinks operation.
+//
+// List all booking links.
+//
+// GET /booking-links
+func (s *Server) handleListBookingLinksRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listBookingLinks"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/booking-links"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ListBookingLinksOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: ListBookingLinksOperation,
+			ID:   "listBookingLinks",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, ListBookingLinksOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+
+	var rawBody []byte
+
+	var response []BookingLink
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    ListBookingLinksOperation,
+			OperationSummary: "List all booking links",
+			OperationID:      "listBookingLinks",
+			Body:             nil,
+			RawBody:          rawBody,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = struct{}
+			Response = []BookingLink
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ListBookingLinks(ctx)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ListBookingLinks(ctx)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeListBookingLinksResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3621,22 +4487,22 @@ func (s *Server) handleListCalendarsRequest(args [0]string, argsEscaped bool, w 
 	}
 }
 
-// handleListLinksRequest handles listLinks operation.
+// handleListPollsRequest handles listPolls operation.
 //
-// List all links.
+// List all polls.
 //
-// GET /links
-func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /polls
+func (s *Server) handleListPollsRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listLinks"),
+		otelogen.OperationID("listPolls"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/links"),
+		semconv.HTTPRouteKey.String("/polls"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), ListLinksOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ListPollsOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -3691,15 +4557,15 @@ func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: ListLinksOperation,
-			ID:   "listLinks",
+			Name: ListPollsOperation,
+			ID:   "listPolls",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, ListLinksOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, ListPollsOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -3742,13 +4608,13 @@ func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http
 
 	var rawBody []byte
 
-	var response []Link
+	var response []Poll
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    ListLinksOperation,
-			OperationSummary: "List all links",
-			OperationID:      "listLinks",
+			OperationName:    ListPollsOperation,
+			OperationSummary: "List all polls",
+			OperationID:      "listPolls",
 			Body:             nil,
 			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
@@ -3758,7 +4624,7 @@ func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = []Link
+			Response = []Poll
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -3769,12 +4635,12 @@ func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListLinks(ctx)
+				response, err = s.h.ListPolls(ctx)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.ListLinks(ctx)
+		response, err = s.h.ListPolls(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -3782,7 +4648,7 @@ func (s *Server) handleListLinksRequest(args [0]string, argsEscaped bool, w http
 		return
 	}
 
-	if err := encodeListLinksResponse(response, w, span); err != nil {
+	if err := encodeListPollsResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3963,16 +4829,16 @@ func (s *Server) handleLogoutRequest(args [0]string, argsEscaped bool, w http.Re
 
 // handlePickPollWinnerRequest handles pickPollWinner operation.
 //
-// Pick winning slot for poll.
+// Pick winning option for poll.
 //
-// POST /links/{id}/pick-winner
+// POST /polls/{id}/pick-winner
 func (s *Server) handlePickPollWinnerRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("pickPollWinner"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/links/{id}/pick-winner"),
+		semconv.HTTPRouteKey.String("/polls/{id}/pick-winner"),
 	}
 
 	// Start a span for this request.
@@ -4112,7 +4978,7 @@ func (s *Server) handlePickPollWinnerRequest(args [1]string, argsEscaped bool, w
 		mreq := middleware.Request{
 			Context:          ctx,
 			OperationName:    PickPollWinnerOperation,
-			OperationSummary: "Pick winning slot for poll",
+			OperationSummary: "Pick winning option for poll",
 			OperationID:      "pickPollWinner",
 			Body:             request,
 			RawBody:          rawBody,
@@ -4350,14 +5216,14 @@ func (s *Server) handleRemoveCalendarRequest(args [1]string, argsEscaped bool, w
 //
 // Submit poll vote.
 //
-// POST /p/{slug}/vote
+// POST /p/poll/{slug}/vote
 func (s *Server) handleSubmitVoteRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("submitVote"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/p/{slug}/vote"),
+		semconv.HTTPRouteKey.String("/p/poll/{slug}/vote"),
 	}
 
 	// Start a span for this request.
@@ -4502,22 +5368,22 @@ func (s *Server) handleSubmitVoteRequest(args [1]string, argsEscaped bool, w htt
 	}
 }
 
-// handleUpdateLinkRequest handles updateLink operation.
+// handleUpdateBookingLinkRequest handles updateBookingLink operation.
 //
-// Update a link.
+// Update a booking link.
 //
-// PUT /links/{id}
-func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// PUT /booking-links/{id}
+func (s *Server) handleUpdateBookingLinkRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateLink"),
+		otelogen.OperationID("updateBookingLink"),
 		semconv.HTTPRequestMethodKey.String("PUT"),
-		semconv.HTTPRouteKey.String("/links/{id}"),
+		semconv.HTTPRouteKey.String("/booking-links/{id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), UpdateLinkOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), UpdateBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -4572,15 +5438,15 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: UpdateLinkOperation,
-			ID:   "updateLink",
+			Name: UpdateBookingLinkOperation,
+			ID:   "updateBookingLink",
 		}
 	)
 	{
 		type bitset = [1]uint8
 		var satisfied bitset
 		{
-			sctx, ok, err := s.securityCookieAuth(ctx, UpdateLinkOperation, r)
+			sctx, ok, err := s.securityCookieAuth(ctx, UpdateBookingLinkOperation, r)
 			if err != nil {
 				err = &ogenerrors.SecurityError{
 					OperationContext: opErrContext,
@@ -4620,7 +5486,7 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 			return
 		}
 	}
-	params, err := decodeUpdateLinkParams(args, argsEscaped, r)
+	params, err := decodeUpdateBookingLinkParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -4632,7 +5498,7 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 	}
 
 	var rawBody []byte
-	request, rawBody, close, err := s.decodeUpdateLinkRequest(r)
+	request, rawBody, close, err := s.decodeUpdateBookingLinkRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -4648,13 +5514,13 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 		}
 	}()
 
-	var response *Link
+	var response *BookingLink
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    UpdateLinkOperation,
-			OperationSummary: "Update a link",
-			OperationID:      "updateLink",
+			OperationName:    UpdateBookingLinkOperation,
+			OperationSummary: "Update a booking link",
+			OperationID:      "updateBookingLink",
 			Body:             request,
 			RawBody:          rawBody,
 			Params: middleware.Parameters{
@@ -4667,9 +5533,9 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 		}
 
 		type (
-			Request  = *UpdateLinkReq
-			Params   = UpdateLinkParams
-			Response = *Link
+			Request  = *UpdateBookingLinkReq
+			Params   = UpdateBookingLinkParams
+			Response = *BookingLink
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -4678,14 +5544,14 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 		](
 			m,
 			mreq,
-			unpackUpdateLinkParams,
+			unpackUpdateBookingLinkParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.UpdateLink(ctx, request, params)
+				response, err = s.h.UpdateBookingLink(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.UpdateLink(ctx, request, params)
+		response, err = s.h.UpdateBookingLink(ctx, request, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -4693,7 +5559,207 @@ func (s *Server) handleUpdateLinkRequest(args [1]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeUpdateLinkResponse(response, w, span); err != nil {
+	if err := encodeUpdateBookingLinkResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleUpdatePollRequest handles updatePoll operation.
+//
+// Update a poll.
+//
+// PUT /polls/{id}
+func (s *Server) handleUpdatePollRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("updatePoll"),
+		semconv.HTTPRequestMethodKey.String("PUT"),
+		semconv.HTTPRouteKey.String("/polls/{id}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), UpdatePollOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code < 100 || code >= 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: UpdatePollOperation,
+			ID:   "updatePoll",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityCookieAuth(ctx, UpdatePollOperation, r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "CookieAuth",
+					Err:              err,
+				}
+				defer recordError("Security:CookieAuth", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeUpdatePollParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeUpdatePollRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response *Poll
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    UpdatePollOperation,
+			OperationSummary: "Update a poll",
+			OperationID:      "updatePoll",
+			Body:             request,
+			RawBody:          rawBody,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = *UpdatePollReq
+			Params   = UpdatePollParams
+			Response = *Poll
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackUpdatePollParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.UpdatePoll(ctx, request, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.UpdatePoll(ctx, request, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeUpdatePollResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

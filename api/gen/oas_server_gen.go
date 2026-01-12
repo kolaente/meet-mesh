@@ -14,12 +14,12 @@ type Handler interface {
 	//
 	// POST /calendars
 	AddCalendar(ctx context.Context, req *AddCalendarReq) (*CalendarConnection, error)
-	// AddSlot implements addSlot operation.
+	// AddPollOption implements addPollOption operation.
 	//
-	// Add a slot to a link.
+	// Add an option to a poll.
 	//
-	// POST /links/{id}/slots
-	AddSlot(ctx context.Context, req *AddSlotReq, params AddSlotParams) (*Slot, error)
+	// POST /polls/{id}/options
+	AddPollOption(ctx context.Context, req *AddPollOptionReq, params AddPollOptionParams) (*PollOption, error)
 	// ApproveBooking implements approveBooking operation.
 	//
 	// Approve a booking.
@@ -42,14 +42,20 @@ type Handler interface {
 	//
 	// Create a booking.
 	//
-	// POST /p/{slug}/book
+	// POST /p/booking/{slug}/book
 	CreateBooking(ctx context.Context, req *CreateBookingReq, params CreateBookingParams) (CreateBookingRes, error)
-	// CreateLink implements createLink operation.
+	// CreateBookingLink implements createBookingLink operation.
 	//
-	// Create a link.
+	// Create a booking link.
 	//
-	// POST /links
-	CreateLink(ctx context.Context, req *CreateLinkReq) (*Link, error)
+	// POST /booking-links
+	CreateBookingLink(ctx context.Context, req *CreateBookingLinkReq) (*BookingLink, error)
+	// CreatePoll implements createPoll operation.
+	//
+	// Create a poll.
+	//
+	// POST /polls
+	CreatePoll(ctx context.Context, req *CreatePollReq) (*Poll, error)
 	// DeclineBooking implements declineBooking operation.
 	//
 	// Decline a booking.
@@ -62,84 +68,108 @@ type Handler interface {
 	//
 	// GET /actions/decline
 	DeclineViaEmail(ctx context.Context) (DeclineViaEmailRes, error)
-	// DeleteLink implements deleteLink operation.
+	// DeleteBookingLink implements deleteBookingLink operation.
 	//
-	// Delete a link.
+	// Delete a booking link.
 	//
-	// DELETE /links/{id}
-	DeleteLink(ctx context.Context, params DeleteLinkParams) error
-	// DeleteSlot implements deleteSlot operation.
+	// DELETE /booking-links/{id}
+	DeleteBookingLink(ctx context.Context, params DeleteBookingLinkParams) error
+	// DeletePoll implements deletePoll operation.
 	//
-	// Delete a slot from a link.
+	// Delete a poll.
 	//
-	// DELETE /links/{id}/slots/{slotId}
-	DeleteSlot(ctx context.Context, params DeleteSlotParams) error
-	// GetAvailability implements getAvailability operation.
+	// DELETE /polls/{id}
+	DeletePoll(ctx context.Context, params DeletePollParams) error
+	// DeletePollOption implements deletePollOption operation.
 	//
-	// Get real-time availability.
+	// Delete an option from a poll.
 	//
-	// GET /p/{slug}/availability
-	GetAvailability(ctx context.Context, params GetAvailabilityParams) (*GetAvailabilityOK, error)
+	// DELETE /polls/{id}/options/{optionId}
+	DeletePollOption(ctx context.Context, params DeletePollOptionParams) error
+	// GetBookingAvailability implements getBookingAvailability operation.
+	//
+	// Get real-time availability for booking link.
+	//
+	// GET /p/booking/{slug}/availability
+	GetBookingAvailability(ctx context.Context, params GetBookingAvailabilityParams) (*GetBookingAvailabilityOK, error)
+	// GetBookingLink implements getBookingLink operation.
+	//
+	// Get booking link details.
+	//
+	// GET /booking-links/{id}
+	GetBookingLink(ctx context.Context, params GetBookingLinkParams) (*BookingLink, error)
+	// GetBookingLinkBookings implements getBookingLinkBookings operation.
+	//
+	// Get bookings for a booking link.
+	//
+	// GET /booking-links/{id}/bookings
+	GetBookingLinkBookings(ctx context.Context, params GetBookingLinkBookingsParams) ([]Booking, error)
 	// GetCurrentUser implements getCurrentUser operation.
 	//
 	// Get current user.
 	//
 	// GET /auth/me
 	GetCurrentUser(ctx context.Context) (GetCurrentUserRes, error)
-	// GetLink implements getLink operation.
+	// GetPoll implements getPoll operation.
 	//
-	// Get link details.
+	// Get poll details.
 	//
-	// GET /links/{id}
-	GetLink(ctx context.Context, params GetLinkParams) (*Link, error)
-	// GetLinkBookings implements getLinkBookings operation.
+	// GET /polls/{id}
+	GetPoll(ctx context.Context, params GetPollParams) (*Poll, error)
+	// GetPollOptions implements getPollOptions operation.
 	//
-	// Get bookings for a link.
+	// Get options for a poll.
 	//
-	// GET /links/{id}/bookings
-	GetLinkBookings(ctx context.Context, params GetLinkBookingsParams) ([]Booking, error)
-	// GetLinkSlots implements getLinkSlots operation.
-	//
-	// Get slots for a link.
-	//
-	// GET /links/{id}/slots
-	GetLinkSlots(ctx context.Context, params GetLinkSlotsParams) ([]Slot, error)
-	// GetLinkVotes implements getLinkVotes operation.
-	//
-	// Get votes for a poll.
-	//
-	// GET /links/{id}/votes
-	GetLinkVotes(ctx context.Context, params GetLinkVotesParams) ([]Vote, error)
+	// GET /polls/{id}/options
+	GetPollOptions(ctx context.Context, params GetPollOptionsParams) ([]PollOption, error)
 	// GetPollResults implements getPollResults operation.
 	//
 	// Get poll results.
 	//
-	// GET /p/{slug}/results
+	// GET /p/poll/{slug}/results
 	GetPollResults(ctx context.Context, params GetPollResultsParams) (GetPollResultsRes, error)
-	// GetPublicLink implements getPublicLink operation.
+	// GetPollVotes implements getPollVotes operation.
 	//
-	// Get public link info.
+	// Get votes for a poll.
 	//
-	// GET /p/{slug}
-	GetPublicLink(ctx context.Context, params GetPublicLinkParams) (GetPublicLinkRes, error)
+	// GET /polls/{id}/votes
+	GetPollVotes(ctx context.Context, params GetPollVotesParams) ([]Vote, error)
+	// GetPublicBookingLink implements getPublicBookingLink operation.
+	//
+	// Get public booking link info.
+	//
+	// GET /p/booking/{slug}
+	GetPublicBookingLink(ctx context.Context, params GetPublicBookingLinkParams) (GetPublicBookingLinkRes, error)
+	// GetPublicPoll implements getPublicPoll operation.
+	//
+	// Get public poll info.
+	//
+	// GET /p/poll/{slug}
+	GetPublicPoll(ctx context.Context, params GetPublicPollParams) (GetPublicPollRes, error)
 	// InitiateLogin implements initiateLogin operation.
 	//
 	// Redirect to OIDC provider.
 	//
 	// GET /auth/login
 	InitiateLogin(ctx context.Context) (*InitiateLoginFound, error)
+	// ListBookingLinks implements listBookingLinks operation.
+	//
+	// List all booking links.
+	//
+	// GET /booking-links
+	ListBookingLinks(ctx context.Context) ([]BookingLink, error)
 	// ListCalendars implements listCalendars operation.
 	//
 	// List calendar connections.
 	//
 	// GET /calendars
 	ListCalendars(ctx context.Context) ([]CalendarConnection, error)
-	// ListLinks implements listLinks operation.
+	// ListPolls implements listPolls operation.
 	//
-	// List all links.
+	// List all polls.
 	//
-	// GET /links
-	ListLinks(ctx context.Context) ([]Link, error)
+	// GET /polls
+	ListPolls(ctx context.Context) ([]Poll, error)
 	// Logout implements logout operation.
 	//
 	// Clear session.
@@ -148,9 +178,9 @@ type Handler interface {
 	Logout(ctx context.Context) error
 	// PickPollWinner implements pickPollWinner operation.
 	//
-	// Pick winning slot for poll.
+	// Pick winning option for poll.
 	//
-	// POST /links/{id}/pick-winner
+	// POST /polls/{id}/pick-winner
 	PickPollWinner(ctx context.Context, req *PickPollWinnerReq, params PickPollWinnerParams) error
 	// RemoveCalendar implements removeCalendar operation.
 	//
@@ -162,14 +192,20 @@ type Handler interface {
 	//
 	// Submit poll vote.
 	//
-	// POST /p/{slug}/vote
+	// POST /p/poll/{slug}/vote
 	SubmitVote(ctx context.Context, req *SubmitVoteReq, params SubmitVoteParams) (*Vote, error)
-	// UpdateLink implements updateLink operation.
+	// UpdateBookingLink implements updateBookingLink operation.
 	//
-	// Update a link.
+	// Update a booking link.
 	//
-	// PUT /links/{id}
-	UpdateLink(ctx context.Context, req *UpdateLinkReq, params UpdateLinkParams) (*Link, error)
+	// PUT /booking-links/{id}
+	UpdateBookingLink(ctx context.Context, req *UpdateBookingLinkReq, params UpdateBookingLinkParams) (*BookingLink, error)
+	// UpdatePoll implements updatePoll operation.
+	//
+	// Update a poll.
+	//
+	// PUT /polls/{id}
+	UpdatePoll(ctx context.Context, req *UpdatePollReq, params UpdatePollParams) (*Poll, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

@@ -34,12 +34,12 @@ type Invoker interface {
 	//
 	// POST /calendars
 	AddCalendar(ctx context.Context, request *AddCalendarReq) (*CalendarConnection, error)
-	// AddSlot invokes addSlot operation.
+	// AddPollOption invokes addPollOption operation.
 	//
-	// Add a slot to a link.
+	// Add an option to a poll.
 	//
-	// POST /links/{id}/slots
-	AddSlot(ctx context.Context, request *AddSlotReq, params AddSlotParams) (*Slot, error)
+	// POST /polls/{id}/options
+	AddPollOption(ctx context.Context, request *AddPollOptionReq, params AddPollOptionParams) (*PollOption, error)
 	// ApproveBooking invokes approveBooking operation.
 	//
 	// Approve a booking.
@@ -62,14 +62,20 @@ type Invoker interface {
 	//
 	// Create a booking.
 	//
-	// POST /p/{slug}/book
+	// POST /p/booking/{slug}/book
 	CreateBooking(ctx context.Context, request *CreateBookingReq, params CreateBookingParams) (CreateBookingRes, error)
-	// CreateLink invokes createLink operation.
+	// CreateBookingLink invokes createBookingLink operation.
 	//
-	// Create a link.
+	// Create a booking link.
 	//
-	// POST /links
-	CreateLink(ctx context.Context, request *CreateLinkReq) (*Link, error)
+	// POST /booking-links
+	CreateBookingLink(ctx context.Context, request *CreateBookingLinkReq) (*BookingLink, error)
+	// CreatePoll invokes createPoll operation.
+	//
+	// Create a poll.
+	//
+	// POST /polls
+	CreatePoll(ctx context.Context, request *CreatePollReq) (*Poll, error)
 	// DeclineBooking invokes declineBooking operation.
 	//
 	// Decline a booking.
@@ -82,84 +88,108 @@ type Invoker interface {
 	//
 	// GET /actions/decline
 	DeclineViaEmail(ctx context.Context) (DeclineViaEmailRes, error)
-	// DeleteLink invokes deleteLink operation.
+	// DeleteBookingLink invokes deleteBookingLink operation.
 	//
-	// Delete a link.
+	// Delete a booking link.
 	//
-	// DELETE /links/{id}
-	DeleteLink(ctx context.Context, params DeleteLinkParams) error
-	// DeleteSlot invokes deleteSlot operation.
+	// DELETE /booking-links/{id}
+	DeleteBookingLink(ctx context.Context, params DeleteBookingLinkParams) error
+	// DeletePoll invokes deletePoll operation.
 	//
-	// Delete a slot from a link.
+	// Delete a poll.
 	//
-	// DELETE /links/{id}/slots/{slotId}
-	DeleteSlot(ctx context.Context, params DeleteSlotParams) error
-	// GetAvailability invokes getAvailability operation.
+	// DELETE /polls/{id}
+	DeletePoll(ctx context.Context, params DeletePollParams) error
+	// DeletePollOption invokes deletePollOption operation.
 	//
-	// Get real-time availability.
+	// Delete an option from a poll.
 	//
-	// GET /p/{slug}/availability
-	GetAvailability(ctx context.Context, params GetAvailabilityParams) (*GetAvailabilityOK, error)
+	// DELETE /polls/{id}/options/{optionId}
+	DeletePollOption(ctx context.Context, params DeletePollOptionParams) error
+	// GetBookingAvailability invokes getBookingAvailability operation.
+	//
+	// Get real-time availability for booking link.
+	//
+	// GET /p/booking/{slug}/availability
+	GetBookingAvailability(ctx context.Context, params GetBookingAvailabilityParams) (*GetBookingAvailabilityOK, error)
+	// GetBookingLink invokes getBookingLink operation.
+	//
+	// Get booking link details.
+	//
+	// GET /booking-links/{id}
+	GetBookingLink(ctx context.Context, params GetBookingLinkParams) (*BookingLink, error)
+	// GetBookingLinkBookings invokes getBookingLinkBookings operation.
+	//
+	// Get bookings for a booking link.
+	//
+	// GET /booking-links/{id}/bookings
+	GetBookingLinkBookings(ctx context.Context, params GetBookingLinkBookingsParams) ([]Booking, error)
 	// GetCurrentUser invokes getCurrentUser operation.
 	//
 	// Get current user.
 	//
 	// GET /auth/me
 	GetCurrentUser(ctx context.Context) (GetCurrentUserRes, error)
-	// GetLink invokes getLink operation.
+	// GetPoll invokes getPoll operation.
 	//
-	// Get link details.
+	// Get poll details.
 	//
-	// GET /links/{id}
-	GetLink(ctx context.Context, params GetLinkParams) (*Link, error)
-	// GetLinkBookings invokes getLinkBookings operation.
+	// GET /polls/{id}
+	GetPoll(ctx context.Context, params GetPollParams) (*Poll, error)
+	// GetPollOptions invokes getPollOptions operation.
 	//
-	// Get bookings for a link.
+	// Get options for a poll.
 	//
-	// GET /links/{id}/bookings
-	GetLinkBookings(ctx context.Context, params GetLinkBookingsParams) ([]Booking, error)
-	// GetLinkSlots invokes getLinkSlots operation.
-	//
-	// Get slots for a link.
-	//
-	// GET /links/{id}/slots
-	GetLinkSlots(ctx context.Context, params GetLinkSlotsParams) ([]Slot, error)
-	// GetLinkVotes invokes getLinkVotes operation.
-	//
-	// Get votes for a poll.
-	//
-	// GET /links/{id}/votes
-	GetLinkVotes(ctx context.Context, params GetLinkVotesParams) ([]Vote, error)
+	// GET /polls/{id}/options
+	GetPollOptions(ctx context.Context, params GetPollOptionsParams) ([]PollOption, error)
 	// GetPollResults invokes getPollResults operation.
 	//
 	// Get poll results.
 	//
-	// GET /p/{slug}/results
+	// GET /p/poll/{slug}/results
 	GetPollResults(ctx context.Context, params GetPollResultsParams) (GetPollResultsRes, error)
-	// GetPublicLink invokes getPublicLink operation.
+	// GetPollVotes invokes getPollVotes operation.
 	//
-	// Get public link info.
+	// Get votes for a poll.
 	//
-	// GET /p/{slug}
-	GetPublicLink(ctx context.Context, params GetPublicLinkParams) (GetPublicLinkRes, error)
+	// GET /polls/{id}/votes
+	GetPollVotes(ctx context.Context, params GetPollVotesParams) ([]Vote, error)
+	// GetPublicBookingLink invokes getPublicBookingLink operation.
+	//
+	// Get public booking link info.
+	//
+	// GET /p/booking/{slug}
+	GetPublicBookingLink(ctx context.Context, params GetPublicBookingLinkParams) (GetPublicBookingLinkRes, error)
+	// GetPublicPoll invokes getPublicPoll operation.
+	//
+	// Get public poll info.
+	//
+	// GET /p/poll/{slug}
+	GetPublicPoll(ctx context.Context, params GetPublicPollParams) (GetPublicPollRes, error)
 	// InitiateLogin invokes initiateLogin operation.
 	//
 	// Redirect to OIDC provider.
 	//
 	// GET /auth/login
 	InitiateLogin(ctx context.Context) (*InitiateLoginFound, error)
+	// ListBookingLinks invokes listBookingLinks operation.
+	//
+	// List all booking links.
+	//
+	// GET /booking-links
+	ListBookingLinks(ctx context.Context) ([]BookingLink, error)
 	// ListCalendars invokes listCalendars operation.
 	//
 	// List calendar connections.
 	//
 	// GET /calendars
 	ListCalendars(ctx context.Context) ([]CalendarConnection, error)
-	// ListLinks invokes listLinks operation.
+	// ListPolls invokes listPolls operation.
 	//
-	// List all links.
+	// List all polls.
 	//
-	// GET /links
-	ListLinks(ctx context.Context) ([]Link, error)
+	// GET /polls
+	ListPolls(ctx context.Context) ([]Poll, error)
 	// Logout invokes logout operation.
 	//
 	// Clear session.
@@ -168,9 +198,9 @@ type Invoker interface {
 	Logout(ctx context.Context) error
 	// PickPollWinner invokes pickPollWinner operation.
 	//
-	// Pick winning slot for poll.
+	// Pick winning option for poll.
 	//
-	// POST /links/{id}/pick-winner
+	// POST /polls/{id}/pick-winner
 	PickPollWinner(ctx context.Context, request *PickPollWinnerReq, params PickPollWinnerParams) error
 	// RemoveCalendar invokes removeCalendar operation.
 	//
@@ -182,14 +212,20 @@ type Invoker interface {
 	//
 	// Submit poll vote.
 	//
-	// POST /p/{slug}/vote
+	// POST /p/poll/{slug}/vote
 	SubmitVote(ctx context.Context, request *SubmitVoteReq, params SubmitVoteParams) (*Vote, error)
-	// UpdateLink invokes updateLink operation.
+	// UpdateBookingLink invokes updateBookingLink operation.
 	//
-	// Update a link.
+	// Update a booking link.
 	//
-	// PUT /links/{id}
-	UpdateLink(ctx context.Context, request *UpdateLinkReq, params UpdateLinkParams) (*Link, error)
+	// PUT /booking-links/{id}
+	UpdateBookingLink(ctx context.Context, request *UpdateBookingLinkReq, params UpdateBookingLinkParams) (*BookingLink, error)
+	// UpdatePoll invokes updatePoll operation.
+	//
+	// Update a poll.
+	//
+	// PUT /polls/{id}
+	UpdatePoll(ctx context.Context, request *UpdatePollReq, params UpdatePollParams) (*Poll, error)
 }
 
 // Client implements OAS client.
@@ -346,21 +382,21 @@ func (c *Client) sendAddCalendar(ctx context.Context, request *AddCalendarReq) (
 	return result, nil
 }
 
-// AddSlot invokes addSlot operation.
+// AddPollOption invokes addPollOption operation.
 //
-// Add a slot to a link.
+// Add an option to a poll.
 //
-// POST /links/{id}/slots
-func (c *Client) AddSlot(ctx context.Context, request *AddSlotReq, params AddSlotParams) (*Slot, error) {
-	res, err := c.sendAddSlot(ctx, request, params)
+// POST /polls/{id}/options
+func (c *Client) AddPollOption(ctx context.Context, request *AddPollOptionReq, params AddPollOptionParams) (*PollOption, error) {
+	res, err := c.sendAddPollOption(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params AddSlotParams) (res *Slot, err error) {
+func (c *Client) sendAddPollOption(ctx context.Context, request *AddPollOptionReq, params AddPollOptionParams) (res *PollOption, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("addSlot"),
+		otelogen.OperationID("addPollOption"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/links/{id}/slots"),
+		semconv.URLTemplateKey.String("/polls/{id}/options"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -376,7 +412,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, AddSlotOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, AddPollOptionOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -394,7 +430,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/polls/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -413,7 +449,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/slots"
+	pathParts[2] = "/options"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -421,7 +457,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeAddSlotRequest(request, r); err != nil {
+	if err := encodeAddPollOptionRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -430,7 +466,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, AddSlotOperation, r); {
+			switch err := c.securityCookieAuth(ctx, AddPollOptionOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -466,7 +502,7 @@ func (c *Client) sendAddSlot(ctx context.Context, request *AddSlotReq, params Ad
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeAddSlotResponse(resp)
+	result, err := decodeAddPollOptionResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -814,7 +850,7 @@ func (c *Client) sendAuthCallback(ctx context.Context, params AuthCallbackParams
 //
 // Create a booking.
 //
-// POST /p/{slug}/book
+// POST /p/booking/{slug}/book
 func (c *Client) CreateBooking(ctx context.Context, request *CreateBookingReq, params CreateBookingParams) (CreateBookingRes, error) {
 	res, err := c.sendCreateBooking(ctx, request, params)
 	return res, err
@@ -824,7 +860,7 @@ func (c *Client) sendCreateBooking(ctx context.Context, request *CreateBookingRe
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("createBooking"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/p/{slug}/book"),
+		semconv.URLTemplateKey.String("/p/booking/{slug}/book"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -858,7 +894,7 @@ func (c *Client) sendCreateBooking(ctx context.Context, request *CreateBookingRe
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/p/"
+	pathParts[0] = "/p/booking/"
 	{
 		// Encode "slug" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -905,21 +941,21 @@ func (c *Client) sendCreateBooking(ctx context.Context, request *CreateBookingRe
 	return result, nil
 }
 
-// CreateLink invokes createLink operation.
+// CreateBookingLink invokes createBookingLink operation.
 //
-// Create a link.
+// Create a booking link.
 //
-// POST /links
-func (c *Client) CreateLink(ctx context.Context, request *CreateLinkReq) (*Link, error) {
-	res, err := c.sendCreateLink(ctx, request)
+// POST /booking-links
+func (c *Client) CreateBookingLink(ctx context.Context, request *CreateBookingLinkReq) (*BookingLink, error) {
+	res, err := c.sendCreateBookingLink(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (res *Link, err error) {
+func (c *Client) sendCreateBookingLink(ctx context.Context, request *CreateBookingLinkReq) (res *BookingLink, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("createLink"),
+		otelogen.OperationID("createBookingLink"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/links"),
+		semconv.URLTemplateKey.String("/booking-links"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -935,7 +971,7 @@ func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (re
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, CreateLinkOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, CreateBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -953,7 +989,7 @@ func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (re
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [1]string
-	pathParts[0] = "/links"
+	pathParts[0] = "/booking-links"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -961,7 +997,7 @@ func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (re
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeCreateLinkRequest(request, r); err != nil {
+	if err := encodeCreateBookingLinkRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -970,7 +1006,7 @@ func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (re
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, CreateLinkOperation, r); {
+			switch err := c.securityCookieAuth(ctx, CreateBookingLinkOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1006,7 +1042,116 @@ func (c *Client) sendCreateLink(ctx context.Context, request *CreateLinkReq) (re
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeCreateLinkResponse(resp)
+	result, err := decodeCreateBookingLinkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// CreatePoll invokes createPoll operation.
+//
+// Create a poll.
+//
+// POST /polls
+func (c *Client) CreatePoll(ctx context.Context, request *CreatePollReq) (*Poll, error) {
+	res, err := c.sendCreatePoll(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendCreatePoll(ctx context.Context, request *CreatePollReq) (res *Poll, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("createPoll"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.URLTemplateKey.String("/polls"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, CreatePollOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/polls"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeCreatePollRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, CreatePollOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeCreatePollResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1245,21 +1390,21 @@ func (c *Client) sendDeclineViaEmail(ctx context.Context) (res DeclineViaEmailRe
 	return result, nil
 }
 
-// DeleteLink invokes deleteLink operation.
+// DeleteBookingLink invokes deleteBookingLink operation.
 //
-// Delete a link.
+// Delete a booking link.
 //
-// DELETE /links/{id}
-func (c *Client) DeleteLink(ctx context.Context, params DeleteLinkParams) error {
-	_, err := c.sendDeleteLink(ctx, params)
+// DELETE /booking-links/{id}
+func (c *Client) DeleteBookingLink(ctx context.Context, params DeleteBookingLinkParams) error {
+	_, err := c.sendDeleteBookingLink(ctx, params)
 	return err
 }
 
-func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (res *DeleteLinkNoContent, err error) {
+func (c *Client) sendDeleteBookingLink(ctx context.Context, params DeleteBookingLinkParams) (res *DeleteBookingLinkNoContent, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteLink"),
+		otelogen.OperationID("deleteBookingLink"),
 		semconv.HTTPRequestMethodKey.String("DELETE"),
-		semconv.URLTemplateKey.String("/links/{id}"),
+		semconv.URLTemplateKey.String("/booking-links/{id}"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1275,7 +1420,7 @@ func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (r
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DeleteLinkOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, DeleteBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1293,7 +1438,7 @@ func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (r
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [2]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/booking-links/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1325,7 +1470,7 @@ func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (r
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, DeleteLinkOperation, r); {
+			switch err := c.securityCookieAuth(ctx, DeleteBookingLinkOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1361,7 +1506,7 @@ func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (r
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeDeleteLinkResponse(resp)
+	result, err := decodeDeleteBookingLinkResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1369,21 +1514,21 @@ func (c *Client) sendDeleteLink(ctx context.Context, params DeleteLinkParams) (r
 	return result, nil
 }
 
-// DeleteSlot invokes deleteSlot operation.
+// DeletePoll invokes deletePoll operation.
 //
-// Delete a slot from a link.
+// Delete a poll.
 //
-// DELETE /links/{id}/slots/{slotId}
-func (c *Client) DeleteSlot(ctx context.Context, params DeleteSlotParams) error {
-	_, err := c.sendDeleteSlot(ctx, params)
+// DELETE /polls/{id}
+func (c *Client) DeletePoll(ctx context.Context, params DeletePollParams) error {
+	_, err := c.sendDeletePoll(ctx, params)
 	return err
 }
 
-func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (res *DeleteSlotNoContent, err error) {
+func (c *Client) sendDeletePoll(ctx context.Context, params DeletePollParams) (res *DeletePollNoContent, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteSlot"),
+		otelogen.OperationID("deletePoll"),
 		semconv.HTTPRequestMethodKey.String("DELETE"),
-		semconv.URLTemplateKey.String("/links/{id}/slots/{slotId}"),
+		semconv.URLTemplateKey.String("/polls/{id}"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1399,7 +1544,7 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DeleteSlotOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, DeletePollOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1416,8 +1561,8 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [4]string
-	pathParts[0] = "/links/"
+	var pathParts [2]string
+	pathParts[0] = "/polls/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1436,16 +1581,140 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/slots/"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
 	{
-		// Encode "slotId" parameter.
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, DeletePollOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeDeletePollResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DeletePollOption invokes deletePollOption operation.
+//
+// Delete an option from a poll.
+//
+// DELETE /polls/{id}/options/{optionId}
+func (c *Client) DeletePollOption(ctx context.Context, params DeletePollOptionParams) error {
+	_, err := c.sendDeletePollOption(ctx, params)
+	return err
+}
+
+func (c *Client) sendDeletePollOption(ctx context.Context, params DeletePollOptionParams) (res *DeletePollOptionNoContent, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("deletePollOption"),
+		semconv.HTTPRequestMethodKey.String("DELETE"),
+		semconv.URLTemplateKey.String("/polls/{id}/options/{optionId}"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, DeletePollOptionOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [4]string
+	pathParts[0] = "/polls/"
+	{
+		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "slotId",
+			Param:   "id",
 			Style:   uri.PathStyleSimple,
 			Explode: false,
 		})
 		if err := func() error {
-			return e.EncodeValue(conv.IntToString(params.SlotId))
+			return e.EncodeValue(conv.IntToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/options/"
+	{
+		// Encode "optionId" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "optionId",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.IntToString(params.OptionId))
 		}(); err != nil {
 			return res, errors.Wrap(err, "encode path")
 		}
@@ -1468,7 +1737,7 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, DeleteSlotOperation, r); {
+			switch err := c.securityCookieAuth(ctx, DeletePollOptionOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1504,7 +1773,7 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeDeleteSlotResponse(resp)
+	result, err := decodeDeletePollOptionResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1512,21 +1781,21 @@ func (c *Client) sendDeleteSlot(ctx context.Context, params DeleteSlotParams) (r
 	return result, nil
 }
 
-// GetAvailability invokes getAvailability operation.
+// GetBookingAvailability invokes getBookingAvailability operation.
 //
-// Get real-time availability.
+// Get real-time availability for booking link.
 //
-// GET /p/{slug}/availability
-func (c *Client) GetAvailability(ctx context.Context, params GetAvailabilityParams) (*GetAvailabilityOK, error) {
-	res, err := c.sendGetAvailability(ctx, params)
+// GET /p/booking/{slug}/availability
+func (c *Client) GetBookingAvailability(ctx context.Context, params GetBookingAvailabilityParams) (*GetBookingAvailabilityOK, error) {
+	res, err := c.sendGetBookingAvailability(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetAvailability(ctx context.Context, params GetAvailabilityParams) (res *GetAvailabilityOK, err error) {
+func (c *Client) sendGetBookingAvailability(ctx context.Context, params GetBookingAvailabilityParams) (res *GetBookingAvailabilityOK, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getAvailability"),
+		otelogen.OperationID("getBookingAvailability"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/p/{slug}/availability"),
+		semconv.URLTemplateKey.String("/p/booking/{slug}/availability"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1542,7 +1811,7 @@ func (c *Client) sendGetAvailability(ctx context.Context, params GetAvailability
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetAvailabilityOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, GetBookingAvailabilityOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1560,7 +1829,7 @@ func (c *Client) sendGetAvailability(ctx context.Context, params GetAvailability
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/p/"
+	pathParts[0] = "/p/booking/"
 	{
 		// Encode "slug" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1628,7 +1897,256 @@ func (c *Client) sendGetAvailability(ctx context.Context, params GetAvailability
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetAvailabilityResponse(resp)
+	result, err := decodeGetBookingAvailabilityResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetBookingLink invokes getBookingLink operation.
+//
+// Get booking link details.
+//
+// GET /booking-links/{id}
+func (c *Client) GetBookingLink(ctx context.Context, params GetBookingLinkParams) (*BookingLink, error) {
+	res, err := c.sendGetBookingLink(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetBookingLink(ctx context.Context, params GetBookingLinkParams) (res *BookingLink, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getBookingLink"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/booking-links/{id}"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, GetBookingLinkOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/booking-links/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.IntToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, GetBookingLinkOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetBookingLinkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetBookingLinkBookings invokes getBookingLinkBookings operation.
+//
+// Get bookings for a booking link.
+//
+// GET /booking-links/{id}/bookings
+func (c *Client) GetBookingLinkBookings(ctx context.Context, params GetBookingLinkBookingsParams) ([]Booking, error) {
+	res, err := c.sendGetBookingLinkBookings(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetBookingLinkBookings(ctx context.Context, params GetBookingLinkBookingsParams) (res []Booking, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getBookingLinkBookings"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/booking-links/{id}/bookings"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, GetBookingLinkBookingsOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/booking-links/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.IntToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/bookings"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, GetBookingLinkBookingsOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetBookingLinkBookingsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1742,21 +2260,21 @@ func (c *Client) sendGetCurrentUser(ctx context.Context) (res GetCurrentUserRes,
 	return result, nil
 }
 
-// GetLink invokes getLink operation.
+// GetPoll invokes getPoll operation.
 //
-// Get link details.
+// Get poll details.
 //
-// GET /links/{id}
-func (c *Client) GetLink(ctx context.Context, params GetLinkParams) (*Link, error) {
-	res, err := c.sendGetLink(ctx, params)
+// GET /polls/{id}
+func (c *Client) GetPoll(ctx context.Context, params GetPollParams) (*Poll, error) {
+	res, err := c.sendGetPoll(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Link, err error) {
+func (c *Client) sendGetPoll(ctx context.Context, params GetPollParams) (res *Poll, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLink"),
+		otelogen.OperationID("getPoll"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/links/{id}"),
+		semconv.URLTemplateKey.String("/polls/{id}"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1772,7 +2290,7 @@ func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Li
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetLinkOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, GetPollOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1790,7 +2308,7 @@ func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Li
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [2]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/polls/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1822,7 +2340,7 @@ func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Li
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, GetLinkOperation, r); {
+			switch err := c.securityCookieAuth(ctx, GetPollOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1858,7 +2376,7 @@ func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Li
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetLinkResponse(resp)
+	result, err := decodeGetPollResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1866,21 +2384,21 @@ func (c *Client) sendGetLink(ctx context.Context, params GetLinkParams) (res *Li
 	return result, nil
 }
 
-// GetLinkBookings invokes getLinkBookings operation.
+// GetPollOptions invokes getPollOptions operation.
 //
-// Get bookings for a link.
+// Get options for a poll.
 //
-// GET /links/{id}/bookings
-func (c *Client) GetLinkBookings(ctx context.Context, params GetLinkBookingsParams) ([]Booking, error) {
-	res, err := c.sendGetLinkBookings(ctx, params)
+// GET /polls/{id}/options
+func (c *Client) GetPollOptions(ctx context.Context, params GetPollOptionsParams) ([]PollOption, error) {
+	res, err := c.sendGetPollOptions(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookingsParams) (res []Booking, err error) {
+func (c *Client) sendGetPollOptions(ctx context.Context, params GetPollOptionsParams) (res []PollOption, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkBookings"),
+		otelogen.OperationID("getPollOptions"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/links/{id}/bookings"),
+		semconv.URLTemplateKey.String("/polls/{id}/options"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1896,7 +2414,7 @@ func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookings
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetLinkBookingsOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, GetPollOptionsOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1914,7 +2432,7 @@ func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookings
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/polls/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1933,7 +2451,7 @@ func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookings
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/bookings"
+	pathParts[2] = "/options"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -1947,7 +2465,7 @@ func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookings
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, GetLinkBookingsOperation, r); {
+			switch err := c.securityCookieAuth(ctx, GetPollOptionsOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1983,257 +2501,7 @@ func (c *Client) sendGetLinkBookings(ctx context.Context, params GetLinkBookings
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetLinkBookingsResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// GetLinkSlots invokes getLinkSlots operation.
-//
-// Get slots for a link.
-//
-// GET /links/{id}/slots
-func (c *Client) GetLinkSlots(ctx context.Context, params GetLinkSlotsParams) ([]Slot, error) {
-	res, err := c.sendGetLinkSlots(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendGetLinkSlots(ctx context.Context, params GetLinkSlotsParams) (res []Slot, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkSlots"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/links/{id}/slots"),
-	}
-	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetLinkSlotsOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/links/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.IntToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/slots"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, GetLinkSlotsOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"CookieAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeGetLinkSlotsResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// GetLinkVotes invokes getLinkVotes operation.
-//
-// Get votes for a poll.
-//
-// GET /links/{id}/votes
-func (c *Client) GetLinkVotes(ctx context.Context, params GetLinkVotesParams) ([]Vote, error) {
-	res, err := c.sendGetLinkVotes(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendGetLinkVotes(ctx context.Context, params GetLinkVotesParams) (res []Vote, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getLinkVotes"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/links/{id}/votes"),
-	}
-	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetLinkVotesOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/links/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.IntToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/votes"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, GetLinkVotesOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"CookieAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeGetLinkVotesResponse(resp)
+	result, err := decodeGetPollOptionsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2245,7 +2513,7 @@ func (c *Client) sendGetLinkVotes(ctx context.Context, params GetLinkVotesParams
 //
 // Get poll results.
 //
-// GET /p/{slug}/results
+// GET /p/poll/{slug}/results
 func (c *Client) GetPollResults(ctx context.Context, params GetPollResultsParams) (GetPollResultsRes, error) {
 	res, err := c.sendGetPollResults(ctx, params)
 	return res, err
@@ -2255,7 +2523,7 @@ func (c *Client) sendGetPollResults(ctx context.Context, params GetPollResultsPa
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getPollResults"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/p/{slug}/results"),
+		semconv.URLTemplateKey.String("/p/poll/{slug}/results"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -2289,7 +2557,7 @@ func (c *Client) sendGetPollResults(ctx context.Context, params GetPollResultsPa
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/p/"
+	pathParts[0] = "/p/poll/"
 	{
 		// Encode "slug" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -2333,21 +2601,21 @@ func (c *Client) sendGetPollResults(ctx context.Context, params GetPollResultsPa
 	return result, nil
 }
 
-// GetPublicLink invokes getPublicLink operation.
+// GetPollVotes invokes getPollVotes operation.
 //
-// Get public link info.
+// Get votes for a poll.
 //
-// GET /p/{slug}
-func (c *Client) GetPublicLink(ctx context.Context, params GetPublicLinkParams) (GetPublicLinkRes, error) {
-	res, err := c.sendGetPublicLink(ctx, params)
+// GET /polls/{id}/votes
+func (c *Client) GetPollVotes(ctx context.Context, params GetPollVotesParams) ([]Vote, error) {
+	res, err := c.sendGetPollVotes(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetPublicLink(ctx context.Context, params GetPublicLinkParams) (res GetPublicLinkRes, err error) {
+func (c *Client) sendGetPollVotes(ctx context.Context, params GetPollVotesParams) (res []Vote, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getPublicLink"),
+		otelogen.OperationID("getPollVotes"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/p/{slug}"),
+		semconv.URLTemplateKey.String("/polls/{id}/votes"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -2363,7 +2631,132 @@ func (c *Client) sendGetPublicLink(ctx context.Context, params GetPublicLinkPara
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetPublicLinkOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, GetPollVotesOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/polls/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.IntToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/votes"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, GetPollVotesOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetPollVotesResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetPublicBookingLink invokes getPublicBookingLink operation.
+//
+// Get public booking link info.
+//
+// GET /p/booking/{slug}
+func (c *Client) GetPublicBookingLink(ctx context.Context, params GetPublicBookingLinkParams) (GetPublicBookingLinkRes, error) {
+	res, err := c.sendGetPublicBookingLink(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetPublicBookingLink(ctx context.Context, params GetPublicBookingLinkParams) (res GetPublicBookingLinkRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getPublicBookingLink"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/p/booking/{slug}"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, GetPublicBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -2381,7 +2774,7 @@ func (c *Client) sendGetPublicLink(ctx context.Context, params GetPublicLinkPara
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [2]string
-	pathParts[0] = "/p/"
+	pathParts[0] = "/p/booking/"
 	{
 		// Encode "slug" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -2416,7 +2809,98 @@ func (c *Client) sendGetPublicLink(ctx context.Context, params GetPublicLinkPara
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetPublicLinkResponse(resp)
+	result, err := decodeGetPublicBookingLinkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetPublicPoll invokes getPublicPoll operation.
+//
+// Get public poll info.
+//
+// GET /p/poll/{slug}
+func (c *Client) GetPublicPoll(ctx context.Context, params GetPublicPollParams) (GetPublicPollRes, error) {
+	res, err := c.sendGetPublicPoll(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetPublicPoll(ctx context.Context, params GetPublicPollParams) (res GetPublicPollRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getPublicPoll"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/p/poll/{slug}"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, GetPublicPollOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/p/poll/"
+	{
+		// Encode "slug" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "slug",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Slug))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetPublicPollResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2490,6 +2974,112 @@ func (c *Client) sendInitiateLogin(ctx context.Context) (res *InitiateLoginFound
 
 	stage = "DecodeResponse"
 	result, err := decodeInitiateLoginResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListBookingLinks invokes listBookingLinks operation.
+//
+// List all booking links.
+//
+// GET /booking-links
+func (c *Client) ListBookingLinks(ctx context.Context) ([]BookingLink, error) {
+	res, err := c.sendListBookingLinks(ctx)
+	return res, err
+}
+
+func (c *Client) sendListBookingLinks(ctx context.Context) (res []BookingLink, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listBookingLinks"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/booking-links"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ListBookingLinksOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/booking-links"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, ListBookingLinksOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListBookingLinksResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2603,21 +3193,21 @@ func (c *Client) sendListCalendars(ctx context.Context) (res []CalendarConnectio
 	return result, nil
 }
 
-// ListLinks invokes listLinks operation.
+// ListPolls invokes listPolls operation.
 //
-// List all links.
+// List all polls.
 //
-// GET /links
-func (c *Client) ListLinks(ctx context.Context) ([]Link, error) {
-	res, err := c.sendListLinks(ctx)
+// GET /polls
+func (c *Client) ListPolls(ctx context.Context) ([]Poll, error) {
+	res, err := c.sendListPolls(ctx)
 	return res, err
 }
 
-func (c *Client) sendListLinks(ctx context.Context) (res []Link, err error) {
+func (c *Client) sendListPolls(ctx context.Context) (res []Poll, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listLinks"),
+		otelogen.OperationID("listPolls"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.URLTemplateKey.String("/links"),
+		semconv.URLTemplateKey.String("/polls"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -2633,7 +3223,7 @@ func (c *Client) sendListLinks(ctx context.Context) (res []Link, err error) {
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ListLinksOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, ListPollsOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -2651,7 +3241,7 @@ func (c *Client) sendListLinks(ctx context.Context) (res []Link, err error) {
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [1]string
-	pathParts[0] = "/links"
+	pathParts[0] = "/polls"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -2665,7 +3255,7 @@ func (c *Client) sendListLinks(ctx context.Context) (res []Link, err error) {
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, ListLinksOperation, r); {
+			switch err := c.securityCookieAuth(ctx, ListPollsOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -2701,7 +3291,7 @@ func (c *Client) sendListLinks(ctx context.Context) (res []Link, err error) {
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeListLinksResponse(resp)
+	result, err := decodeListPollsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2817,9 +3407,9 @@ func (c *Client) sendLogout(ctx context.Context) (res *LogoutOK, err error) {
 
 // PickPollWinner invokes pickPollWinner operation.
 //
-// Pick winning slot for poll.
+// Pick winning option for poll.
 //
-// POST /links/{id}/pick-winner
+// POST /polls/{id}/pick-winner
 func (c *Client) PickPollWinner(ctx context.Context, request *PickPollWinnerReq, params PickPollWinnerParams) error {
 	_, err := c.sendPickPollWinner(ctx, request, params)
 	return err
@@ -2829,7 +3419,7 @@ func (c *Client) sendPickPollWinner(ctx context.Context, request *PickPollWinner
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("pickPollWinner"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/links/{id}/pick-winner"),
+		semconv.URLTemplateKey.String("/polls/{id}/pick-winner"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -2863,7 +3453,7 @@ func (c *Client) sendPickPollWinner(ctx context.Context, request *PickPollWinner
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/polls/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -3071,7 +3661,7 @@ func (c *Client) sendRemoveCalendar(ctx context.Context, params RemoveCalendarPa
 //
 // Submit poll vote.
 //
-// POST /p/{slug}/vote
+// POST /p/poll/{slug}/vote
 func (c *Client) SubmitVote(ctx context.Context, request *SubmitVoteReq, params SubmitVoteParams) (*Vote, error) {
 	res, err := c.sendSubmitVote(ctx, request, params)
 	return res, err
@@ -3081,7 +3671,7 @@ func (c *Client) sendSubmitVote(ctx context.Context, request *SubmitVoteReq, par
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("submitVote"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/p/{slug}/vote"),
+		semconv.URLTemplateKey.String("/p/poll/{slug}/vote"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -3115,7 +3705,7 @@ func (c *Client) sendSubmitVote(ctx context.Context, request *SubmitVoteReq, par
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [3]string
-	pathParts[0] = "/p/"
+	pathParts[0] = "/p/poll/"
 	{
 		// Encode "slug" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -3162,21 +3752,21 @@ func (c *Client) sendSubmitVote(ctx context.Context, request *SubmitVoteReq, par
 	return result, nil
 }
 
-// UpdateLink invokes updateLink operation.
+// UpdateBookingLink invokes updateBookingLink operation.
 //
-// Update a link.
+// Update a booking link.
 //
-// PUT /links/{id}
-func (c *Client) UpdateLink(ctx context.Context, request *UpdateLinkReq, params UpdateLinkParams) (*Link, error) {
-	res, err := c.sendUpdateLink(ctx, request, params)
+// PUT /booking-links/{id}
+func (c *Client) UpdateBookingLink(ctx context.Context, request *UpdateBookingLinkReq, params UpdateBookingLinkParams) (*BookingLink, error) {
+	res, err := c.sendUpdateBookingLink(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, params UpdateLinkParams) (res *Link, err error) {
+func (c *Client) sendUpdateBookingLink(ctx context.Context, request *UpdateBookingLinkReq, params UpdateBookingLinkParams) (res *BookingLink, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateLink"),
+		otelogen.OperationID("updateBookingLink"),
 		semconv.HTTPRequestMethodKey.String("PUT"),
-		semconv.URLTemplateKey.String("/links/{id}"),
+		semconv.URLTemplateKey.String("/booking-links/{id}"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -3192,7 +3782,7 @@ func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, par
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, UpdateLinkOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, UpdateBookingLinkOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -3210,7 +3800,7 @@ func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, par
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [2]string
-	pathParts[0] = "/links/"
+	pathParts[0] = "/booking-links/"
 	{
 		// Encode "id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -3236,7 +3826,7 @@ func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, par
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeUpdateLinkRequest(request, r); err != nil {
+	if err := encodeUpdateBookingLinkRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -3245,7 +3835,7 @@ func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, par
 		var satisfied bitset
 		{
 			stage = "Security:CookieAuth"
-			switch err := c.securityCookieAuth(ctx, UpdateLinkOperation, r); {
+			switch err := c.securityCookieAuth(ctx, UpdateBookingLinkOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -3281,7 +3871,134 @@ func (c *Client) sendUpdateLink(ctx context.Context, request *UpdateLinkReq, par
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeUpdateLinkResponse(resp)
+	result, err := decodeUpdateBookingLinkResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UpdatePoll invokes updatePoll operation.
+//
+// Update a poll.
+//
+// PUT /polls/{id}
+func (c *Client) UpdatePoll(ctx context.Context, request *UpdatePollReq, params UpdatePollParams) (*Poll, error) {
+	res, err := c.sendUpdatePoll(ctx, request, params)
+	return res, err
+}
+
+func (c *Client) sendUpdatePoll(ctx context.Context, request *UpdatePollReq, params UpdatePollParams) (res *Poll, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("updatePoll"),
+		semconv.HTTPRequestMethodKey.String("PUT"),
+		semconv.URLTemplateKey.String("/polls/{id}"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, UpdatePollOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/polls/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.IntToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "PUT", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeUpdatePollRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:CookieAuth"
+			switch err := c.securityCookieAuth(ctx, UpdatePollOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"CookieAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeUpdatePollResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

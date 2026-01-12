@@ -191,14 +191,14 @@ func (s *AddCalendarReq) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *AddSlotReq) Encode(e *jx.Encoder) {
+func (s *AddPollOptionReq) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *AddSlotReq) encodeFields(e *jx.Encoder) {
+func (s *AddPollOptionReq) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("type")
 		s.Type.Encode(e)
@@ -213,16 +213,16 @@ func (s *AddSlotReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfAddSlotReq = [3]string{
+var jsonFieldsNameOfAddPollOptionReq = [3]string{
 	0: "type",
 	1: "start_time",
 	2: "end_time",
 }
 
-// Decode decodes AddSlotReq from json.
-func (s *AddSlotReq) Decode(d *jx.Decoder) error {
+// Decode decodes AddPollOptionReq from json.
+func (s *AddPollOptionReq) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode AddSlotReq to nil")
+		return errors.New("invalid: unable to decode AddPollOptionReq to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -267,7 +267,7 @@ func (s *AddSlotReq) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode AddSlotReq")
+		return errors.Wrap(err, "decode AddPollOptionReq")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -284,8 +284,8 @@ func (s *AddSlotReq) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfAddSlotReq) {
-					name = jsonFieldsNameOfAddSlotReq[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfAddPollOptionReq) {
+					name = jsonFieldsNameOfAddPollOptionReq[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -306,14 +306,14 @@ func (s *AddSlotReq) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *AddSlotReq) MarshalJSON() ([]byte, error) {
+func (s *AddPollOptionReq) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AddSlotReq) UnmarshalJSON(data []byte) error {
+func (s *AddPollOptionReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -773,6 +773,293 @@ func (s *BookingCustomFields) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *BookingLink) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *BookingLink) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		e.Int(s.ID)
+	}
+	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("status")
+		s.Status.Encode(e)
+	}
+	{
+		if s.AutoConfirm.Set {
+			e.FieldStart("auto_confirm")
+			s.AutoConfirm.Encode(e)
+		}
+	}
+	{
+		if s.RequireEmail.Set {
+			e.FieldStart("require_email")
+			s.RequireEmail.Encode(e)
+		}
+	}
+	{
+		if s.AvailabilityRules != nil {
+			e.FieldStart("availability_rules")
+			e.ArrStart()
+			for _, elem := range s.AvailabilityRules {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.CustomFields != nil {
+			e.FieldStart("custom_fields")
+			e.ArrStart()
+			for _, elem := range s.CustomFields {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.EventTemplate.Set {
+			e.FieldStart("event_template")
+			s.EventTemplate.Encode(e)
+		}
+	}
+	{
+		if s.CreatedAt.Set {
+			e.FieldStart("created_at")
+			s.CreatedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+}
+
+var jsonFieldsNameOfBookingLink = [11]string{
+	0:  "id",
+	1:  "slug",
+	2:  "name",
+	3:  "description",
+	4:  "status",
+	5:  "auto_confirm",
+	6:  "require_email",
+	7:  "availability_rules",
+	8:  "custom_fields",
+	9:  "event_template",
+	10: "created_at",
+}
+
+// Decode decodes BookingLink from json.
+func (s *BookingLink) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BookingLink to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.ID = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "slug":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "status":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Status.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"status\"")
+			}
+		case "auto_confirm":
+			if err := func() error {
+				s.AutoConfirm.Reset()
+				if err := s.AutoConfirm.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"auto_confirm\"")
+			}
+		case "require_email":
+			if err := func() error {
+				s.RequireEmail.Reset()
+				if err := s.RequireEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "availability_rules":
+			if err := func() error {
+				s.AvailabilityRules = make([]AvailabilityRule, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem AvailabilityRule
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.AvailabilityRules = append(s.AvailabilityRules, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"availability_rules\"")
+			}
+		case "custom_fields":
+			if err := func() error {
+				s.CustomFields = make([]CustomField, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem CustomField
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.CustomFields = append(s.CustomFields, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"custom_fields\"")
+			}
+		case "event_template":
+			if err := func() error {
+				s.EventTemplate.Reset()
+				if err := s.EventTemplate.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"event_template\"")
+			}
+		case "created_at":
+			if err := func() error {
+				s.CreatedAt.Reset()
+				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode BookingLink")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b00010111,
+		0b00000000,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfBookingLink) {
+					name = jsonFieldsNameOfBookingLink[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *BookingLink) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BookingLink) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes BookingStatus as json.
 func (s BookingStatus) Encode(e *jx.Encoder) {
 	e.Int(int(s))
@@ -1094,6 +1381,226 @@ func (s *CreateBookingCreated) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *CreateBookingLinkReq) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.AutoConfirm.Set {
+			e.FieldStart("auto_confirm")
+			s.AutoConfirm.Encode(e)
+		}
+	}
+	{
+		if s.RequireEmail.Set {
+			e.FieldStart("require_email")
+			s.RequireEmail.Encode(e)
+		}
+	}
+	{
+		if s.AvailabilityRules != nil {
+			e.FieldStart("availability_rules")
+			e.ArrStart()
+			for _, elem := range s.AvailabilityRules {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.CustomFields != nil {
+			e.FieldStart("custom_fields")
+			e.ArrStart()
+			for _, elem := range s.CustomFields {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.EventTemplate.Set {
+			e.FieldStart("event_template")
+			s.EventTemplate.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfCreateBookingLinkReq = [7]string{
+	0: "name",
+	1: "description",
+	2: "auto_confirm",
+	3: "require_email",
+	4: "availability_rules",
+	5: "custom_fields",
+	6: "event_template",
+}
+
+// Decode decodes CreateBookingLinkReq from json.
+func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode CreateBookingLinkReq to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "auto_confirm":
+			if err := func() error {
+				s.AutoConfirm.Reset()
+				if err := s.AutoConfirm.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"auto_confirm\"")
+			}
+		case "require_email":
+			if err := func() error {
+				s.RequireEmail.Reset()
+				if err := s.RequireEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "availability_rules":
+			if err := func() error {
+				s.AvailabilityRules = make([]AvailabilityRule, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem AvailabilityRule
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.AvailabilityRules = append(s.AvailabilityRules, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"availability_rules\"")
+			}
+		case "custom_fields":
+			if err := func() error {
+				s.CustomFields = make([]CustomField, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem CustomField
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.CustomFields = append(s.CustomFields, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"custom_fields\"")
+			}
+		case "event_template":
+			if err := func() error {
+				s.EventTemplate.Reset()
+				if err := s.EventTemplate.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"event_template\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode CreateBookingLinkReq")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfCreateBookingLinkReq) {
+					name = jsonFieldsNameOfCreateBookingLinkReq[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *CreateBookingLinkReq) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *CreateBookingLinkReq) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *CreateBookingReq) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -1297,18 +1804,14 @@ func (s *CreateBookingReqCustomFields) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *CreateLinkReq) Encode(e *jx.Encoder) {
+func (s *CreatePollReq) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *CreateLinkReq) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("type")
-		s.Type.Encode(e)
-	}
+func (s *CreatePollReq) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("name")
 		e.Str(s.Name)
@@ -1317,12 +1820,6 @@ func (s *CreateLinkReq) encodeFields(e *jx.Encoder) {
 		if s.Description.Set {
 			e.FieldStart("description")
 			s.Description.Encode(e)
-		}
-	}
-	{
-		if s.AutoConfirm.Set {
-			e.FieldStart("auto_confirm")
-			s.AutoConfirm.Encode(e)
 		}
 	}
 	{
@@ -1338,16 +1835,6 @@ func (s *CreateLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.AvailabilityRules != nil {
-			e.FieldStart("availability_rules")
-			e.ArrStart()
-			for _, elem := range s.AvailabilityRules {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.CustomFields != nil {
 			e.FieldStart("custom_fields")
 			e.ArrStart()
@@ -1357,47 +1844,27 @@ func (s *CreateLinkReq) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
-	{
-		if s.EventTemplate.Set {
-			e.FieldStart("event_template")
-			s.EventTemplate.Encode(e)
-		}
-	}
 }
 
-var jsonFieldsNameOfCreateLinkReq = [9]string{
-	0: "type",
-	1: "name",
-	2: "description",
-	3: "auto_confirm",
-	4: "show_results",
-	5: "require_email",
-	6: "availability_rules",
-	7: "custom_fields",
-	8: "event_template",
+var jsonFieldsNameOfCreatePollReq = [5]string{
+	0: "name",
+	1: "description",
+	2: "show_results",
+	3: "require_email",
+	4: "custom_fields",
 }
 
-// Decode decodes CreateLinkReq from json.
-func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
+// Decode decodes CreatePollReq from json.
+func (s *CreatePollReq) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode CreateLinkReq to nil")
+		return errors.New("invalid: unable to decode CreatePollReq to nil")
 	}
-	var requiredBitSet [2]uint8
+	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "type":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Type.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
 		case "name":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -1417,16 +1884,6 @@ func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"description\"")
-			}
-		case "auto_confirm":
-			if err := func() error {
-				s.AutoConfirm.Reset()
-				if err := s.AutoConfirm.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"auto_confirm\"")
 			}
 		case "show_results":
 			if err := func() error {
@@ -1448,23 +1905,6 @@ func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
 			}
-		case "availability_rules":
-			if err := func() error {
-				s.AvailabilityRules = make([]AvailabilityRule, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem AvailabilityRule
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.AvailabilityRules = append(s.AvailabilityRules, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"availability_rules\"")
-			}
 		case "custom_fields":
 			if err := func() error {
 				s.CustomFields = make([]CustomField, 0)
@@ -1482,28 +1922,17 @@ func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"custom_fields\"")
 			}
-		case "event_template":
-			if err := func() error {
-				s.EventTemplate.Reset()
-				if err := s.EventTemplate.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"event_template\"")
-			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode CreateLinkReq")
+		return errors.Wrap(err, "decode CreatePollReq")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
-		0b00000011,
-		0b00000000,
+	for i, mask := range [1]uint8{
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1515,8 +1944,8 @@ func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfCreateLinkReq) {
-					name = jsonFieldsNameOfCreateLinkReq[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfCreatePollReq) {
+					name = jsonFieldsNameOfCreatePollReq[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -1537,14 +1966,14 @@ func (s *CreateLinkReq) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *CreateLinkReq) MarshalJSON() ([]byte, error) {
+func (s *CreatePollReq) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *CreateLinkReq) UnmarshalJSON(data []byte) error {
+func (s *CreatePollReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2013,14 +2442,14 @@ func (s *EventTemplate) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *GetAvailabilityOK) Encode(e *jx.Encoder) {
+func (s *GetBookingAvailabilityOK) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *GetAvailabilityOK) encodeFields(e *jx.Encoder) {
+func (s *GetBookingAvailabilityOK) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("slots")
 		e.ArrStart()
@@ -2031,14 +2460,14 @@ func (s *GetAvailabilityOK) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGetAvailabilityOK = [1]string{
+var jsonFieldsNameOfGetBookingAvailabilityOK = [1]string{
 	0: "slots",
 }
 
-// Decode decodes GetAvailabilityOK from json.
-func (s *GetAvailabilityOK) Decode(d *jx.Decoder) error {
+// Decode decodes GetBookingAvailabilityOK from json.
+func (s *GetBookingAvailabilityOK) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetAvailabilityOK to nil")
+		return errors.New("invalid: unable to decode GetBookingAvailabilityOK to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -2067,7 +2496,7 @@ func (s *GetAvailabilityOK) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode GetAvailabilityOK")
+		return errors.Wrap(err, "decode GetBookingAvailabilityOK")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -2084,8 +2513,8 @@ func (s *GetAvailabilityOK) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfGetAvailabilityOK) {
-					name = jsonFieldsNameOfGetAvailabilityOK[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfGetBookingAvailabilityOK) {
+					name = jsonFieldsNameOfGetBookingAvailabilityOK[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -2106,14 +2535,14 @@ func (s *GetAvailabilityOK) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GetAvailabilityOK) MarshalJSON() ([]byte, error) {
+func (s *GetBookingAvailabilityOK) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetAvailabilityOK) UnmarshalJSON(data []byte) error {
+func (s *GetBookingAvailabilityOK) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2253,18 +2682,14 @@ func (s *GetPollResultsOK) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *GetPublicLinkOK) Encode(e *jx.Encoder) {
+func (s *GetPublicBookingLinkOK) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *GetPublicLinkOK) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("type")
-		s.Type.Encode(e)
-	}
+func (s *GetPublicBookingLinkOK) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("name")
 		e.Str(s.Name)
@@ -2286,9 +2711,167 @@ func (s *GetPublicLinkOK) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("slots")
+		if s.RequireEmail.Set {
+			e.FieldStart("require_email")
+			s.RequireEmail.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfGetPublicBookingLinkOK = [4]string{
+	0: "name",
+	1: "description",
+	2: "custom_fields",
+	3: "require_email",
+}
+
+// Decode decodes GetPublicBookingLinkOK from json.
+func (s *GetPublicBookingLinkOK) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode GetPublicBookingLinkOK to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "custom_fields":
+			if err := func() error {
+				s.CustomFields = make([]CustomField, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem CustomField
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.CustomFields = append(s.CustomFields, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"custom_fields\"")
+			}
+		case "require_email":
+			if err := func() error {
+				s.RequireEmail.Reset()
+				if err := s.RequireEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode GetPublicBookingLinkOK")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfGetPublicBookingLinkOK) {
+					name = jsonFieldsNameOfGetPublicBookingLinkOK[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *GetPublicBookingLinkOK) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *GetPublicBookingLinkOK) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *GetPublicPollOK) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *GetPublicPollOK) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.CustomFields != nil {
+			e.FieldStart("custom_fields")
+			e.ArrStart()
+			for _, elem := range s.CustomFields {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		e.FieldStart("options")
 		e.ArrStart()
-		for _, elem := range s.Slots {
+		for _, elem := range s.Options {
 			elem.Encode(e)
 		}
 		e.ArrEnd()
@@ -2307,37 +2890,26 @@ func (s *GetPublicLinkOK) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGetPublicLinkOK = [7]string{
-	0: "type",
-	1: "name",
-	2: "description",
-	3: "custom_fields",
-	4: "slots",
-	5: "show_results",
-	6: "require_email",
+var jsonFieldsNameOfGetPublicPollOK = [6]string{
+	0: "name",
+	1: "description",
+	2: "custom_fields",
+	3: "options",
+	4: "show_results",
+	5: "require_email",
 }
 
-// Decode decodes GetPublicLinkOK from json.
-func (s *GetPublicLinkOK) Decode(d *jx.Decoder) error {
+// Decode decodes GetPublicPollOK from json.
+func (s *GetPublicPollOK) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetPublicLinkOK to nil")
+		return errors.New("invalid: unable to decode GetPublicPollOK to nil")
 	}
 	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "type":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Type.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
 		case "name":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -2375,23 +2947,23 @@ func (s *GetPublicLinkOK) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"custom_fields\"")
 			}
-		case "slots":
-			requiredBitSet[0] |= 1 << 4
+		case "options":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
-				s.Slots = make([]Slot, 0)
+				s.Options = make([]PollOption, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem Slot
+					var elem PollOption
 					if err := elem.Decode(d); err != nil {
 						return err
 					}
-					s.Slots = append(s.Slots, elem)
+					s.Options = append(s.Options, elem)
 					return nil
 				}); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"slots\"")
+				return errors.Wrap(err, "decode field \"options\"")
 			}
 		case "show_results":
 			if err := func() error {
@@ -2418,12 +2990,12 @@ func (s *GetPublicLinkOK) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode GetPublicLinkOK")
+		return errors.Wrap(err, "decode GetPublicPollOK")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00010011,
+		0b00001001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2435,8 +3007,8 @@ func (s *GetPublicLinkOK) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfGetPublicLinkOK) {
-					name = jsonFieldsNameOfGetPublicLinkOK[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfGetPublicPollOK) {
+					name = jsonFieldsNameOfGetPublicPollOK[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -2457,333 +3029,14 @@ func (s *GetPublicLinkOK) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GetPublicLinkOK) MarshalJSON() ([]byte, error) {
+func (s *GetPublicPollOK) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetPublicLinkOK) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *Link) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *Link) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		e.Int(s.ID)
-	}
-	{
-		e.FieldStart("slug")
-		e.Str(s.Slug)
-	}
-	{
-		e.FieldStart("type")
-		s.Type.Encode(e)
-	}
-	{
-		e.FieldStart("name")
-		e.Str(s.Name)
-	}
-	{
-		if s.Description.Set {
-			e.FieldStart("description")
-			s.Description.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("status")
-		s.Status.Encode(e)
-	}
-	{
-		if s.AutoConfirm.Set {
-			e.FieldStart("auto_confirm")
-			s.AutoConfirm.Encode(e)
-		}
-	}
-	{
-		if s.ShowResults.Set {
-			e.FieldStart("show_results")
-			s.ShowResults.Encode(e)
-		}
-	}
-	{
-		if s.RequireEmail.Set {
-			e.FieldStart("require_email")
-			s.RequireEmail.Encode(e)
-		}
-	}
-	{
-		if s.AvailabilityRules != nil {
-			e.FieldStart("availability_rules")
-			e.ArrStart()
-			for _, elem := range s.AvailabilityRules {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.CustomFields != nil {
-			e.FieldStart("custom_fields")
-			e.ArrStart()
-			for _, elem := range s.CustomFields {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.EventTemplate.Set {
-			e.FieldStart("event_template")
-			s.EventTemplate.Encode(e)
-		}
-	}
-	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-}
-
-var jsonFieldsNameOfLink = [13]string{
-	0:  "id",
-	1:  "slug",
-	2:  "type",
-	3:  "name",
-	4:  "description",
-	5:  "status",
-	6:  "auto_confirm",
-	7:  "show_results",
-	8:  "require_email",
-	9:  "availability_rules",
-	10: "custom_fields",
-	11: "event_template",
-	12: "created_at",
-}
-
-// Decode decodes Link from json.
-func (s *Link) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode Link to nil")
-	}
-	var requiredBitSet [2]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.ID = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "slug":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Str()
-				s.Slug = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"slug\"")
-			}
-		case "type":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				if err := s.Type.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"type\"")
-			}
-		case "name":
-			requiredBitSet[0] |= 1 << 3
-			if err := func() error {
-				v, err := d.Str()
-				s.Name = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"name\"")
-			}
-		case "description":
-			if err := func() error {
-				s.Description.Reset()
-				if err := s.Description.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"description\"")
-			}
-		case "status":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				if err := s.Status.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"status\"")
-			}
-		case "auto_confirm":
-			if err := func() error {
-				s.AutoConfirm.Reset()
-				if err := s.AutoConfirm.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"auto_confirm\"")
-			}
-		case "show_results":
-			if err := func() error {
-				s.ShowResults.Reset()
-				if err := s.ShowResults.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"show_results\"")
-			}
-		case "require_email":
-			if err := func() error {
-				s.RequireEmail.Reset()
-				if err := s.RequireEmail.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"require_email\"")
-			}
-		case "availability_rules":
-			if err := func() error {
-				s.AvailabilityRules = make([]AvailabilityRule, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem AvailabilityRule
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.AvailabilityRules = append(s.AvailabilityRules, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"availability_rules\"")
-			}
-		case "custom_fields":
-			if err := func() error {
-				s.CustomFields = make([]CustomField, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem CustomField
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.CustomFields = append(s.CustomFields, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"custom_fields\"")
-			}
-		case "event_template":
-			if err := func() error {
-				s.EventTemplate.Reset()
-				if err := s.EventTemplate.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"event_template\"")
-			}
-		case "created_at":
-			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode Link")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
-		0b00101111,
-		0b00000000,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfLink) {
-					name = jsonFieldsNameOfLink[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *Link) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *Link) UnmarshalJSON(data []byte) error {
+func (s *GetPublicPollOK) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2816,38 +3069,6 @@ func (s LinkStatus) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *LinkStatus) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes LinkType as json.
-func (s LinkType) Encode(e *jx.Encoder) {
-	e.Int(int(s))
-}
-
-// Decode decodes LinkType from json.
-func (s *LinkType) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode LinkType to nil")
-	}
-	v, err := d.Int()
-	if err != nil {
-		return err
-	}
-	*s = LinkType(v)
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s LinkType) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *LinkType) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -3169,13 +3390,13 @@ func (s *PickPollWinnerReq) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *PickPollWinnerReq) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("slot_id")
-		e.Int(s.SlotID)
+		e.FieldStart("option_id")
+		e.Int(s.OptionID)
 	}
 }
 
 var jsonFieldsNameOfPickPollWinnerReq = [1]string{
-	0: "slot_id",
+	0: "option_id",
 }
 
 // Decode decodes PickPollWinnerReq from json.
@@ -3187,17 +3408,17 @@ func (s *PickPollWinnerReq) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "slot_id":
+		case "option_id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Int()
-				s.SlotID = int(v)
+				s.OptionID = int(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"slot_id\"")
+				return errors.Wrap(err, "decode field \"option_id\"")
 			}
 		default:
 			return d.Skip()
@@ -3251,6 +3472,393 @@ func (s *PickPollWinnerReq) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *PickPollWinnerReq) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *Poll) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *Poll) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		e.Int(s.ID)
+	}
+	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("status")
+		s.Status.Encode(e)
+	}
+	{
+		if s.ShowResults.Set {
+			e.FieldStart("show_results")
+			s.ShowResults.Encode(e)
+		}
+	}
+	{
+		if s.RequireEmail.Set {
+			e.FieldStart("require_email")
+			s.RequireEmail.Encode(e)
+		}
+	}
+	{
+		if s.CustomFields != nil {
+			e.FieldStart("custom_fields")
+			e.ArrStart()
+			for _, elem := range s.CustomFields {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.CreatedAt.Set {
+			e.FieldStart("created_at")
+			s.CreatedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+}
+
+var jsonFieldsNameOfPoll = [9]string{
+	0: "id",
+	1: "slug",
+	2: "name",
+	3: "description",
+	4: "status",
+	5: "show_results",
+	6: "require_email",
+	7: "custom_fields",
+	8: "created_at",
+}
+
+// Decode decodes Poll from json.
+func (s *Poll) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode Poll to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.ID = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "slug":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "status":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Status.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"status\"")
+			}
+		case "show_results":
+			if err := func() error {
+				s.ShowResults.Reset()
+				if err := s.ShowResults.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"show_results\"")
+			}
+		case "require_email":
+			if err := func() error {
+				s.RequireEmail.Reset()
+				if err := s.RequireEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "custom_fields":
+			if err := func() error {
+				s.CustomFields = make([]CustomField, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem CustomField
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.CustomFields = append(s.CustomFields, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"custom_fields\"")
+			}
+		case "created_at":
+			if err := func() error {
+				s.CreatedAt.Reset()
+				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode Poll")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b00010111,
+		0b00000000,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfPoll) {
+					name = jsonFieldsNameOfPoll[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *Poll) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *Poll) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *PollOption) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *PollOption) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		e.Int(s.ID)
+	}
+	{
+		e.FieldStart("type")
+		s.Type.Encode(e)
+	}
+	{
+		e.FieldStart("start_time")
+		json.EncodeDateTime(e, s.StartTime)
+	}
+	{
+		e.FieldStart("end_time")
+		json.EncodeDateTime(e, s.EndTime)
+	}
+}
+
+var jsonFieldsNameOfPollOption = [4]string{
+	0: "id",
+	1: "type",
+	2: "start_time",
+	3: "end_time",
+}
+
+// Decode decodes PollOption from json.
+func (s *PollOption) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PollOption to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.ID = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "type":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Type.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"type\"")
+			}
+		case "start_time":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.StartTime = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"start_time\"")
+			}
+		case "end_time":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.EndTime = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"end_time\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode PollOption")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfPollOption) {
+					name = jsonFieldsNameOfPollOption[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *PollOption) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PollOption) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -3688,14 +4296,14 @@ func (s *SubmitVoteReqResponses) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *UpdateLinkReq) Encode(e *jx.Encoder) {
+func (s *UpdateBookingLinkReq) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *UpdateLinkReq) encodeFields(e *jx.Encoder) {
+func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	{
 		if s.Name.Set {
 			e.FieldStart("name")
@@ -3718,12 +4326,6 @@ func (s *UpdateLinkReq) encodeFields(e *jx.Encoder) {
 		if s.AutoConfirm.Set {
 			e.FieldStart("auto_confirm")
 			s.AutoConfirm.Encode(e)
-		}
-	}
-	{
-		if s.ShowResults.Set {
-			e.FieldStart("show_results")
-			s.ShowResults.Encode(e)
 		}
 	}
 	{
@@ -3760,22 +4362,21 @@ func (s *UpdateLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateLinkReq = [9]string{
+var jsonFieldsNameOfUpdateBookingLinkReq = [8]string{
 	0: "name",
 	1: "description",
 	2: "status",
 	3: "auto_confirm",
-	4: "show_results",
-	5: "require_email",
-	6: "availability_rules",
-	7: "custom_fields",
-	8: "event_template",
+	4: "require_email",
+	5: "availability_rules",
+	6: "custom_fields",
+	7: "event_template",
 }
 
-// Decode decodes UpdateLinkReq from json.
-func (s *UpdateLinkReq) Decode(d *jx.Decoder) error {
+// Decode decodes UpdateBookingLinkReq from json.
+func (s *UpdateBookingLinkReq) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode UpdateLinkReq to nil")
+		return errors.New("invalid: unable to decode UpdateBookingLinkReq to nil")
 	}
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
@@ -3819,16 +4420,6 @@ func (s *UpdateLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"auto_confirm\"")
-			}
-		case "show_results":
-			if err := func() error {
-				s.ShowResults.Reset()
-				if err := s.ShowResults.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"show_results\"")
 			}
 		case "require_email":
 			if err := func() error {
@@ -3889,21 +4480,180 @@ func (s *UpdateLinkReq) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode UpdateLinkReq")
+		return errors.Wrap(err, "decode UpdateBookingLinkReq")
 	}
 
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *UpdateLinkReq) MarshalJSON() ([]byte, error) {
+func (s *UpdateBookingLinkReq) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *UpdateLinkReq) UnmarshalJSON(data []byte) error {
+func (s *UpdateBookingLinkReq) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *UpdatePollReq) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *UpdatePollReq) encodeFields(e *jx.Encoder) {
+	{
+		if s.Name.Set {
+			e.FieldStart("name")
+			s.Name.Encode(e)
+		}
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.Status.Set {
+			e.FieldStart("status")
+			s.Status.Encode(e)
+		}
+	}
+	{
+		if s.ShowResults.Set {
+			e.FieldStart("show_results")
+			s.ShowResults.Encode(e)
+		}
+	}
+	{
+		if s.RequireEmail.Set {
+			e.FieldStart("require_email")
+			s.RequireEmail.Encode(e)
+		}
+	}
+	{
+		if s.CustomFields != nil {
+			e.FieldStart("custom_fields")
+			e.ArrStart()
+			for _, elem := range s.CustomFields {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfUpdatePollReq = [6]string{
+	0: "name",
+	1: "description",
+	2: "status",
+	3: "show_results",
+	4: "require_email",
+	5: "custom_fields",
+}
+
+// Decode decodes UpdatePollReq from json.
+func (s *UpdatePollReq) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UpdatePollReq to nil")
+	}
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			if err := func() error {
+				s.Name.Reset()
+				if err := s.Name.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "status":
+			if err := func() error {
+				s.Status.Reset()
+				if err := s.Status.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"status\"")
+			}
+		case "show_results":
+			if err := func() error {
+				s.ShowResults.Reset()
+				if err := s.ShowResults.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"show_results\"")
+			}
+		case "require_email":
+			if err := func() error {
+				s.RequireEmail.Reset()
+				if err := s.RequireEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "custom_fields":
+			if err := func() error {
+				s.CustomFields = make([]CustomField, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem CustomField
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.CustomFields = append(s.CustomFields, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"custom_fields\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode UpdatePollReq")
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UpdatePollReq) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UpdatePollReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -4369,8 +5119,8 @@ func (s *VoteTally) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *VoteTally) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("slot_id")
-		e.Int(s.SlotID)
+		e.FieldStart("option_id")
+		e.Int(s.OptionID)
 	}
 	{
 		e.FieldStart("yes_count")
@@ -4387,7 +5137,7 @@ func (s *VoteTally) encodeFields(e *jx.Encoder) {
 }
 
 var jsonFieldsNameOfVoteTally = [4]string{
-	0: "slot_id",
+	0: "option_id",
 	1: "yes_count",
 	2: "no_count",
 	3: "maybe_count",
@@ -4402,17 +5152,17 @@ func (s *VoteTally) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "slot_id":
+		case "option_id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Int()
-				s.SlotID = int(v)
+				s.OptionID = int(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"slot_id\"")
+				return errors.Wrap(err, "decode field \"option_id\"")
 			}
 		case "yes_count":
 			requiredBitSet[0] |= 1 << 1

@@ -237,81 +237,180 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'b': // Prefix: "bookings/"
+			case 'b': // Prefix: "booking"
 
-				if l := len("bookings/"); len(elem) >= l && elem[0:l] == "bookings/" {
+				if l := len("booking"); len(elem) >= l && elem[0:l] == "booking" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "id"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
 				if len(elem) == 0 {
 					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case '-': // Prefix: "-links"
 
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("-links"); len(elem) >= l && elem[0:l] == "-links" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleListBookingLinksRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleCreateBookingLinkRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "DELETE":
+								s.handleDeleteBookingLinkRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleGetBookingLinkRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "PUT":
+								s.handleUpdateBookingLinkRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,PUT")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/bookings"
+
+							if l := len("/bookings"); len(elem) >= l && elem[0:l] == "/bookings" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleGetBookingLinkBookingsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+
+						}
+
+					}
+
+				case 's': // Prefix: "s/"
+
+					if l := len("s/"); len(elem) >= l && elem[0:l] == "s/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
+					if len(elem) == 0 {
 						break
 					}
 					switch elem[0] {
-					case 'a': // Prefix: "approve"
+					case '/': // Prefix: "/"
 
-						if l := len("approve"); len(elem) >= l && elem[0:l] == "approve" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "POST":
-								s.handleApproveBookingRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "POST")
-							}
-
-							return
-						}
-
-					case 'd': // Prefix: "decline"
-
-						if l := len("decline"); len(elem) >= l && elem[0:l] == "decline" {
-							elem = elem[l:]
-						} else {
 							break
 						}
+						switch elem[0] {
+						case 'a': // Prefix: "approve"
 
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "POST":
-								s.handleDeclineBookingRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "POST")
+							if l := len("approve"); len(elem) >= l && elem[0:l] == "approve" {
+								elem = elem[l:]
+							} else {
+								break
 							}
 
-							return
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "POST":
+									s.handleApproveBookingRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "POST")
+								}
+
+								return
+							}
+
+						case 'd': // Prefix: "decline"
+
+							if l := len("decline"); len(elem) >= l && elem[0:l] == "decline" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "POST":
+									s.handleDeclineBookingRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "POST")
+								}
+
+								return
+							}
+
 						}
 
 					}
@@ -372,25 +471,16 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'l': // Prefix: "links"
+			case 'p': // Prefix: "p"
 
-				if l := len("links"); len(elem) >= l && elem[0:l] == "links" {
+				if l := len("p"); len(elem) >= l && elem[0:l] == "p" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleListLinksRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleCreateLinkRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,POST")
-					}
-
-					return
+					break
 				}
 				switch elem[0] {
 				case '/': // Prefix: "/"
@@ -401,31 +491,208 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						break
 					}
 
-					// Param: "id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
+					if len(elem) == 0 {
+						break
 					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
+					switch elem[0] {
+					case 'b': // Prefix: "booking/"
+
+						if l := len("booking/"); len(elem) >= l && elem[0:l] == "booking/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "slug"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "GET":
+								s.handleGetPublicBookingLinkRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'a': // Prefix: "availability"
+
+								if l := len("availability"); len(elem) >= l && elem[0:l] == "availability" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleGetBookingAvailabilityRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
+
+							case 'b': // Prefix: "book"
+
+								if l := len("book"); len(elem) >= l && elem[0:l] == "book" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleCreateBookingRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+							}
+
+						}
+
+					case 'p': // Prefix: "poll/"
+
+						if l := len("poll/"); len(elem) >= l && elem[0:l] == "poll/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "slug"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "GET":
+								s.handleGetPublicPollRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'r': // Prefix: "results"
+
+								if l := len("results"); len(elem) >= l && elem[0:l] == "results" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleGetPollResultsRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
+
+							case 'v': // Prefix: "vote"
+
+								if l := len("vote"); len(elem) >= l && elem[0:l] == "vote" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleSubmitVoteRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+							}
+
+						}
+
+					}
+
+				case 'o': // Prefix: "olls"
+
+					if l := len("olls"); len(elem) >= l && elem[0:l] == "olls" {
+						elem = elem[l:]
+					} else {
+						break
+					}
 
 					if len(elem) == 0 {
 						switch r.Method {
-						case "DELETE":
-							s.handleDeleteLinkRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
 						case "GET":
-							s.handleGetLinkRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "PUT":
-							s.handleUpdateLinkRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
+							s.handleListPollsRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleCreatePollRequest([0]string{}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "DELETE,GET,PUT")
+							s.notAllowed(w, r, "GET,POST")
 						}
 
 						return
@@ -439,106 +706,146 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							break
 						}
 
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
 						if len(elem) == 0 {
-							break
+							switch r.Method {
+							case "DELETE":
+								s.handleDeletePollRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleGetPollRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "PUT":
+								s.handleUpdatePollRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,PUT")
+							}
+
+							return
 						}
 						switch elem[0] {
-						case 'b': // Prefix: "bookings"
+						case '/': // Prefix: "/"
 
-							if l := len("bookings"); len(elem) >= l && elem[0:l] == "bookings" {
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleGetLinkBookingsRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-
-						case 'p': // Prefix: "pick-winner"
-
-							if l := len("pick-winner"); len(elem) >= l && elem[0:l] == "pick-winner" {
-								elem = elem[l:]
-							} else {
 								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "POST":
-									s.handlePickPollWinnerRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "POST")
-								}
-
-								return
-							}
-
-						case 's': // Prefix: "slots"
-
-							if l := len("slots"); len(elem) >= l && elem[0:l] == "slots" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch r.Method {
-								case "GET":
-									s.handleGetLinkSlotsRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								case "POST":
-									s.handleAddSlotRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET,POST")
-								}
-
-								return
 							}
 							switch elem[0] {
-							case '/': // Prefix: "/"
+							case 'o': // Prefix: "options"
 
-								if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								if l := len("options"); len(elem) >= l && elem[0:l] == "options" {
 									elem = elem[l:]
 								} else {
 									break
 								}
 
-								// Param: "slotId"
-								// Leaf parameter, slashes are prohibited
-								idx := strings.IndexByte(elem, '/')
-								if idx >= 0 {
+								if len(elem) == 0 {
+									switch r.Method {
+									case "GET":
+										s.handleGetPollOptionsRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									case "POST":
+										s.handleAddPollOptionRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET,POST")
+									}
+
+									return
+								}
+								switch elem[0] {
+								case '/': // Prefix: "/"
+
+									if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									// Param: "optionId"
+									// Leaf parameter, slashes are prohibited
+									idx := strings.IndexByte(elem, '/')
+									if idx >= 0 {
+										break
+									}
+									args[1] = elem
+									elem = ""
+
+									if len(elem) == 0 {
+										// Leaf node.
+										switch r.Method {
+										case "DELETE":
+											s.handleDeletePollOptionRequest([2]string{
+												args[0],
+												args[1],
+											}, elemIsEscaped, w, r)
+										default:
+											s.notAllowed(w, r, "DELETE")
+										}
+
+										return
+									}
+
+								}
+
+							case 'p': // Prefix: "pick-winner"
+
+								if l := len("pick-winner"); len(elem) >= l && elem[0:l] == "pick-winner" {
+									elem = elem[l:]
+								} else {
 									break
 								}
-								args[1] = elem
-								elem = ""
 
 								if len(elem) == 0 {
 									// Leaf node.
 									switch r.Method {
-									case "DELETE":
-										s.handleDeleteSlotRequest([2]string{
+									case "POST":
+										s.handlePickPollWinnerRequest([1]string{
 											args[0],
-											args[1],
 										}, elemIsEscaped, w, r)
 									default:
-										s.notAllowed(w, r, "DELETE")
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+							case 'v': // Prefix: "votes"
+
+								if l := len("votes"); len(elem) >= l && elem[0:l] == "votes" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleGetPollVotesRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
 									}
 
 									return
@@ -546,162 +853,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 							}
 
-						case 'v': // Prefix: "votes"
-
-							if l := len("votes"); len(elem) >= l && elem[0:l] == "votes" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleGetLinkVotesRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-
-						}
-
-					}
-
-				}
-
-			case 'p': // Prefix: "p/"
-
-				if l := len("p/"); len(elem) >= l && elem[0:l] == "p/" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				// Param: "slug"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleGetPublicLinkRequest([1]string{
-							args[0],
-						}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						break
-					}
-					switch elem[0] {
-					case 'a': // Prefix: "availability"
-
-						if l := len("availability"); len(elem) >= l && elem[0:l] == "availability" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleGetAvailabilityRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
-							}
-
-							return
-						}
-
-					case 'b': // Prefix: "book"
-
-						if l := len("book"); len(elem) >= l && elem[0:l] == "book" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "POST":
-								s.handleCreateBookingRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "POST")
-							}
-
-							return
-						}
-
-					case 'r': // Prefix: "results"
-
-						if l := len("results"); len(elem) >= l && elem[0:l] == "results" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleGetPollResultsRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
-							}
-
-							return
-						}
-
-					case 'v': // Prefix: "vote"
-
-						if l := len("vote"); len(elem) >= l && elem[0:l] == "vote" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "POST":
-								s.handleSubmitVoteRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "POST")
-							}
-
-							return
 						}
 
 					}
@@ -1014,87 +1165,214 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'b': // Prefix: "bookings/"
+			case 'b': // Prefix: "booking"
 
-				if l := len("bookings/"); len(elem) >= l && elem[0:l] == "bookings/" {
+				if l := len("booking"); len(elem) >= l && elem[0:l] == "booking" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "id"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
 				if len(elem) == 0 {
 					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case '-': // Prefix: "-links"
 
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("-links"); len(elem) >= l && elem[0:l] == "-links" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = ListBookingLinksOperation
+							r.summary = "List all booking links"
+							r.operationID = "listBookingLinks"
+							r.operationGroup = ""
+							r.pathPattern = "/booking-links"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = CreateBookingLinkOperation
+							r.summary = "Create a booking link"
+							r.operationID = "createBookingLink"
+							r.operationGroup = ""
+							r.pathPattern = "/booking-links"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "DELETE":
+								r.name = DeleteBookingLinkOperation
+								r.summary = "Delete a booking link"
+								r.operationID = "deleteBookingLink"
+								r.operationGroup = ""
+								r.pathPattern = "/booking-links/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = GetBookingLinkOperation
+								r.summary = "Get booking link details"
+								r.operationID = "getBookingLink"
+								r.operationGroup = ""
+								r.pathPattern = "/booking-links/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "PUT":
+								r.name = UpdateBookingLinkOperation
+								r.summary = "Update a booking link"
+								r.operationID = "updateBookingLink"
+								r.operationGroup = ""
+								r.pathPattern = "/booking-links/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/bookings"
+
+							if l := len("/bookings"); len(elem) >= l && elem[0:l] == "/bookings" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "GET":
+									r.name = GetBookingLinkBookingsOperation
+									r.summary = "Get bookings for a booking link"
+									r.operationID = "getBookingLinkBookings"
+									r.operationGroup = ""
+									r.pathPattern = "/booking-links/{id}/bookings"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+						}
+
+					}
+
+				case 's': // Prefix: "s/"
+
+					if l := len("s/"); len(elem) >= l && elem[0:l] == "s/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
+					if len(elem) == 0 {
 						break
 					}
 					switch elem[0] {
-					case 'a': // Prefix: "approve"
+					case '/': // Prefix: "/"
 
-						if l := len("approve"); len(elem) >= l && elem[0:l] == "approve" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "POST":
-								r.name = ApproveBookingOperation
-								r.summary = "Approve a booking"
-								r.operationID = "approveBooking"
-								r.operationGroup = ""
-								r.pathPattern = "/bookings/{id}/approve"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'd': // Prefix: "decline"
-
-						if l := len("decline"); len(elem) >= l && elem[0:l] == "decline" {
-							elem = elem[l:]
-						} else {
 							break
 						}
+						switch elem[0] {
+						case 'a': // Prefix: "approve"
 
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "POST":
-								r.name = DeclineBookingOperation
-								r.summary = "Decline a booking"
-								r.operationID = "declineBooking"
-								r.operationGroup = ""
-								r.pathPattern = "/bookings/{id}/decline"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
+							if l := len("approve"); len(elem) >= l && elem[0:l] == "approve" {
+								elem = elem[l:]
+							} else {
+								break
 							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "POST":
+									r.name = ApproveBookingOperation
+									r.summary = "Approve a booking"
+									r.operationID = "approveBooking"
+									r.operationGroup = ""
+									r.pathPattern = "/bookings/{id}/approve"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
+						case 'd': // Prefix: "decline"
+
+							if l := len("decline"); len(elem) >= l && elem[0:l] == "decline" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "POST":
+									r.name = DeclineBookingOperation
+									r.summary = "Decline a booking"
+									r.operationID = "declineBooking"
+									r.operationGroup = ""
+									r.pathPattern = "/bookings/{id}/decline"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+
 						}
 
 					}
@@ -1170,37 +1448,16 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'l': // Prefix: "links"
+			case 'p': // Prefix: "p"
 
-				if l := len("links"); len(elem) >= l && elem[0:l] == "links" {
+				if l := len("p"); len(elem) >= l && elem[0:l] == "p" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = ListLinksOperation
-						r.summary = "List all links"
-						r.operationID = "listLinks"
-						r.operationGroup = ""
-						r.pathPattern = "/links"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = CreateLinkOperation
-						r.summary = "Create a link"
-						r.operationID = "createLink"
-						r.operationGroup = ""
-						r.pathPattern = "/links"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
+					break
 				}
 				switch elem[0] {
 				case '/': // Prefix: "/"
@@ -1211,43 +1468,237 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						break
 					}
 
-					// Param: "id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
+					if len(elem) == 0 {
+						break
 					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
+					switch elem[0] {
+					case 'b': // Prefix: "booking/"
+
+						if l := len("booking/"); len(elem) >= l && elem[0:l] == "booking/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "slug"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "GET":
+								r.name = GetPublicBookingLinkOperation
+								r.summary = "Get public booking link info"
+								r.operationID = "getPublicBookingLink"
+								r.operationGroup = ""
+								r.pathPattern = "/p/booking/{slug}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'a': // Prefix: "availability"
+
+								if l := len("availability"); len(elem) >= l && elem[0:l] == "availability" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "GET":
+										r.name = GetBookingAvailabilityOperation
+										r.summary = "Get real-time availability for booking link"
+										r.operationID = "getBookingAvailability"
+										r.operationGroup = ""
+										r.pathPattern = "/p/booking/{slug}/availability"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+							case 'b': // Prefix: "book"
+
+								if l := len("book"); len(elem) >= l && elem[0:l] == "book" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "POST":
+										r.name = CreateBookingOperation
+										r.summary = "Create a booking"
+										r.operationID = "createBooking"
+										r.operationGroup = ""
+										r.pathPattern = "/p/booking/{slug}/book"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+							}
+
+						}
+
+					case 'p': // Prefix: "poll/"
+
+						if l := len("poll/"); len(elem) >= l && elem[0:l] == "poll/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "slug"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "GET":
+								r.name = GetPublicPollOperation
+								r.summary = "Get public poll info"
+								r.operationID = "getPublicPoll"
+								r.operationGroup = ""
+								r.pathPattern = "/p/poll/{slug}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'r': // Prefix: "results"
+
+								if l := len("results"); len(elem) >= l && elem[0:l] == "results" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "GET":
+										r.name = GetPollResultsOperation
+										r.summary = "Get poll results"
+										r.operationID = "getPollResults"
+										r.operationGroup = ""
+										r.pathPattern = "/p/poll/{slug}/results"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+							case 'v': // Prefix: "vote"
+
+								if l := len("vote"); len(elem) >= l && elem[0:l] == "vote" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "POST":
+										r.name = SubmitVoteOperation
+										r.summary = "Submit poll vote"
+										r.operationID = "submitVote"
+										r.operationGroup = ""
+										r.pathPattern = "/p/poll/{slug}/vote"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+							}
+
+						}
+
+					}
+
+				case 'o': // Prefix: "olls"
+
+					if l := len("olls"); len(elem) >= l && elem[0:l] == "olls" {
+						elem = elem[l:]
+					} else {
+						break
+					}
 
 					if len(elem) == 0 {
 						switch method {
-						case "DELETE":
-							r.name = DeleteLinkOperation
-							r.summary = "Delete a link"
-							r.operationID = "deleteLink"
-							r.operationGroup = ""
-							r.pathPattern = "/links/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
 						case "GET":
-							r.name = GetLinkOperation
-							r.summary = "Get link details"
-							r.operationID = "getLink"
+							r.name = ListPollsOperation
+							r.summary = "List all polls"
+							r.operationID = "listPolls"
 							r.operationGroup = ""
-							r.pathPattern = "/links/{id}"
+							r.pathPattern = "/polls"
 							r.args = args
-							r.count = 1
+							r.count = 0
 							return r, true
-						case "PUT":
-							r.name = UpdateLinkOperation
-							r.summary = "Update a link"
-							r.operationID = "updateLink"
+						case "POST":
+							r.name = CreatePollOperation
+							r.summary = "Create a poll"
+							r.operationID = "createPoll"
 							r.operationGroup = ""
-							r.pathPattern = "/links/{id}"
+							r.pathPattern = "/polls"
 							r.args = args
-							r.count = 1
+							r.count = 0
 							return r, true
 						default:
 							return
@@ -1262,121 +1713,174 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							break
 						}
 
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
 						if len(elem) == 0 {
-							break
+							switch method {
+							case "DELETE":
+								r.name = DeletePollOperation
+								r.summary = "Delete a poll"
+								r.operationID = "deletePoll"
+								r.operationGroup = ""
+								r.pathPattern = "/polls/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = GetPollOperation
+								r.summary = "Get poll details"
+								r.operationID = "getPoll"
+								r.operationGroup = ""
+								r.pathPattern = "/polls/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "PUT":
+								r.name = UpdatePollOperation
+								r.summary = "Update a poll"
+								r.operationID = "updatePoll"
+								r.operationGroup = ""
+								r.pathPattern = "/polls/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
 						}
 						switch elem[0] {
-						case 'b': // Prefix: "bookings"
+						case '/': // Prefix: "/"
 
-							if l := len("bookings"); len(elem) >= l && elem[0:l] == "bookings" {
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "GET":
-									r.name = GetLinkBookingsOperation
-									r.summary = "Get bookings for a link"
-									r.operationID = "getLinkBookings"
-									r.operationGroup = ""
-									r.pathPattern = "/links/{id}/bookings"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
-						case 'p': // Prefix: "pick-winner"
-
-							if l := len("pick-winner"); len(elem) >= l && elem[0:l] == "pick-winner" {
-								elem = elem[l:]
-							} else {
 								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "POST":
-									r.name = PickPollWinnerOperation
-									r.summary = "Pick winning slot for poll"
-									r.operationID = "pickPollWinner"
-									r.operationGroup = ""
-									r.pathPattern = "/links/{id}/pick-winner"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
-						case 's': // Prefix: "slots"
-
-							if l := len("slots"); len(elem) >= l && elem[0:l] == "slots" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									r.name = GetLinkSlotsOperation
-									r.summary = "Get slots for a link"
-									r.operationID = "getLinkSlots"
-									r.operationGroup = ""
-									r.pathPattern = "/links/{id}/slots"
-									r.args = args
-									r.count = 1
-									return r, true
-								case "POST":
-									r.name = AddSlotOperation
-									r.summary = "Add a slot to a link"
-									r.operationID = "addSlot"
-									r.operationGroup = ""
-									r.pathPattern = "/links/{id}/slots"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
 							}
 							switch elem[0] {
-							case '/': // Prefix: "/"
+							case 'o': // Prefix: "options"
 
-								if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								if l := len("options"); len(elem) >= l && elem[0:l] == "options" {
 									elem = elem[l:]
 								} else {
 									break
 								}
 
-								// Param: "slotId"
-								// Leaf parameter, slashes are prohibited
-								idx := strings.IndexByte(elem, '/')
-								if idx >= 0 {
+								if len(elem) == 0 {
+									switch method {
+									case "GET":
+										r.name = GetPollOptionsOperation
+										r.summary = "Get options for a poll"
+										r.operationID = "getPollOptions"
+										r.operationGroup = ""
+										r.pathPattern = "/polls/{id}/options"
+										r.args = args
+										r.count = 1
+										return r, true
+									case "POST":
+										r.name = AddPollOptionOperation
+										r.summary = "Add an option to a poll"
+										r.operationID = "addPollOption"
+										r.operationGroup = ""
+										r.pathPattern = "/polls/{id}/options"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+								switch elem[0] {
+								case '/': // Prefix: "/"
+
+									if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									// Param: "optionId"
+									// Leaf parameter, slashes are prohibited
+									idx := strings.IndexByte(elem, '/')
+									if idx >= 0 {
+										break
+									}
+									args[1] = elem
+									elem = ""
+
+									if len(elem) == 0 {
+										// Leaf node.
+										switch method {
+										case "DELETE":
+											r.name = DeletePollOptionOperation
+											r.summary = "Delete an option from a poll"
+											r.operationID = "deletePollOption"
+											r.operationGroup = ""
+											r.pathPattern = "/polls/{id}/options/{optionId}"
+											r.args = args
+											r.count = 2
+											return r, true
+										default:
+											return
+										}
+									}
+
+								}
+
+							case 'p': // Prefix: "pick-winner"
+
+								if l := len("pick-winner"); len(elem) >= l && elem[0:l] == "pick-winner" {
+									elem = elem[l:]
+								} else {
 									break
 								}
-								args[1] = elem
-								elem = ""
 
 								if len(elem) == 0 {
 									// Leaf node.
 									switch method {
-									case "DELETE":
-										r.name = DeleteSlotOperation
-										r.summary = "Delete a slot from a link"
-										r.operationID = "deleteSlot"
+									case "POST":
+										r.name = PickPollWinnerOperation
+										r.summary = "Pick winning option for poll"
+										r.operationID = "pickPollWinner"
 										r.operationGroup = ""
-										r.pathPattern = "/links/{id}/slots/{slotId}"
+										r.pathPattern = "/polls/{id}/pick-winner"
 										r.args = args
-										r.count = 2
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+							case 'v': // Prefix: "votes"
+
+								if l := len("votes"); len(elem) >= l && elem[0:l] == "votes" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "GET":
+										r.name = GetPollVotesOperation
+										r.summary = "Get votes for a poll"
+										r.operationID = "getPollVotes"
+										r.operationGroup = ""
+										r.pathPattern = "/polls/{id}/votes"
+										r.args = args
+										r.count = 1
 										return r, true
 									default:
 										return
@@ -1385,180 +1889,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 							}
 
-						case 'v': // Prefix: "votes"
-
-							if l := len("votes"); len(elem) >= l && elem[0:l] == "votes" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "GET":
-									r.name = GetLinkVotesOperation
-									r.summary = "Get votes for a poll"
-									r.operationID = "getLinkVotes"
-									r.operationGroup = ""
-									r.pathPattern = "/links/{id}/votes"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
-						}
-
-					}
-
-				}
-
-			case 'p': // Prefix: "p/"
-
-				if l := len("p/"); len(elem) >= l && elem[0:l] == "p/" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				// Param: "slug"
-				// Match until "/"
-				idx := strings.IndexByte(elem, '/')
-				if idx < 0 {
-					idx = len(elem)
-				}
-				args[0] = elem[:idx]
-				elem = elem[idx:]
-
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = GetPublicLinkOperation
-						r.summary = "Get public link info"
-						r.operationID = "getPublicLink"
-						r.operationGroup = ""
-						r.pathPattern = "/p/{slug}"
-						r.args = args
-						r.count = 1
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						break
-					}
-					switch elem[0] {
-					case 'a': // Prefix: "availability"
-
-						if l := len("availability"); len(elem) >= l && elem[0:l] == "availability" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "GET":
-								r.name = GetAvailabilityOperation
-								r.summary = "Get real-time availability"
-								r.operationID = "getAvailability"
-								r.operationGroup = ""
-								r.pathPattern = "/p/{slug}/availability"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'b': // Prefix: "book"
-
-						if l := len("book"); len(elem) >= l && elem[0:l] == "book" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "POST":
-								r.name = CreateBookingOperation
-								r.summary = "Create a booking"
-								r.operationID = "createBooking"
-								r.operationGroup = ""
-								r.pathPattern = "/p/{slug}/book"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'r': // Prefix: "results"
-
-						if l := len("results"); len(elem) >= l && elem[0:l] == "results" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "GET":
-								r.name = GetPollResultsOperation
-								r.summary = "Get poll results"
-								r.operationID = "getPollResults"
-								r.operationGroup = ""
-								r.pathPattern = "/p/{slug}/results"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'v': // Prefix: "vote"
-
-						if l := len("vote"); len(elem) >= l && elem[0:l] == "vote" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "POST":
-								r.name = SubmitVoteOperation
-								r.summary = "Submit poll vote"
-								r.operationID = "submitVote"
-								r.operationGroup = ""
-								r.pathPattern = "/p/{slug}/vote"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
 						}
 
 					}
