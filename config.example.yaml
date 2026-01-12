@@ -1,0 +1,20 @@
+# config.example.yaml
+server:
+  port: 8080
+  base_url: http://localhost:8080
+
+database:
+  path: ./data/meet-mesh.db
+
+oidc:
+  issuer: https://auth.example.com
+  client_id: meet-mesh
+  client_secret: ${OIDC_CLIENT_SECRET}
+  redirect_uri: http://localhost:8080/api/v1/auth/callback
+
+smtp:
+  host: smtp.example.com
+  port: 587
+  username: meet-mesh@example.com
+  password: ${SMTP_PASSWORD}
+  from: "Meet Mesh <meet-mesh@example.com>"
