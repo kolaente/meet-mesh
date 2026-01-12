@@ -3,19 +3,15 @@ package api
 
 import (
 	"context"
-	"net/http"
 
-	"github.com/kolaente/meet-mesh/api/gen"
+	gen "github.com/kolaente/meet-mesh/api/gen"
 )
 
 // ApproveViaEmail approves booking via email link
-func (h *Handler) ApproveViaEmail(ctx context.Context) (*gen.ApproveViaEmailOK, error) {
+func (h *Handler) ApproveViaEmail(ctx context.Context) (gen.ApproveViaEmailRes, error) {
 	bookingID, ok := GetBookingID(ctx)
 	if !ok {
-		return nil, &gen.ErrorStatusCode{
-			StatusCode: http.StatusBadRequest,
-			Response:   gen.Error{Message: "Invalid token"},
-		}
+		return &gen.Error{Message: "Invalid token"}, nil
 	}
 
 	var booking Booking
@@ -53,13 +49,10 @@ func (h *Handler) ApproveViaEmail(ctx context.Context) (*gen.ApproveViaEmailOK, 
 }
 
 // DeclineViaEmail declines booking via email link
-func (h *Handler) DeclineViaEmail(ctx context.Context) (*gen.DeclineViaEmailOK, error) {
+func (h *Handler) DeclineViaEmail(ctx context.Context) (gen.DeclineViaEmailRes, error) {
 	bookingID, ok := GetBookingID(ctx)
 	if !ok {
-		return nil, &gen.ErrorStatusCode{
-			StatusCode: http.StatusBadRequest,
-			Response:   gen.Error{Message: "Invalid token"},
-		}
+		return &gen.Error{Message: "Invalid token"}, nil
 	}
 
 	var booking Booking
