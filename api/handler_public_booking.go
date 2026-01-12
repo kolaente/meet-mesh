@@ -17,7 +17,7 @@ func (h *Handler) GetPublicBookingLink(ctx context.Context, params gen.GetPublic
 	var link BookingLink
 	if err := h.db.Where("slug = ? AND status = ?", params.Slug, LinkStatusActive).First(&link).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return &gen.GetPublicBookingLinkNotFound{Message: "Booking link not found"}, nil
+			return &gen.Error{Message: "Booking link not found"}, nil
 		}
 		return nil, err
 	}
@@ -115,14 +115,14 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 	// Verify slot exists and is available
 	var slot Slot
 	if err := h.db.Where("id = ? AND booking_link_id = ?", req.SlotID, link.ID).First(&slot).Error; err != nil {
-		return &gen.CreateBookingConflict{Message: "Slot not available"}, nil
+		return &gen.Error{Message: "Slot not available"}, nil
 	}
 
 	// Check CalDAV availability
 	if h.caldav != nil {
 		busyTimes, err := h.caldav.GetBusyTimes(ctx, link.UserID, slot.StartTime, slot.EndTime)
 		if err == nil && len(busyTimes) > 0 {
-			return &gen.CreateBookingConflict{Message: "Slot no longer available"}, nil
+			return &gen.Error{Message: "Slot no longer available"}, nil
 		}
 	}
 

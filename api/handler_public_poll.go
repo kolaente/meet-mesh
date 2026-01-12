@@ -17,7 +17,7 @@ func (h *Handler) GetPublicPoll(ctx context.Context, params gen.GetPublicPollPar
 	var poll Poll
 	if err := h.db.Preload("PollOptions").Where("slug = ? AND status = ?", params.Slug, LinkStatusActive).First(&poll).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return &gen.GetPublicPollNotFound{Message: "Poll not found"}, nil
+			return &gen.Error{Message: "Poll not found"}, nil
 		}
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (h *Handler) GetPollResults(ctx context.Context, params gen.GetPollResultsP
 	}
 
 	if !poll.ShowResults {
-		return &gen.GetPollResultsForbidden{Message: "Results not public"}, nil
+		return &gen.Error{Message: "Results not public"}, nil
 	}
 
 	var votes []Vote

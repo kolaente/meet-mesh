@@ -15,7 +15,7 @@ func (h *Handler) ApproveViaEmail(ctx context.Context) (gen.ApproveViaEmailRes, 
 	}
 
 	var booking Booking
-	if err := h.db.Preload("Link").Preload("Slot").First(&booking, bookingID).Error; err != nil {
+	if err := h.db.Preload("BookingLink").Preload("Slot").First(&booking, bookingID).Error; err != nil {
 		return nil, err
 	}
 
@@ -35,12 +35,12 @@ func (h *Handler) ApproveViaEmail(ctx context.Context) (gen.ApproveViaEmailRes, 
 
 	// Send confirmation email
 	if h.mailer != nil {
-		h.mailer.SendBookingApproved(&booking, &booking.Link)
+		h.mailer.SendBookingApproved(&booking, &booking.BookingLink)
 	}
 
 	// Create calendar event
 	if h.caldav != nil {
-		h.caldav.CreateEvent(ctx, booking.Link.UserID, &booking, &booking.Slot, booking.Link.EventTemplate)
+		h.caldav.CreateBookingEvent(ctx, booking.BookingLink.UserID, &booking, &booking.Slot, booking.BookingLink.EventTemplate)
 	}
 
 	return &gen.ApproveViaEmailOK{
@@ -56,7 +56,7 @@ func (h *Handler) DeclineViaEmail(ctx context.Context) (gen.DeclineViaEmailRes, 
 	}
 
 	var booking Booking
-	if err := h.db.Preload("Link").Preload("Slot").First(&booking, bookingID).Error; err != nil {
+	if err := h.db.Preload("BookingLink").Preload("Slot").First(&booking, bookingID).Error; err != nil {
 		return nil, err
 	}
 
@@ -76,7 +76,7 @@ func (h *Handler) DeclineViaEmail(ctx context.Context) (gen.DeclineViaEmailRes, 
 
 	// Send decline email
 	if h.mailer != nil {
-		h.mailer.SendBookingDeclined(&booking, &booking.Link)
+		h.mailer.SendBookingDeclined(&booking, &booking.BookingLink)
 	}
 
 	return &gen.DeclineViaEmailOK{
