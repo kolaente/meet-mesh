@@ -78,7 +78,7 @@ type EventTemplate struct {
 // GORM Models
 type User struct {
 	ID        uint      `gorm:"primaryKey"`
-	OIDCSub   string    `gorm:"uniqueIndex;not null"`
+	OIDCSub   string    `gorm:"column:oidc_sub;uniqueIndex;not null"`
 	Email     string    `gorm:"not null"`
 	Name      string
 	CreatedAt time.Time
