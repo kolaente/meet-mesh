@@ -135,7 +135,7 @@ type PollOption struct {
 
 type Slot struct {
 	ID            uint      `gorm:"primaryKey"`
-	BookingLinkID uint      `gorm:"index;not null"`
+	BookingLinkID uint      `gorm:"index;not null;default:0"`
 	Type          SlotType  `gorm:"not null"`
 	StartTime     time.Time `gorm:"not null"`
 	EndTime       time.Time `gorm:"not null"`
@@ -145,7 +145,7 @@ type Slot struct {
 
 type Booking struct {
 	ID            uint              `gorm:"primaryKey"`
-	BookingLinkID uint              `gorm:"index;not null"`
+	BookingLinkID uint              `gorm:"index;not null;default:0"`
 	SlotID        uint              `gorm:"index;not null"`
 	GuestEmail    string            `gorm:"not null"`
 	GuestName     string
@@ -161,7 +161,7 @@ type Booking struct {
 
 type Vote struct {
 	ID           uint                      `gorm:"primaryKey"`
-	PollID       uint                      `gorm:"index;not null"`
+	PollID       uint                      `gorm:"index;not null;default:0"`
 	GuestEmail   string
 	GuestName    string
 	Responses    map[uint]VoteResponseType `gorm:"serializer:json;not null"`

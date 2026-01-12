@@ -254,9 +254,12 @@ func main() {
 
 	fmt.Printf("Found %d slots to migrate\n", len(oldSlots))
 
+	var slotsToDelete []uint
+	slotsUpdated := 0
+
 	for _, oldSlot := range oldSlots {
 		if newPollID, ok := linkToPoll[oldSlot.LinkID]; ok {
-			// This slot belongs to a poll - create PollOption
+			// This slot belongs to a poll - create PollOption and mark slot for deletion
 			newOption := PollOption{
 				PollID:    newPollID,
 				Type:      oldSlot.Type,
@@ -269,22 +272,28 @@ func main() {
 				continue
 			}
 			slotToPollOption[oldSlot.ID] = newOption.ID
+			slotsToDelete = append(slotsToDelete, oldSlot.ID)
 			fmt.Printf("  Migrated slot to poll option: %d -> %d\n", oldSlot.ID, newOption.ID)
 		} else if newLinkID, ok := linkToBookingLink[oldSlot.LinkID]; ok {
-			// This slot belongs to a booking link - update to use new foreign key
-			newSlot := Slot{
-				BookingLinkID: newLinkID,
-				Type:          oldSlot.Type,
-				StartTime:     oldSlot.StartTime,
-				EndTime:       oldSlot.EndTime,
-				Manual:        oldSlot.Manual,
-				CreatedAt:     oldSlot.CreatedAt,
-			}
-			if err := db.Create(&newSlot).Error; err != nil {
-				log.Printf("Warning: Failed to create slot: %v", err)
+			// This slot belongs to a booking link - update existing slot with new foreign key
+			result := db.Exec("UPDATE slots SET booking_link_id = ? WHERE id = ?", newLinkID, oldSlot.ID)
+			if result.Error != nil {
+				log.Printf("Warning: Failed to update slot %d: %v", oldSlot.ID, result.Error)
 				continue
 			}
-			fmt.Printf("  Migrated slot to booking link: %d -> %d\n", oldSlot.ID, newSlot.ID)
+			slotsUpdated++
+			fmt.Printf("  Updated slot %d with booking_link_id %d\n", oldSlot.ID, newLinkID)
+		}
+	}
+
+	// Delete slots that were converted to poll options
+	if len(slotsToDelete) > 0 {
+		fmt.Printf("Deleting %d slots that were converted to poll options...\n", len(slotsToDelete))
+		result := db.Exec("DELETE FROM slots WHERE id IN ?", slotsToDelete)
+		if result.Error != nil {
+			log.Printf("Warning: Failed to delete old poll slots: %v", result.Error)
+		} else {
+			fmt.Printf("  Deleted %d slots\n", result.RowsAffected)
 		}
 	}
 
@@ -315,8 +324,10 @@ func main() {
 	fmt.Printf("  Booking links created: %d\n", len(linkToBookingLink))
 	fmt.Printf("  Polls created: %d\n", len(linkToPoll))
 	fmt.Printf("  Poll options created: %d\n", len(slotToPollOption))
+	fmt.Printf("  Slots updated with booking_link_id: %d\n", slotsUpdated)
+	fmt.Printf("  Old poll slots deleted: %d\n", len(slotsToDelete))
 	fmt.Println("\nNote: You can now safely drop the old 'links' table after verifying the migration.")
-	fmt.Println("      You may also need to drop the old 'link_id' columns from bookings and votes tables.")
+	fmt.Println("      You may also need to drop the old 'link_id' columns from bookings, votes, and slots tables.")
 }
 
 func tableExists(db *gorm.DB, tableName string) bool {
