@@ -6,6 +6,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -65,21 +67,25 @@ type UserClaims struct {
 func (a *AuthService) Exchange(ctx context.Context, code string) (*UserClaims, error) {
 	token, err := a.oauth2Config.Exchange(ctx, code)
 	if err != nil {
+		log.Printf("OAuth token exchange failed: %v", err)
 		return nil, err
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		return nil, err
+		log.Printf("No id_token in OAuth response")
+		return nil, errors.New("no id_token in response")
 	}
 
 	idToken, err := a.verifier.Verify(ctx, rawIDToken)
 	if err != nil {
+		log.Printf("ID token verification failed: %v", err)
 		return nil, err
 	}
 
 	var claims UserClaims
 	if err := idToken.Claims(&claims); err != nil {
+		log.Printf("Failed to extract claims: %v", err)
 		return nil, err
 	}
 
@@ -106,7 +112,7 @@ func (a *AuthService) CreateSessionCookie(session *Session) (*http.Cookie, error
 		Value:    encoded,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   false, // TODO: Make configurable for production
 		SameSite: http.SameSiteLaxMode,
 		Expires:  session.ExpiresAt,
 	}, nil
