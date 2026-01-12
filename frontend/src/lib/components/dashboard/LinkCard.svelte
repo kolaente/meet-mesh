@@ -20,12 +20,12 @@
 </script>
 
 <a href="/links/{link.id}" class="block">
-	<Card class="hover:shadow-md transition-shadow cursor-pointer">
+	<Card class="hover:shadow-md transition-shadow cursor-pointer active:shadow-sm">
 		{#snippet children()}
-			<div class="space-y-3">
+			<div class="space-y-2 sm:space-y-3">
 				<div class="flex items-start justify-between gap-2">
-					<h3 class="font-medium text-gray-900 truncate">{link.name}</h3>
-					<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full {link.type === 1 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
+					<h3 class="font-medium text-gray-900 truncate text-sm sm:text-base">{link.name}</h3>
+					<span class="inline-flex items-center flex-shrink-0 px-2 py-0.5 text-xs font-medium rounded-full {link.type === 1 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
 						{typeLabels[link.type]}
 					</span>
 				</div>
@@ -34,7 +34,7 @@
 					<Badge variant={statusVariant} size="sm" />
 				</div>
 
-				<div class="text-sm text-gray-500 truncate">
+				<div class="text-xs sm:text-sm text-gray-500 truncate">
 					<span class="font-mono">/p/{link.slug}</span>
 				</div>
 			</div>

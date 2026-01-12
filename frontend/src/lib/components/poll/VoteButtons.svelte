@@ -35,7 +35,7 @@
 
 	function getButtonClasses(optionValue: VoteResponse): string {
 		const isSelected = value === optionValue;
-		const base = 'px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
+		const base = 'px-3 sm:px-4 py-2.5 sm:py-2 min-h-[44px] text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-[0.98]';
 
 		if (isSelected) {
 			switch (optionValue) {
@@ -54,7 +54,7 @@
 </script>
 
 <div
-	class="inline-flex rounded-[var(--radius-md)] shadow-sm {className}"
+	class="inline-flex w-full sm:w-auto rounded-[var(--radius-md)] shadow-sm {className}"
 	role="group"
 	aria-label="Vote selection"
 >
@@ -63,7 +63,7 @@
 		<button
 			type="button"
 			onclick={() => handleClick(option.value)}
-			class={getButtonClasses(option.value)}
+			class="{getButtonClasses(option.value)} flex-1 sm:flex-none"
 			class:border-l={!isSelected && option.value !== 1}
 			class:border-y={!isSelected}
 			class:border-r={!isSelected && option.value === 3}
