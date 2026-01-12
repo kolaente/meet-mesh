@@ -4,3 +4,4 @@ api/embedded/dist/
 /meet-mesh
 /config.yaml
 /data
+*.db
