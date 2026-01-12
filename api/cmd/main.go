@@ -50,8 +50,8 @@ func main() {
 	// Create security handler
 	security := api.NewSecurityHandler(db, auth)
 
-	// Create server
-	server, err := gen.NewServer(handler, security)
+	// Create server with /api prefix so ogen strips it before routing
+	server, err := gen.NewServer(handler, security, gen.WithPathPrefix("/api"))
 	if err != nil {
 		log.Fatalf("Failed to create server: %v", err)
 	}
