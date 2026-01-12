@@ -1,0 +1,923 @@
+openapi: 3.0.3
+info:
+  title: Meet Mesh API
+  version: 1.0.0
+  description: Self-hosted scheduling API
+
+servers:
+  - url: /api/v1
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+    actionToken:
+      type: apiKey
+      in: query
+      name: token
+
+  schemas:
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    LinkType:
+      type: integer
+      enum: [1, 2]
+      description: "1=booking, 2=poll"
+
+    SlotType:
+      type: integer
+      enum: [1, 2, 3]
+      description: "1=time, 2=full_day, 3=multi_day"
+
+    LinkStatus:
+      type: integer
+      enum: [1, 2]
+      description: "1=active, 2=closed"
+
+    BookingStatus:
+      type: integer
+      enum: [1, 2, 3]
+      description: "1=pending, 2=confirmed, 3=declined"
+
+    CustomFieldType:
+      type: integer
+      enum: [1, 2, 3, 4, 5]
+      description: "1=text, 2=email, 3=phone, 4=select, 5=textarea"
+
+    VoteResponse:
+      type: integer
+      enum: [1, 2, 3]
+      description: "1=yes, 2=no, 3=maybe"
+
+    AvailabilityRule:
+      type: object
+      required: [days_of_week, start_time, end_time]
+      properties:
+        days_of_week:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+        start_time:
+          type: string
+          pattern: "^[0-2][0-9]:[0-5][0-9]$"
+        end_time:
+          type: string
+          pattern: "^[0-2][0-9]:[0-5][0-9]$"
+
+    CustomField:
+      type: object
+      required: [name, label, type, required]
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        type:
+          $ref: '#/components/schemas/CustomFieldType'
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+
+    EventTemplate:
+      type: object
+      properties:
+        title_template:
+          type: string
+        description_template:
+          type: string
+        location:
+          type: string
+
+    User:
+      type: object
+      required: [id, email]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+
+    CalendarConnection:
+      type: object
+      required: [id, server_url, username]
+      properties:
+        id:
+          type: integer
+        server_url:
+          type: string
+        username:
+          type: string
+        calendar_urls:
+          type: array
+          items:
+            type: string
+        write_url:
+          type: string
+
+    Link:
+      type: object
+      required: [id, slug, type, name, status]
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        type:
+          $ref: '#/components/schemas/LinkType'
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/LinkStatus'
+        auto_confirm:
+          type: boolean
+        show_results:
+          type: boolean
+        require_email:
+          type: boolean
+        availability_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailabilityRule'
+        custom_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+        event_template:
+          $ref: '#/components/schemas/EventTemplate'
+        created_at:
+          type: string
+          format: date-time
+
+    Slot:
+      type: object
+      required: [id, type, start_time, end_time]
+      properties:
+        id:
+          type: integer
+        type:
+          $ref: '#/components/schemas/SlotType'
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+
+    Booking:
+      type: object
+      required: [id, slot, guest_email, status]
+      properties:
+        id:
+          type: integer
+        slot:
+          $ref: '#/components/schemas/Slot'
+        guest_email:
+          type: string
+        guest_name:
+          type: string
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        custom_fields:
+          type: object
+          additionalProperties:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Vote:
+      type: object
+      required: [id, responses]
+      properties:
+        id:
+          type: integer
+        guest_name:
+          type: string
+        guest_email:
+          type: string
+        responses:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/VoteResponse'
+        custom_fields:
+          type: object
+          additionalProperties:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+
+    VoteTally:
+      type: object
+      required: [slot_id, yes_count, no_count, maybe_count]
+      properties:
+        slot_id:
+          type: integer
+        yes_count:
+          type: integer
+        no_count:
+          type: integer
+        maybe_count:
+          type: integer
+
+paths:
+  /auth/login:
+    get:
+      operationId: initiateLogin
+      summary: Redirect to OIDC provider
+      responses:
+        '302':
+          description: Redirect to OIDC provider
+
+  /auth/callback:
+    get:
+      operationId: authCallback
+      summary: Handle OIDC callback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to dashboard
+        '400':
+          description: Invalid callback
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: Clear session
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get current user
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /calendars:
+    get:
+      operationId: listCalendars
+      summary: List calendar connections
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Calendar connections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarConnection'
+
+    post:
+      operationId: addCalendar
+      summary: Add calendar connection
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [server_url, username, password]
+              properties:
+                server_url:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                calendar_urls:
+                  type: array
+                  items:
+                    type: string
+                write_url:
+                  type: string
+      responses:
+        '201':
+          description: Calendar added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarConnection'
+
+  /calendars/{id}:
+    delete:
+      operationId: removeCalendar
+      summary: Remove calendar connection
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Calendar removed
+
+  /links:
+    get:
+      operationId: listLinks
+      summary: List all links
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+
+    post:
+      operationId: createLink
+      summary: Create a link
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, name]
+              properties:
+                type:
+                  $ref: '#/components/schemas/LinkType'
+                name:
+                  type: string
+                description:
+                  type: string
+                auto_confirm:
+                  type: boolean
+                show_results:
+                  type: boolean
+                require_email:
+                  type: boolean
+                availability_rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AvailabilityRule'
+                custom_fields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomField'
+                event_template:
+                  $ref: '#/components/schemas/EventTemplate'
+      responses:
+        '201':
+          description: Link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+
+  /links/{id}:
+    get:
+      operationId: getLink
+      summary: Get link details
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Link details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+
+    put:
+      operationId: updateLink
+      summary: Update a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                status:
+                  $ref: '#/components/schemas/LinkStatus'
+                auto_confirm:
+                  type: boolean
+                show_results:
+                  type: boolean
+                require_email:
+                  type: boolean
+                availability_rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AvailabilityRule'
+                custom_fields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomField'
+                event_template:
+                  $ref: '#/components/schemas/EventTemplate'
+      responses:
+        '200':
+          description: Link updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+
+    delete:
+      operationId: deleteLink
+      summary: Delete a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Link deleted
+
+  /links/{id}/slots:
+    get:
+      operationId: getLinkSlots
+      summary: Get slots for a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slot'
+
+    post:
+      operationId: addSlot
+      summary: Add a slot to a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, start_time, end_time]
+              properties:
+                type:
+                  $ref: '#/components/schemas/SlotType'
+                start_time:
+                  type: string
+                  format: date-time
+                end_time:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Slot added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+
+  /links/{id}/bookings:
+    get:
+      operationId: getLinkBookings
+      summary: Get bookings for a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+
+  /links/{id}/votes:
+    get:
+      operationId: getLinkVotes
+      summary: Get votes for a poll
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Votes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vote'
+
+  /links/{id}/pick-winner:
+    post:
+      operationId: pickPollWinner
+      summary: Pick winning slot for poll
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slot_id]
+              properties:
+                slot_id:
+                  type: integer
+      responses:
+        '200':
+          description: Winner picked
+
+  /bookings/{id}/approve:
+    post:
+      operationId: approveBooking
+      summary: Approve a booking
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Booking approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
+  /bookings/{id}/decline:
+    post:
+      operationId: declineBooking
+      summary: Decline a booking
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Booking declined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
+  /p/{slug}:
+    get:
+      operationId: getPublicLink
+      summary: Get public link info
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Link info
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [type, name, slots]
+                properties:
+                  type:
+                    $ref: '#/components/schemas/LinkType'
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  custom_fields:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomField'
+                  slots:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Slot'
+                  show_results:
+                    type: boolean
+                  require_email:
+                    type: boolean
+        '404':
+          description: Link not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /p/{slug}/availability:
+    get:
+      operationId: getAvailability
+      summary: Get real-time availability
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Available slots
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [slots]
+                properties:
+                  slots:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Slot'
+
+  /p/{slug}/book:
+    post:
+      operationId: createBooking
+      summary: Create a booking
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slot_id, guest_email]
+              properties:
+                slot_id:
+                  type: integer
+                guest_email:
+                  type: string
+                  format: email
+                guest_name:
+                  type: string
+                custom_fields:
+                  type: object
+                  additionalProperties:
+                    type: string
+      responses:
+        '201':
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    $ref: '#/components/schemas/BookingStatus'
+                  message:
+                    type: string
+        '409':
+          description: Slot unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /p/{slug}/vote:
+    post:
+      operationId: submitVote
+      summary: Submit poll vote
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [responses]
+              properties:
+                guest_name:
+                  type: string
+                guest_email:
+                  type: string
+                  format: email
+                responses:
+                  type: object
+                  additionalProperties:
+                    $ref: '#/components/schemas/VoteResponse'
+                custom_fields:
+                  type: object
+                  additionalProperties:
+                    type: string
+      responses:
+        '201':
+          description: Vote submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+
+  /p/{slug}/results:
+    get:
+      operationId: getPollResults
+      summary: Get poll results
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Poll results
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [tally]
+                properties:
+                  tally:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VoteTally'
+                  votes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vote'
+        '403':
+          description: Results not public
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /actions/approve:
+    get:
+      operationId: approveViaEmail
+      summary: Approve booking via email link
+      security:
+        - actionToken: []
+      responses:
+        '200':
+          description: Booking approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /actions/decline:
+    get:
+      operationId: declineViaEmail
+      summary: Decline booking via email link
+      security:
+        - actionToken: []
+      responses:
+        '200':
+          description: Booking declined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
