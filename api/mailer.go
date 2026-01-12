@@ -50,7 +50,7 @@ func (m *Mailer) renderTemplate(name string, data any) string {
 }
 
 // SendBookingConfirmation sends confirmation to guest
-func (m *Mailer) SendBookingConfirmation(booking *Booking, link *Link) error {
+func (m *Mailer) SendBookingConfirmation(booking *Booking, link *BookingLink) error {
 	body := m.renderTemplate("booking_confirmed_guest", map[string]any{
 		"LinkName":  link.Name,
 		"GuestName": booking.GuestName,
@@ -60,7 +60,7 @@ func (m *Mailer) SendBookingConfirmation(booking *Booking, link *Link) error {
 }
 
 // SendBookingPending sends pending notification to organizer
-func (m *Mailer) SendBookingPending(booking *Booking, link *Link) error {
+func (m *Mailer) SendBookingPending(booking *Booking, link *BookingLink) error {
 	approveURL := fmt.Sprintf("%s/api/actions/approve?token=%s", m.baseURL, booking.ActionToken)
 	declineURL := fmt.Sprintf("%s/api/actions/decline?token=%s", m.baseURL, booking.ActionToken)
 
@@ -78,7 +78,7 @@ func (m *Mailer) SendBookingPending(booking *Booking, link *Link) error {
 }
 
 // SendBookingApproved sends approval notification to guest
-func (m *Mailer) SendBookingApproved(booking *Booking, link *Link) error {
+func (m *Mailer) SendBookingApproved(booking *Booking, link *BookingLink) error {
 	body := m.renderTemplate("booking_approved", map[string]any{
 		"LinkName":  link.Name,
 		"GuestName": booking.GuestName,
@@ -88,7 +88,7 @@ func (m *Mailer) SendBookingApproved(booking *Booking, link *Link) error {
 }
 
 // SendBookingDeclined sends decline notification to guest
-func (m *Mailer) SendBookingDeclined(booking *Booking, link *Link) error {
+func (m *Mailer) SendBookingDeclined(booking *Booking, link *BookingLink) error {
 	body := m.renderTemplate("booking_declined", map[string]any{
 		"LinkName":  link.Name,
 		"GuestName": booking.GuestName,
@@ -98,15 +98,15 @@ func (m *Mailer) SendBookingDeclined(booking *Booking, link *Link) error {
 }
 
 // SendPollWinner sends winner notification to all voters
-func (m *Mailer) SendPollWinner(link *Link, slot *Slot, votes []Vote) error {
+func (m *Mailer) SendPollWinner(poll *Poll, option *PollOption, votes []Vote) error {
 	body := m.renderTemplate("poll_winner", map[string]any{
-		"LinkName": link.Name,
-		"Time":     slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName": poll.Name,
+		"Time":     option.StartTime.Format("Monday, January 2 at 3:04 PM"),
 	})
 
 	for _, vote := range votes {
 		if vote.GuestEmail != "" {
-			m.send(vote.GuestEmail, "Date Selected: "+link.Name, body)
+			m.send(vote.GuestEmail, "Date Selected: "+poll.Name, body)
 		}
 	}
 	return nil
