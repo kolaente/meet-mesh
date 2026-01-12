@@ -107,62 +107,116 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/links": {
+    "/booking-links": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List all links */
-        get: operations["listLinks"];
+        /** List all booking links */
+        get: operations["listBookingLinks"];
         put?: never;
-        /** Create a link */
-        post: operations["createLink"];
+        /** Create a booking link */
+        post: operations["createBookingLink"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/links/{id}": {
+    "/booking-links/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get link details */
-        get: operations["getLink"];
-        /** Update a link */
-        put: operations["updateLink"];
+        /** Get booking link details */
+        get: operations["getBookingLink"];
+        /** Update a booking link */
+        put: operations["updateBookingLink"];
         post?: never;
-        /** Delete a link */
-        delete: operations["deleteLink"];
+        /** Delete a booking link */
+        delete: operations["deleteBookingLink"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/links/{id}/slots": {
+    "/booking-links/{id}/bookings": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get slots for a link */
-        get: operations["getLinkSlots"];
+        /** Get bookings for a booking link */
+        get: operations["getBookingLinkBookings"];
         put?: never;
-        /** Add a slot to a link */
-        post: operations["addSlot"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/links/{id}/slots/{slotId}": {
+    "/polls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all polls */
+        get: operations["listPolls"];
+        put?: never;
+        /** Create a poll */
+        post: operations["createPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/polls/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get poll details */
+        get: operations["getPoll"];
+        /** Update a poll */
+        put: operations["updatePoll"];
+        post?: never;
+        /** Delete a poll */
+        delete: operations["deletePoll"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/polls/{id}/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get options for a poll */
+        get: operations["getPollOptions"];
+        put?: never;
+        /** Add an option to a poll */
+        post: operations["addPollOption"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/polls/{id}/options/{optionId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -172,31 +226,14 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Delete a slot from a link */
-        delete: operations["deleteSlot"];
+        /** Delete an option from a poll */
+        delete: operations["deletePollOption"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/links/{id}/bookings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get bookings for a link */
-        get: operations["getLinkBookings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/links/{id}/votes": {
+    "/polls/{id}/votes": {
         parameters: {
             query?: never;
             header?: never;
@@ -204,7 +241,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get votes for a poll */
-        get: operations["getLinkVotes"];
+        get: operations["getPollVotes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -213,7 +250,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/links/{id}/pick-winner": {
+    "/polls/{id}/pick-winner": {
         parameters: {
             query?: never;
             header?: never;
@@ -222,7 +259,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Pick winning slot for poll */
+        /** Pick winning option for poll */
         post: operations["pickPollWinner"];
         delete?: never;
         options?: never;
@@ -264,15 +301,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/p/{slug}": {
+    "/p/booking/{slug}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get public link info */
-        get: operations["getPublicLink"];
+        /** Get public booking link info */
+        get: operations["getPublicBookingLink"];
         put?: never;
         post?: never;
         delete?: never;
@@ -281,15 +318,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/p/{slug}/availability": {
+    "/p/booking/{slug}/availability": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get real-time availability */
-        get: operations["getAvailability"];
+        /** Get real-time availability for booking link */
+        get: operations["getBookingAvailability"];
         put?: never;
         post?: never;
         delete?: never;
@@ -298,7 +335,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/p/{slug}/book": {
+    "/p/booking/{slug}/book": {
         parameters: {
             query?: never;
             header?: never;
@@ -315,7 +352,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/p/{slug}/vote": {
+    "/p/poll/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get public poll info */
+        get: operations["getPublicPoll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/p/poll/{slug}/vote": {
         parameters: {
             query?: never;
             header?: never;
@@ -332,7 +386,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/p/{slug}/results": {
+    "/p/poll/{slug}/results": {
         parameters: {
             query?: never;
             header?: never;
@@ -391,11 +445,6 @@ export interface components {
             message: string;
         };
         /**
-         * @description 1=booking, 2=poll
-         * @enum {integer}
-         */
-        LinkType: 1 | 2;
-        /**
          * @description 1=time, 2=full_day, 3=multi_day
          * @enum {integer}
          */
@@ -449,21 +498,39 @@ export interface components {
             calendar_urls?: string[];
             write_url?: string;
         };
-        Link: {
+        BookingLink: {
             id: number;
             slug: string;
-            type: components["schemas"]["LinkType"];
             name: string;
             description?: string;
             status: components["schemas"]["LinkStatus"];
             auto_confirm?: boolean;
-            show_results?: boolean;
             require_email?: boolean;
             availability_rules?: components["schemas"]["AvailabilityRule"][];
             custom_fields?: components["schemas"]["CustomField"][];
             event_template?: components["schemas"]["EventTemplate"];
             /** Format: date-time */
             created_at?: string;
+        };
+        Poll: {
+            id: number;
+            slug: string;
+            name: string;
+            description?: string;
+            status: components["schemas"]["LinkStatus"];
+            show_results?: boolean;
+            require_email?: boolean;
+            custom_fields?: components["schemas"]["CustomField"][];
+            /** Format: date-time */
+            created_at?: string;
+        };
+        PollOption: {
+            id: number;
+            type: components["schemas"]["SlotType"];
+            /** Format: date-time */
+            start_time: string;
+            /** Format: date-time */
+            end_time: string;
         };
         Slot: {
             id: number;
@@ -499,7 +566,7 @@ export interface components {
             created_at?: string;
         };
         VoteTally: {
-            slot_id: number;
+            option_id: number;
             yes_count: number;
             no_count: number;
             maybe_count: number;
@@ -686,7 +753,7 @@ export interface operations {
             };
         };
     };
-    listLinks: {
+    listBookingLinks: {
         parameters: {
             query?: never;
             header?: never;
@@ -695,18 +762,18 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Links */
+            /** @description Booking links */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Link"][];
+                    "application/json": components["schemas"]["BookingLink"][];
                 };
             };
         };
     };
-    createLink: {
+    createBookingLink: {
         parameters: {
             query?: never;
             header?: never;
@@ -716,11 +783,9 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    type: components["schemas"]["LinkType"];
                     name: string;
                     description?: string;
                     auto_confirm?: boolean;
-                    show_results?: boolean;
                     require_email?: boolean;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
@@ -729,18 +794,18 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Link created */
+            /** @description Booking link created */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Link"];
+                    "application/json": components["schemas"]["BookingLink"];
                 };
             };
         };
     };
-    getLink: {
+    getBookingLink: {
         parameters: {
             query?: never;
             header?: never;
@@ -751,18 +816,18 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Link details */
+            /** @description Booking link details */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Link"];
+                    "application/json": components["schemas"]["BookingLink"];
                 };
             };
         };
     };
-    updateLink: {
+    updateBookingLink: {
         parameters: {
             query?: never;
             header?: never;
@@ -778,7 +843,6 @@ export interface operations {
                     description?: string;
                     status?: components["schemas"]["LinkStatus"];
                     auto_confirm?: boolean;
-                    show_results?: boolean;
                     require_email?: boolean;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
@@ -787,18 +851,18 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Link updated */
+            /** @description Booking link updated */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Link"];
+                    "application/json": components["schemas"]["BookingLink"];
                 };
             };
         };
     };
-    deleteLink: {
+    deleteBookingLink: {
         parameters: {
             query?: never;
             header?: never;
@@ -809,7 +873,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Link deleted */
+            /** @description Booking link deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -818,82 +882,7 @@ export interface operations {
             };
         };
     };
-    getLinkSlots: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Slots */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Slot"][];
-                };
-            };
-        };
-    };
-    addSlot: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    type: components["schemas"]["SlotType"];
-                    /** Format: date-time */
-                    start_time: string;
-                    /** Format: date-time */
-                    end_time: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Slot added */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Slot"];
-                };
-            };
-        };
-    };
-    deleteSlot: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-                slotId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Slot deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getLinkBookings: {
+    getBookingLinkBookings: {
         parameters: {
             query?: never;
             header?: never;
@@ -915,7 +904,207 @@ export interface operations {
             };
         };
     };
-    getLinkVotes: {
+    listPolls: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Polls */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Poll"][];
+                };
+            };
+        };
+    };
+    createPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    description?: string;
+                    show_results?: boolean;
+                    require_email?: boolean;
+                    custom_fields?: components["schemas"]["CustomField"][];
+                };
+            };
+        };
+        responses: {
+            /** @description Poll created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Poll"];
+                };
+            };
+        };
+    };
+    getPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Poll"];
+                };
+            };
+        };
+    };
+    updatePoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    description?: string;
+                    status?: components["schemas"]["LinkStatus"];
+                    show_results?: boolean;
+                    require_email?: boolean;
+                    custom_fields?: components["schemas"]["CustomField"][];
+                };
+            };
+        };
+        responses: {
+            /** @description Poll updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Poll"];
+                };
+            };
+        };
+    };
+    deletePoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPollOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll options */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PollOption"][];
+                };
+            };
+        };
+    };
+    addPollOption: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    type: components["schemas"]["SlotType"];
+                    /** Format: date-time */
+                    start_time: string;
+                    /** Format: date-time */
+                    end_time: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Option added */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PollOption"];
+                };
+            };
+        };
+    };
+    deletePollOption: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                optionId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Option deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPollVotes: {
         parameters: {
             query?: never;
             header?: never;
@@ -949,7 +1138,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    slot_id: number;
+                    option_id: number;
                 };
             };
         };
@@ -1007,7 +1196,7 @@ export interface operations {
             };
         };
     };
-    getPublicLink: {
+    getPublicBookingLink: {
         parameters: {
             query?: never;
             header?: never;
@@ -1018,24 +1207,21 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Link info */
+            /** @description Booking link info */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        type: components["schemas"]["LinkType"];
                         name: string;
                         description?: string;
                         custom_fields?: components["schemas"]["CustomField"][];
-                        slots: components["schemas"]["Slot"][];
-                        show_results?: boolean;
                         require_email?: boolean;
                     };
                 };
             };
-            /** @description Link not found */
+            /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1046,7 +1232,7 @@ export interface operations {
             };
         };
     };
-    getAvailability: {
+    getBookingAvailability: {
         parameters: {
             query: {
                 start: string;
@@ -1110,6 +1296,44 @@ export interface operations {
             };
             /** @description Slot unavailable */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getPublicPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll info */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        name: string;
+                        description?: string;
+                        custom_fields?: components["schemas"]["CustomField"][];
+                        options: components["schemas"]["PollOption"][];
+                        show_results?: boolean;
+                        require_email?: boolean;
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
