@@ -5,14 +5,6 @@ import (
 	"time"
 )
 
-// Enum types
-type LinkType int
-
-const (
-	LinkTypeBooking LinkType = 1
-	LinkTypePoll    LinkType = 2
-)
-
 type SlotType int
 
 const (
@@ -77,13 +69,14 @@ type EventTemplate struct {
 
 // GORM Models
 type User struct {
-	ID        uint      `gorm:"primaryKey"`
-	OIDCSub   string    `gorm:"column:oidc_sub;uniqueIndex;not null"`
-	Email     string    `gorm:"not null"`
-	Name      string
-	CreatedAt time.Time
-	Calendars []CalendarConnection `gorm:"foreignKey:UserID"`
-	Links     []Link               `gorm:"foreignKey:UserID"`
+	ID           uint      `gorm:"primaryKey"`
+	OIDCSub      string    `gorm:"column:oidc_sub;uniqueIndex;not null"`
+	Email        string    `gorm:"not null"`
+	Name         string
+	CreatedAt    time.Time
+	Calendars    []CalendarConnection `gorm:"foreignKey:UserID"`
+	BookingLinks []BookingLink        `gorm:"foreignKey:UserID"`
+	Polls        []Poll               `gorm:"foreignKey:UserID"`
 }
 
 type CalendarConnection struct {
@@ -98,60 +91,81 @@ type CalendarConnection struct {
 	UpdatedAt    time.Time
 }
 
-type Link struct {
+type BookingLink struct {
 	ID                uint               `gorm:"primaryKey"`
 	UserID            uint               `gorm:"index;not null"`
 	Slug              string             `gorm:"uniqueIndex;not null"`
-	Type              LinkType           `gorm:"not null"`
 	Name              string             `gorm:"not null"`
 	Description       string
 	Status            LinkStatus         `gorm:"not null;default:1"`
 	AutoConfirm       bool
 	AvailabilityRules []AvailabilityRule `gorm:"serializer:json"`
-	ShowResults       bool
 	RequireEmail      bool
 	CustomFields      []CustomField      `gorm:"serializer:json"`
 	EventTemplate     *EventTemplate     `gorm:"serializer:json"`
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
-	Slots             []Slot             `gorm:"foreignKey:LinkID"`
-	Bookings          []Booking          `gorm:"foreignKey:LinkID"`
-	Votes             []Vote             `gorm:"foreignKey:LinkID"`
+	Bookings          []Booking          `gorm:"foreignKey:BookingLinkID"`
 }
 
-type Slot struct {
+type Poll struct {
+	ID           uint          `gorm:"primaryKey"`
+	UserID       uint          `gorm:"index;not null"`
+	Slug         string        `gorm:"uniqueIndex;not null"`
+	Name         string        `gorm:"not null"`
+	Description  string
+	Status       LinkStatus    `gorm:"not null;default:1"`
+	ShowResults  bool
+	RequireEmail bool
+	CustomFields []CustomField `gorm:"serializer:json"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	PollOptions  []PollOption  `gorm:"foreignKey:PollID"`
+	Votes        []Vote        `gorm:"foreignKey:PollID"`
+}
+
+type PollOption struct {
 	ID        uint      `gorm:"primaryKey"`
-	LinkID    uint      `gorm:"index;not null"`
+	PollID    uint      `gorm:"index;not null"`
 	Type      SlotType  `gorm:"not null"`
 	StartTime time.Time `gorm:"not null"`
 	EndTime   time.Time `gorm:"not null"`
-	Manual    bool
 	CreatedAt time.Time
 }
 
+type Slot struct {
+	ID            uint      `gorm:"primaryKey"`
+	BookingLinkID uint      `gorm:"index;not null"`
+	Type          SlotType  `gorm:"not null"`
+	StartTime     time.Time `gorm:"not null"`
+	EndTime       time.Time `gorm:"not null"`
+	Manual        bool
+	CreatedAt     time.Time
+}
+
 type Booking struct {
-	ID           uint              `gorm:"primaryKey"`
-	LinkID       uint              `gorm:"index;not null"`
-	SlotID       uint              `gorm:"index;not null"`
-	GuestEmail   string            `gorm:"not null"`
-	GuestName    string
-	CustomFields map[string]string `gorm:"serializer:json"`
-	Status       BookingStatus     `gorm:"not null;default:1"`
-	ActionToken  string            `gorm:"uniqueIndex"`
-	CalendarUID  string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Link         Link              `gorm:"foreignKey:LinkID"`
-	Slot         Slot              `gorm:"foreignKey:SlotID"`
+	ID            uint              `gorm:"primaryKey"`
+	BookingLinkID uint              `gorm:"index;not null"`
+	SlotID        uint              `gorm:"index;not null"`
+	GuestEmail    string            `gorm:"not null"`
+	GuestName     string
+	CustomFields  map[string]string `gorm:"serializer:json"`
+	Status        BookingStatus     `gorm:"not null;default:1"`
+	ActionToken   string            `gorm:"uniqueIndex"`
+	CalendarUID   string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	BookingLink   BookingLink       `gorm:"foreignKey:BookingLinkID"`
+	Slot          Slot              `gorm:"foreignKey:SlotID"`
 }
 
 type Vote struct {
-	ID           uint                         `gorm:"primaryKey"`
-	LinkID       uint                         `gorm:"index;not null"`
+	ID           uint                      `gorm:"primaryKey"`
+	PollID       uint                      `gorm:"index;not null"`
 	GuestEmail   string
 	GuestName    string
-	Responses    map[uint]VoteResponseType    `gorm:"serializer:json;not null"`
-	CustomFields map[string]string            `gorm:"serializer:json"`
+	Responses    map[uint]VoteResponseType `gorm:"serializer:json;not null"`
+	CustomFields map[string]string         `gorm:"serializer:json"`
 	CreatedAt    time.Time
-	Link         Link                         `gorm:"foreignKey:LinkID"`
+	Poll         Poll                      `gorm:"foreignKey:PollID"`
 }
