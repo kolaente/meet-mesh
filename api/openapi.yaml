@@ -244,6 +244,15 @@ paths:
       responses:
         '302':
           description: Redirect to OIDC provider
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+            Set-Cookie:
+              description: State cookie for CSRF protection
+              schema:
+                type: string
 
   /auth/callback:
     get:
@@ -263,6 +272,15 @@ paths:
       responses:
         '302':
           description: Redirect to dashboard
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+            Set-Cookie:
+              description: Session cookie
+              schema:
+                type: string
         '400':
           description: Invalid callback
           content:

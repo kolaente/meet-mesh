@@ -142,7 +142,30 @@ func (s *ApproveViaEmailOK) SetMessage(val OptString) {
 func (*ApproveViaEmailOK) approveViaEmailRes() {}
 
 // AuthCallbackFound is response for AuthCallback operation.
-type AuthCallbackFound struct{}
+type AuthCallbackFound struct {
+	Location  OptString
+	SetCookie OptString
+}
+
+// GetLocation returns the value of Location.
+func (s *AuthCallbackFound) GetLocation() OptString {
+	return s.Location
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *AuthCallbackFound) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// SetLocation sets the value of Location.
+func (s *AuthCallbackFound) SetLocation(val OptString) {
+	s.Location = val
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *AuthCallbackFound) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
 
 func (*AuthCallbackFound) authCallbackRes() {}
 
@@ -850,7 +873,30 @@ func (s *GetPublicLinkOK) SetRequireEmail(val OptBool) {
 func (*GetPublicLinkOK) getPublicLinkRes() {}
 
 // InitiateLoginFound is response for InitiateLogin operation.
-type InitiateLoginFound struct{}
+type InitiateLoginFound struct {
+	Location  OptString
+	SetCookie OptString
+}
+
+// GetLocation returns the value of Location.
+func (s *InitiateLoginFound) GetLocation() OptString {
+	return s.Location
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *InitiateLoginFound) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// SetLocation sets the value of Location.
+func (s *InitiateLoginFound) SetLocation(val OptString) {
+	s.Location = val
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *InitiateLoginFound) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
 
 // Ref: #/components/schemas/Link
 type Link struct {

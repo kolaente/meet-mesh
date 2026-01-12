@@ -3240,12 +3240,12 @@ func (s *Server) handleInitiateLoginRequest(args [0]string, argsEscaped bool, w 
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.InitiateLogin(ctx)
+				response, err = s.h.InitiateLogin(ctx)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.InitiateLogin(ctx)
+		response, err = s.h.InitiateLogin(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

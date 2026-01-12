@@ -34,26 +34,36 @@ func GetRedirectInfo(ctx context.Context) (*RedirectInfo, bool) {
 }
 
 // InitiateLogin redirects to OIDC provider
-// Note: The actual redirect header must be set via middleware since ogen
-// doesn't support response headers in the generated code for this endpoint.
-func (h *Handler) InitiateLogin(ctx context.Context) error {
+func (h *Handler) InitiateLogin(ctx context.Context) (*gen.InitiateLoginFound, error) {
 	state, err := h.auth.GenerateState()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Store state in context for middleware to set as cookie
-	// In production, use a secure state store (e.g., Redis, encrypted cookie)
-	_ = state // State should be stored and validated in callback
+	// Generate the OIDC authorization URL
+	authURL := h.auth.AuthCodeURL(state)
 
-	// The redirect URL should be set via middleware
-	// For now, we return nil to indicate success (302 response)
-	// Middleware should intercept and set Location header to h.auth.AuthCodeURL(state)
-	return nil
+	// Create state cookie for CSRF protection
+	stateCookie := &http.Cookie{
+		Name:     "oauth_state",
+		Value:    state,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   300, // 5 minutes
+	}
+
+	return &gen.InitiateLoginFound{
+		Location:  gen.NewOptString(authURL),
+		SetCookie: gen.NewOptString(stateCookie.String()),
+	}, nil
 }
 
 // AuthCallback handles OIDC callback
 func (h *Handler) AuthCallback(ctx context.Context, params gen.AuthCallbackParams) (gen.AuthCallbackRes, error) {
+	// TODO: Validate state cookie matches params.State for CSRF protection
+
 	claims, err := h.auth.Exchange(ctx, params.Code)
 	if err != nil {
 		return &gen.Error{Message: "Authentication failed"}, nil
@@ -86,15 +96,10 @@ func (h *Handler) AuthCallback(ctx context.Context, params gen.AuthCallbackParam
 		return &gen.Error{Message: "Failed to create session"}, nil
 	}
 
-	// Store redirect info for middleware to handle
-	// Middleware should set Location and Set-Cookie headers
-	redirectInfo := &RedirectInfo{
-		Location:  h.config.Server.BaseURL + "/dashboard",
-		SetCookie: cookie,
-	}
-	_ = redirectInfo // Should be passed to middleware
-
-	return &gen.AuthCallbackFound{}, nil
+	return &gen.AuthCallbackFound{
+		Location:  gen.NewOptString(h.config.Server.BaseURL + "/dashboard"),
+		SetCookie: gen.NewOptString(cookie.String()),
+	}, nil
 }
 
 // Logout clears the session

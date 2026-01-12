@@ -141,7 +141,7 @@ type Invoker interface {
 	// Redirect to OIDC provider.
 	//
 	// GET /auth/login
-	InitiateLogin(ctx context.Context) error
+	InitiateLogin(ctx context.Context) (*InitiateLoginFound, error)
 	// ListCalendars invokes listCalendars operation.
 	//
 	// List calendar connections.
@@ -2280,9 +2280,9 @@ func (c *Client) sendGetPublicLink(ctx context.Context, params GetPublicLinkPara
 // Redirect to OIDC provider.
 //
 // GET /auth/login
-func (c *Client) InitiateLogin(ctx context.Context) error {
-	_, err := c.sendInitiateLogin(ctx)
-	return err
+func (c *Client) InitiateLogin(ctx context.Context) (*InitiateLoginFound, error) {
+	res, err := c.sendInitiateLogin(ctx)
+	return res, err
 }
 
 func (c *Client) sendInitiateLogin(ctx context.Context) (res *InitiateLoginFound, err error) {

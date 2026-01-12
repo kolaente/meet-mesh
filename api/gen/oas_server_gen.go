@@ -121,7 +121,7 @@ type Handler interface {
 	// Redirect to OIDC provider.
 	//
 	// GET /auth/login
-	InitiateLogin(ctx context.Context) error
+	InitiateLogin(ctx context.Context) (*InitiateLoginFound, error)
 	// ListCalendars implements listCalendars operation.
 	//
 	// List calendar connections.

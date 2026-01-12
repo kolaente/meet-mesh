@@ -180,8 +180,8 @@ func (UnimplementedHandler) GetPublicLink(ctx context.Context, params GetPublicL
 // Redirect to OIDC provider.
 //
 // GET /auth/login
-func (UnimplementedHandler) InitiateLogin(ctx context.Context) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) InitiateLogin(ctx context.Context) (r *InitiateLoginFound, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // ListCalendars implements listCalendars operation.
