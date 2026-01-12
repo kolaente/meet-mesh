@@ -1,0 +1,92 @@
+// api/handler_actions.go
+package api
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/kolaente/meet-mesh/api/gen"
+)
+
+// ApproveViaEmail approves booking via email link
+func (h *Handler) ApproveViaEmail(ctx context.Context) (*gen.ApproveViaEmailOK, error) {
+	bookingID, ok := GetBookingID(ctx)
+	if !ok {
+		return nil, &gen.ErrorStatusCode{
+			StatusCode: http.StatusBadRequest,
+			Response:   gen.Error{Message: "Invalid token"},
+		}
+	}
+
+	var booking Booking
+	if err := h.db.Preload("Link").Preload("Slot").First(&booking, bookingID).Error; err != nil {
+		return nil, err
+	}
+
+	if booking.Status != BookingStatusPending {
+		return &gen.ApproveViaEmailOK{
+			Message: gen.NewOptString("Booking already processed"),
+		}, nil
+	}
+
+	booking.Status = BookingStatusConfirmed
+	if err := h.db.Save(&booking).Error; err != nil {
+		return nil, err
+	}
+
+	// Clear the action token (single use)
+	h.db.Model(&booking).Update("action_token", "")
+
+	// Send confirmation email
+	if h.mailer != nil {
+		h.mailer.SendBookingApproved(&booking, &booking.Link)
+	}
+
+	// Create calendar event
+	if h.caldav != nil {
+		h.caldav.CreateEvent(ctx, booking.Link.UserID, &booking, &booking.Slot, booking.Link.EventTemplate)
+	}
+
+	return &gen.ApproveViaEmailOK{
+		Message: gen.NewOptString("Booking approved successfully"),
+	}, nil
+}
+
+// DeclineViaEmail declines booking via email link
+func (h *Handler) DeclineViaEmail(ctx context.Context) (*gen.DeclineViaEmailOK, error) {
+	bookingID, ok := GetBookingID(ctx)
+	if !ok {
+		return nil, &gen.ErrorStatusCode{
+			StatusCode: http.StatusBadRequest,
+			Response:   gen.Error{Message: "Invalid token"},
+		}
+	}
+
+	var booking Booking
+	if err := h.db.Preload("Link").Preload("Slot").First(&booking, bookingID).Error; err != nil {
+		return nil, err
+	}
+
+	if booking.Status != BookingStatusPending {
+		return &gen.DeclineViaEmailOK{
+			Message: gen.NewOptString("Booking already processed"),
+		}, nil
+	}
+
+	booking.Status = BookingStatusDeclined
+	if err := h.db.Save(&booking).Error; err != nil {
+		return nil, err
+	}
+
+	// Clear the action token (single use)
+	h.db.Model(&booking).Update("action_token", "")
+
+	// Send decline email
+	if h.mailer != nil {
+		h.mailer.SendBookingDeclined(&booking, &booking.Link)
+	}
+
+	return &gen.DeclineViaEmailOK{
+		Message: gen.NewOptString("Booking declined"),
+	}, nil
+}
