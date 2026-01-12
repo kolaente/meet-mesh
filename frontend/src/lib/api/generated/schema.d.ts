@@ -508,6 +508,10 @@ export interface operations {
             /** @description Redirect to OIDC provider */
             302: {
                 headers: {
+                    /** @description URL to redirect to */
+                    Location?: string;
+                    /** @description State cookie for CSRF protection */
+                    "Set-Cookie"?: string;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -529,6 +533,10 @@ export interface operations {
             /** @description Redirect to dashboard */
             302: {
                 headers: {
+                    /** @description URL to redirect to */
+                    Location?: string;
+                    /** @description Session cookie */
+                    "Set-Cookie"?: string;
                     [name: string]: unknown;
                 };
                 content?: never;
