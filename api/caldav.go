@@ -86,8 +86,8 @@ func (c *CalDAVClient) GetBusyTimes(ctx context.Context, userID uint, start, end
 	return mergePeriods(allBusy), nil
 }
 
-// CreateEvent creates a calendar event for a confirmed booking
-func (c *CalDAVClient) CreateEvent(ctx context.Context, userID uint, booking *Booking, slot *Slot, template *EventTemplate) (string, error) {
+// CreateBookingEvent creates a calendar event for a confirmed booking
+func (c *CalDAVClient) CreateBookingEvent(ctx context.Context, userID uint, booking *Booking, slot *Slot, template *EventTemplate) (string, error) {
 	var conn CalendarConnection
 	if err := c.db.Where("user_id = ? AND write_url != ''", userID).First(&conn).Error; err != nil {
 		return "", err
