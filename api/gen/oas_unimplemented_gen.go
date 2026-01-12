@@ -103,6 +103,15 @@ func (UnimplementedHandler) DeleteLink(ctx context.Context, params DeleteLinkPar
 	return ht.ErrNotImplemented
 }
 
+// DeleteSlot implements deleteSlot operation.
+//
+// Delete a slot from a link.
+//
+// DELETE /links/{id}/slots/{slotId}
+func (UnimplementedHandler) DeleteSlot(ctx context.Context, params DeleteSlotParams) error {
+	return ht.ErrNotImplemented
+}
+
 // GetAvailability implements getAvailability operation.
 //
 // Get real-time availability.

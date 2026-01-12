@@ -6,3 +6,4 @@ export { default as BookingRow } from './BookingRow.svelte';
 export { default as VoteRow } from './VoteRow.svelte';
 export { default as StatsCard } from './StatsCard.svelte';
 export { default as CalendarConnectionCard } from './CalendarConnectionCard.svelte';
+export { default as SlotManager } from './SlotManager.svelte';

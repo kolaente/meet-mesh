@@ -58,6 +58,24 @@ func mapSlotsToGen(slots []Slot) []gen.Slot {
 	return result
 }
 
+// DeleteSlot deletes a slot from a link
+func (h *Handler) DeleteSlot(ctx context.Context, params gen.DeleteSlotParams) error {
+	userID, _ := GetUserID(ctx)
+
+	// Verify link ownership
+	var link Link
+	if err := h.db.Where("id = ? AND user_id = ?", params.ID, userID).First(&link).Error; err != nil {
+		return err
+	}
+
+	// Delete the slot
+	if err := h.db.Where("id = ? AND link_id = ?", params.SlotId, params.ID).Delete(&Slot{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func mapSlotToGen(slot *Slot) *gen.Slot {
 	return &gen.Slot{
 		ID:        int(slot.ID),

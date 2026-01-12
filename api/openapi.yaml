@@ -582,6 +582,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Slot'
 
+  /links/{id}/slots/{slotId}:
+    delete:
+      operationId: deleteSlot
+      summary: Delete a slot from a link
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: slotId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Slot deleted
+
   /links/{id}/bookings:
     get:
       operationId: getLinkBookings

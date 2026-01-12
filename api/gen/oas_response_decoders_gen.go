@@ -623,6 +623,15 @@ func decodeDeleteLinkResponse(resp *http.Response) (res *DeleteLinkNoContent, _ 
 	return res, validate.UnexpectedStatusCodeWithResponse(resp)
 }
 
+func decodeDeleteSlotResponse(resp *http.Response) (res *DeleteSlotNoContent, _ error) {
+	switch resp.StatusCode {
+	case 204:
+		// Code 204.
+		return &DeleteSlotNoContent{}, nil
+	}
+	return res, validate.UnexpectedStatusCodeWithResponse(resp)
+}
+
 func decodeGetAvailabilityResponse(resp *http.Response) (res *GetAvailabilityOK, _ error) {
 	switch resp.StatusCode {
 	case 200:

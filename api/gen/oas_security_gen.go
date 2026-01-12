@@ -65,6 +65,7 @@ var operationRolesCookieAuth = map[string][]string{
 	CreateLinkOperation:      []string{},
 	DeclineBookingOperation:  []string{},
 	DeleteLinkOperation:      []string{},
+	DeleteSlotOperation:      []string{},
 	GetCurrentUserOperation:  []string{},
 	GetLinkOperation:         []string{},
 	GetLinkBookingsOperation: []string{},

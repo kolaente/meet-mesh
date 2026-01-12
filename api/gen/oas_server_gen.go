@@ -68,6 +68,12 @@ type Handler interface {
 	//
 	// DELETE /links/{id}
 	DeleteLink(ctx context.Context, params DeleteLinkParams) error
+	// DeleteSlot implements deleteSlot operation.
+	//
+	// Delete a slot from a link.
+	//
+	// DELETE /links/{id}/slots/{slotId}
+	DeleteSlot(ctx context.Context, params DeleteSlotParams) error
 	// GetAvailability implements getAvailability operation.
 	//
 	// Get real-time availability.

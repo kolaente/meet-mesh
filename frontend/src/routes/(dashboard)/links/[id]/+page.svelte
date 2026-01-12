@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
-	import { DashboardHeader, BookingRow, VoteRow } from '$lib/components/dashboard';
+	import { DashboardHeader, BookingRow, VoteRow, SlotManager } from '$lib/components/dashboard';
 	import { Button, Card, Badge, Spinner } from '$lib/components/ui';
 
 	type Link = components['schemas']['Link'];
@@ -165,6 +165,11 @@
 				</div>
 			{/snippet}
 		</Card>
+
+		<!-- Slots (for polls only) -->
+		{#if link.type === 2}
+			<SlotManager {linkId} bind:slots />
+		{/if}
 
 		<!-- Bookings or Votes -->
 		{#if link.type === 1}

@@ -16,6 +16,7 @@ const (
 	DeclineBookingOperation  OperationName = "DeclineBooking"
 	DeclineViaEmailOperation OperationName = "DeclineViaEmail"
 	DeleteLinkOperation      OperationName = "DeleteLink"
+	DeleteSlotOperation      OperationName = "DeleteSlot"
 	GetAvailabilityOperation OperationName = "GetAvailability"
 	GetCurrentUserOperation  OperationName = "GetCurrentUser"
 	GetLinkOperation         OperationName = "GetLink"

@@ -689,6 +689,9 @@ func (*DeclineViaEmailOK) declineViaEmailRes() {}
 // DeleteLinkNoContent is response for DeleteLink operation.
 type DeleteLinkNoContent struct{}
 
+// DeleteSlotNoContent is response for DeleteSlot operation.
+type DeleteSlotNoContent struct{}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Message string `json:"message"`
