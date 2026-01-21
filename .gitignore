@@ -5,3 +5,14 @@ api/embedded/dist/
 /config.yaml
 /data
 *.db
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
