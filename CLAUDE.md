@@ -35,9 +35,10 @@ cd api && go run ./cmd
 
 ```bash
 cd frontend
-pnpm dev              # Development server
+pnpm dev              # Development server (auto-regenerates API types)
 pnpm build            # Production build
 pnpm check            # TypeScript/Svelte type checking
+pnpm check:watch      # Type checking in watch mode
 pnpm generate:api     # Regenerate TypeScript types from OpenAPI spec
 ```
 
@@ -109,3 +110,43 @@ Copy `config.example.yaml` to `config.yaml`. Contains OIDC provider, SMTP, datab
 
 - `docs/spec.md` - Feature specification and user flows
 - `docs/technical-overview.md` - Detailed architecture and data models
+
+## Issue Tracking (bd/beads)
+
+This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
+
+### Quick Reference
+
+```bash
+bd ready              # Find available work
+bd show <id>          # View issue details
+bd update <id> --status in_progress  # Claim work
+bd close <id>         # Complete work
+bd sync               # Sync with git
+```
+
+### Landing the Plane (Session Completion)
+
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+**MANDATORY WORKFLOW:**
+
+1. **File issues for remaining work** - Create issues for anything that needs follow-up
+2. **Run quality gates** (if code changed) - Tests, linters, builds
+3. **Update issue status** - Close finished work, update in-progress items
+4. **PUSH TO REMOTE** - This is MANDATORY:
+   ```bash
+   git pull --rebase
+   bd sync
+   git push
+   git status  # MUST show "up to date with origin"
+   ```
+5. **Clean up** - Clear stashes, prune remote branches
+6. **Verify** - All changes committed AND pushed
+7. **Hand off** - Provide context for next session
+
+**CRITICAL RULES:**
+- Work is NOT complete until `git push` succeeds
+- NEVER stop before pushing - that leaves work stranded locally
+- NEVER say "ready to push when you are" - YOU must push
+- If push fails, resolve and retry until it succeeds
