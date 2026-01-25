@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meet Mesh — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Light mode */
+      --bg-primary: #f5f3f0;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #ebe8e4;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --border-color: #1a1a1a;
+
+      /* Accent colors - Tailwind 500 palette */
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --sky: #0ea5e9;
+      --violet: #8b5cf6;
+      --rose: #f43f5e;
+
+      /* Aliases for compatibility */
+      --cyan: var(--sky);
+      --purple: var(--violet);
+      --pink: var(--rose);
+      --orange: var(--amber);
+      --green: var(--emerald);
+      --blue: var(--sky);
+
+      /* Neo-brutalist shadows - visible but not extreme */
+      --shadow: 3px 3px 0 var(--border-color);
+      --shadow-hover: 5px 5px 0 var(--border-color);
+      --shadow-sm: 2px 2px 0 var(--border-color);
+
+      /* Borders - present but refined */
+      --border: 2px solid var(--border-color);
+      --border-light: 1px solid var(--border-color);
+
+      /* Radius - rounded but not too soft */
+      --radius: 8px;
+      --radius-lg: 12px;
+
+      --transition: 0.15s ease;
+      --sidebar-width: 250px;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #0a0a0a;
+      --bg-tertiary: #111111;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a0a0a0;
+      --text-muted: #606060;
+      --border-color: #000000;
+
+      /* Same offset shadows as light mode */
+      --shadow: 3px 3px 0 var(--border-color);
+      --shadow-hover: 5px 5px 0 var(--border-color);
+      --shadow-sm: 2px 2px 0 var(--border-color);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* Layout */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: var(--border);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: var(--border-light);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--cyan);
+      border: var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+
+    [data-theme="dark"] .logo-icon {
+      border-color: rgba(14, 165, 233, 0.3);
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+    }
+
+    .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+      stroke-width: 2.5;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .nav-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      padding: 1rem 0.5rem 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: var(--radius);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      border: 2px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--cyan);
+      color: white;
+      border-color: var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    [data-theme="dark"] .nav-item.active {
+      border-color: transparent;
+      box-shadow: 0 0 16px rgba(14, 165, 233, 0.3);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--pink);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+      border: 1px solid var(--border-color);
+    }
+
+    .sidebar-footer {
+      padding-top: 1rem;
+      border-top: var(--border-light);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: background var(--transition);
+      cursor: pointer;
+    }
+
+    .user-card:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      background: var(--orange);
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .user-email {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 1.5rem 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.5rem;
+      border-bottom: var(--border-light);
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      border: var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle:active {
+      transform: translate(1px, 1px);
+      box-shadow: none;
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: var(--radius);
+      border: var(--border);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-primary:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background: var(--purple);
+      color: white;
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow var(--transition);
+    }
+
+    .stat-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .stat-card:nth-child(1) .stat-icon { background: var(--cyan); color: white; }
+    .stat-card:nth-child(2) .stat-icon { background: var(--purple); color: white; }
+    .stat-card:nth-child(3) .stat-icon { background: var(--orange); color: white; }
+    .stat-card:nth-child(4) .stat-icon { background: var(--green); color: white; }
+
+    /* Glowing icons in dark mode - Tailwind 500 colors */
+    [data-theme="dark"] .stat-card:nth-child(1) .stat-icon {
+      border-color: rgba(14, 165, 233, 0.3);
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
+    }
+    [data-theme="dark"] .stat-card:nth-child(2) .stat-icon {
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+    }
+    [data-theme="dark"] .stat-card:nth-child(3) .stat-icon {
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+    }
+    [data-theme="dark"] .stat-card:nth-child(4) .stat-icon {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+
+    .stat-trend {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-trend.up { background: var(--green); color: white; }
+    .stat-trend.alert { background: var(--orange); color: white; }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-secondary);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: var(--border);
+      background: var(--bg-tertiary);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .card-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius);
+      background: var(--orange);
+      color: white;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-link {
+      font-size: 0.8rem;
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .card-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Booking List */
+    .booking-list {
+      list-style: none;
+    }
+
+    .booking-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: var(--border-light);
+      transition: background var(--transition);
+    }
+
+    .booking-item:last-child {
+      border-bottom: none;
+    }
+
+    .booking-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .booking-status {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .booking-status.pending {
+      background: var(--orange);
+      animation: pulse 2s ease infinite;
+    }
+
+    .booking-status.confirmed {
+      background: var(--green);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+    }
+
+    .booking-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .booking-guest {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .booking-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+
+    .booking-time {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .booking-actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius);
+      border: var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .btn-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .btn-icon:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-icon.approve:hover {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-icon.decline:hover {
+      background: var(--pink);
+      color: white;
+    }
+
+    /* Right column */
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      padding: 0.75rem;
+    }
+
+    .quick-action {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition);
+      border: 2px solid transparent;
+    }
+
+    .quick-action:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-color);
+      transform: translateX(4px);
+    }
+
+    .quick-action-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quick-action-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .quick-action:nth-child(1) .quick-action-icon { background: var(--cyan); color: white; }
+    .quick-action:nth-child(2) .quick-action-icon { background: var(--purple); color: white; }
+    .quick-action:nth-child(3) .quick-action-icon { background: var(--blue); color: white; }
+
+    /* Glowing quick action icons in dark mode - Tailwind 500 colors */
+    [data-theme="dark"] .quick-action:nth-child(1) .quick-action-icon {
+      border-color: rgba(14, 165, 233, 0.3);
+      box-shadow: 0 0 16px rgba(14, 165, 233, 0.25);
+    }
+    [data-theme="dark"] .quick-action:nth-child(2) .quick-action-icon {
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+    }
+    [data-theme="dark"] .quick-action:nth-child(3) .quick-action-icon {
+      border-color: rgba(14, 165, 233, 0.3);
+      box-shadow: 0 0 16px rgba(14, 165, 233, 0.25);
+    }
+
+    .quick-action-text {
+      flex: 1;
+    }
+
+    .quick-action-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .quick-action-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .quick-action-arrow {
+      color: var(--text-muted);
+      transition: transform var(--transition), color var(--transition);
+    }
+
+    .quick-action:hover .quick-action-arrow {
+      transform: translateX(4px);
+      color: var(--cyan);
+    }
+
+    /* Calendar */
+    .calendar-body {
+      padding: 1rem;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .calendar-month {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .calendar-nav button {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius);
+      border: var(--border);
+      background: var(--bg-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .calendar-nav button:hover {
+      background: var(--cyan);
+      color: white;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .calendar-day-label {
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      text-align: center;
+      padding: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      border: 1px solid transparent;
+    }
+
+    .calendar-day:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-color);
+    }
+
+    .calendar-day.today {
+      background: var(--cyan);
+      color: white;
+      border-color: var(--border-color);
+    }
+
+    .calendar-day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--pink);
+    }
+
+    .calendar-day.today.has-event::after {
+      background: white;
+    }
+
+    .calendar-day.other-month {
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    /* Activity */
+    .activity-list {
+      padding: 0.5rem 0;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.65rem 1.25rem;
+      transition: background var(--transition);
+    }
+
+    .activity-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-color);
+    }
+
+    .activity-dot.booking { background: var(--pink); }
+    .activity-dot.poll { background: var(--purple); }
+    .activity-dot.vote { background: var(--green); }
+
+    .activity-text {
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .activity-text strong {
+      font-weight: 700;
+    }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-menu { display: flex; }
+    }
+
+    @media (max-width: 600px) {
+      .header { flex-direction: column; gap: 1rem; }
+      .header-actions { width: 100%; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .booking-item { flex-wrap: wrap; }
+      .booking-time { order: 4; margin-left: auto; }
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 200;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      border: var(--border);
+      background: var(--bg-secondary);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 900px) {
+      .mobile-menu { display: flex; }
+      .main { padding-top: 4.5rem; }
+    }
+
+    /* Overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 50;
+    }
+
+    .overlay.active { display: block; }
+
+    /* Animations */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stat-card { animation: slideUp 0.3s ease backwards; }
+    .stat-card:nth-child(1) { animation-delay: 0.05s; }
+    .stat-card:nth-child(2) { animation-delay: 0.1s; }
+    .stat-card:nth-child(3) { animation-delay: 0.15s; }
+    .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+    .card { animation: slideUp 0.3s ease 0.25s backwards; }
+  </style>
+</head>
+<body>
+  <button class="mobile-menu" onclick="toggleSidebar()">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <div class="dashboard">
+    <aside class="sidebar" id="sidebar">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="logo-text">Meet Mesh</span>
+      </a>
+
+      <nav class="nav">
+        <div class="nav-label">Menu</div>
+        <a href="#" class="nav-item active">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          Booking Links
+          <span class="nav-badge">7</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          Polls
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Calendar
+        </a>
+
+        <div class="nav-label">Settings</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          Settings
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">KS</div>
+          <div>
+            <div class="user-name">Konrad S.</div>
+            <div class="user-email">konrad@example.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Welcome back! Here's what's happening.</p>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+          <a href="#" class="btn btn-secondary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+            New Link
+          </a>
+          <a href="#" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            New Poll
+          </a>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+            </div>
+            <span class="stat-trend up">+12%</span>
+          </div>
+          <div class="stat-value">7</div>
+          <div class="stat-label">Booking Links</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+            <span class="stat-trend up">+3</span>
+          </div>
+          <div class="stat-value">4</div>
+          <div class="stat-label">Active Polls</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="stat-trend alert">3 new</span>
+          </div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Pending Approval</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">28</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Bookings</span>
+            <span class="card-badge">3 pending</span>
+          </div>
+          <ul class="booking-list">
+            <li class="booking-item">
+              <div class="booking-status pending"></div>
+              <div class="booking-info">
+                <div class="booking-guest">Sarah Johnson</div>
+                <div class="booking-meta">Coffee Chat · 30 min</div>
+              </div>
+              <div class="booking-time">Today, 2:00 PM</div>
+              <div class="booking-actions">
+                <button class="btn-icon approve" title="Approve">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </button>
+                <button class="btn-icon decline" title="Decline">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </li>
+            <li class="booking-item">
+              <div class="booking-status pending"></div>
+              <div class="booking-info">
+                <div class="booking-guest">Mike Chen</div>
+                <div class="booking-meta">Consulting Call · 60 min</div>
+              </div>
+              <div class="booking-time">Tomorrow, 10:00 AM</div>
+              <div class="booking-actions">
+                <button class="btn-icon approve" title="Approve">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </button>
+                <button class="btn-icon decline" title="Decline">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </li>
+            <li class="booking-item">
+              <div class="booking-status confirmed"></div>
+              <div class="booking-info">
+                <div class="booking-guest">Alex Rivera</div>
+                <div class="booking-meta">Demo Session · 45 min</div>
+              </div>
+              <div class="booking-time">Jan 27, 3:30 PM</div>
+              <div class="booking-actions">
+                <button class="btn-icon" title="View">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
+              </div>
+            </li>
+            <li class="booking-item">
+              <div class="booking-status pending"></div>
+              <div class="booking-info">
+                <div class="booking-guest">Jenna Park</div>
+                <div class="booking-meta">Coffee Chat · 30 min</div>
+              </div>
+              <div class="booking-time">Jan 28, 11:00 AM</div>
+              <div class="booking-actions">
+                <button class="btn-icon approve" title="Approve">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </button>
+                <button class="btn-icon decline" title="Decline">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </li>
+            <li class="booking-item">
+              <div class="booking-status confirmed"></div>
+              <div class="booking-info">
+                <div class="booking-guest">Tom Wilson</div>
+                <div class="booking-meta">Strategy Call · 60 min</div>
+              </div>
+              <div class="booking-time">Jan 29, 2:00 PM</div>
+              <div class="booking-actions">
+                <button class="btn-icon" title="View">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="right-column">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Quick Actions</span>
+            </div>
+            <div class="quick-actions">
+              <a href="#" class="quick-action">
+                <div class="quick-action-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                </div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Create Booking Link</div>
+                  <div class="quick-action-desc">Set up 1:1 scheduling</div>
+                </div>
+                <svg class="quick-action-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#" class="quick-action">
+                <div class="quick-action-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Start New Poll</div>
+                  <div class="quick-action-desc">Coordinate group availability</div>
+                </div>
+                <svg class="quick-action-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#" class="quick-action">
+                <div class="quick-action-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Sync Calendar</div>
+                  <div class="quick-action-desc">Update availability</div>
+                </div>
+                <svg class="quick-action-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">January 2026</span>
+              <a href="#" class="card-link">View full</a>
+            </div>
+            <div class="calendar-body">
+              <div class="calendar-header">
+                <span class="calendar-month">January 2026</span>
+                <div class="calendar-nav">
+                  <button><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg></button>
+                  <button><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg></button>
+                </div>
+              </div>
+              <div class="calendar-grid">
+                <div class="calendar-day-label">Su</div>
+                <div class="calendar-day-label">Mo</div>
+                <div class="calendar-day-label">Tu</div>
+                <div class="calendar-day-label">We</div>
+                <div class="calendar-day-label">Th</div>
+                <div class="calendar-day-label">Fr</div>
+                <div class="calendar-day-label">Sa</div>
+                <div class="calendar-day other-month">28</div>
+                <div class="calendar-day other-month">29</div>
+                <div class="calendar-day other-month">30</div>
+                <div class="calendar-day other-month">31</div>
+                <div class="calendar-day has-event">1</div>
+                <div class="calendar-day">2</div>
+                <div class="calendar-day">3</div>
+                <div class="calendar-day">4</div>
+                <div class="calendar-day has-event">5</div>
+                <div class="calendar-day">6</div>
+                <div class="calendar-day has-event">7</div>
+                <div class="calendar-day">8</div>
+                <div class="calendar-day">9</div>
+                <div class="calendar-day">10</div>
+                <div class="calendar-day">11</div>
+                <div class="calendar-day">12</div>
+                <div class="calendar-day has-event">13</div>
+                <div class="calendar-day">14</div>
+                <div class="calendar-day has-event">15</div>
+                <div class="calendar-day">16</div>
+                <div class="calendar-day">17</div>
+                <div class="calendar-day">18</div>
+                <div class="calendar-day has-event">19</div>
+                <div class="calendar-day has-event">20</div>
+                <div class="calendar-day">21</div>
+                <div class="calendar-day">22</div>
+                <div class="calendar-day">23</div>
+                <div class="calendar-day">24</div>
+                <div class="calendar-day today has-event">25</div>
+                <div class="calendar-day has-event">26</div>
+                <div class="calendar-day has-event">27</div>
+                <div class="calendar-day has-event">28</div>
+                <div class="calendar-day has-event">29</div>
+                <div class="calendar-day">30</div>
+                <div class="calendar-day">31</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Activity</span>
+              <a href="#" class="card-link">View all</a>
+            </div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-dot booking"></div>
+                <div>
+                  <div class="activity-text"><strong>Sarah Johnson</strong> requested a booking</div>
+                  <div class="activity-time">2 minutes ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot vote"></div>
+                <div>
+                  <div class="activity-text"><strong>3 new votes</strong> on Team Offsite poll</div>
+                  <div class="activity-time">15 minutes ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot poll"></div>
+                <div>
+                  <div class="activity-text">You created <strong>Q1 Planning</strong> poll</div>
+                  <div class="activity-time">1 hour ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot booking"></div>
+                <div>
+                  <div class="activity-text">Booking with <strong>Alex Rivera</strong> confirmed</div>
+                  <div class="activity-time">3 hours ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('active');
+    }
+
+    // Init theme
+    const saved = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+
+    // Booking actions
+    document.querySelectorAll('.btn-icon.approve').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const item = this.closest('.booking-item');
+        item.querySelector('.booking-status').className = 'booking-status confirmed';
+        this.closest('.booking-actions').innerHTML = `
+          <button class="btn-icon" title="View">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+        `;
+      });
+    });
+
+    document.querySelectorAll('.btn-icon.decline').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const item = this.closest('.booking-item');
+        item.style.opacity = '0.4';
+        this.closest('.booking-actions').innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted);font-weight:600">Declined</span>';
+      });
+    });
+  </script>
+</body>
+</html>
