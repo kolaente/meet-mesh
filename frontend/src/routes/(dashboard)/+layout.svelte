@@ -30,8 +30,8 @@
     <!-- Sidebar (hidden on mobile, icons on tablet, full on desktop) -->
     <Sidebar />
 
-    <!-- Main content with responsive padding -->
-    <main class="flex-1 pt-16 px-4 pb-6 sm:pt-6 sm:px-6 bg-slate-50">
+    <!-- Main content with margin for fixed sidebar -->
+    <main class="main-content">
       {#key page.url.pathname}
         <div in:fade={pageIn} out:fade={pageOut}>
           {@render children()}
@@ -40,3 +40,20 @@
     </main>
   </div>
 {/if}
+
+<style>
+  .main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 1.5rem 2rem;
+    background: var(--bg-primary);
+    min-height: 100vh;
+  }
+
+  @media (max-width: 900px) {
+    .main-content {
+      margin-left: 0;
+      padding-top: 4.5rem;
+    }
+  }
+</style>
