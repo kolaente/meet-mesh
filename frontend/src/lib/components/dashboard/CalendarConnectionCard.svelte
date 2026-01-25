@@ -48,7 +48,7 @@
 				<span class="font-mono text-xs truncate block">{calendar.server_url}</span>
 			</div>
 
-			<div class="flex justify-end pt-2 border-t border-[var(--border-color)]">
+			<div class="flex justify-end pt-2">
 				<Button
 					variant="danger"
 					size="sm"
