@@ -144,7 +144,7 @@
 				<!-- Custom Fields -->
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
-						<span class="block text-sm font-medium text-gray-700">Custom Fields</span>
+						<span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Custom Fields</span>
 						<Button variant="secondary" size="sm" type="button" onclick={addCustomField}>
 							{#snippet children()}Add Field{/snippet}
 						</Button>
@@ -153,7 +153,7 @@
 					{#if customFields.length > 0}
 						<div class="space-y-4">
 							{#each customFields as field, index (index)}
-								<div class="p-4 bg-gray-50 rounded-lg space-y-3">
+								<div class="p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg space-y-3">
 									<div class="flex items-start justify-between gap-4">
 										<div class="flex-1 grid grid-cols-2 gap-3">
 											<Input
@@ -178,7 +178,7 @@
 										<button
 											type="button"
 											onclick={() => removeCustomField(index)}
-											class="mt-6 p-1 text-gray-400 hover:text-red-500"
+											class="mt-6 p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
 											aria-label="Remove field"
 										>
 											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,14 +194,14 @@
 
 									<div class="grid grid-cols-2 gap-3">
 										<div class="space-y-1.5">
-											<label for={`edit-field-type-${index}`} class="block text-sm font-medium text-gray-700">Field Type</label>
+											<label for={`edit-field-type-${index}`} class="block text-sm font-medium text-gray-700 dark:text-gray-300">Field Type</label>
 											<select
 												id={`edit-field-type-${index}`}
 												name={`field-type-${index}`}
 												value={String(field.type)}
 												onchange={(e: Event) =>
 													updateField(index, 'type', Number((e.target as HTMLSelectElement).value) as CustomFieldType)}
-												class="block w-full h-10 rounded-[var(--radius-md)] border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
+												class="block w-full h-10 rounded-[var(--radius-md)] border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
 											>
 												{#each fieldTypeOptions as opt (opt.value)}
 													<option value={opt.value}>{opt.label}</option>
@@ -209,13 +209,13 @@
 											</select>
 										</div>
 										<div class="flex items-end pb-1">
-											<label class="flex items-center gap-2 text-sm text-gray-700">
+											<label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
 												<input
 													type="checkbox"
 													checked={field.required}
 													onchange={(e: Event) =>
 														updateField(index, 'required', (e.target as HTMLInputElement).checked)}
-													class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+													class="rounded border-gray-300 dark:border-neutral-600 text-indigo-600 focus:ring-indigo-500"
 												/>
 												Required
 											</label>
@@ -240,7 +240,7 @@
 							{/each}
 						</div>
 					{:else}
-						<p class="text-sm text-gray-500">
+						<p class="text-sm text-gray-500 dark:text-gray-400">
 							No custom fields. Add fields to collect additional information from guests.
 						</p>
 					{/if}

@@ -19,6 +19,6 @@
 <div class="min-h-screen flex items-center justify-center">
   <div class="text-center">
     <Spinner size="lg" />
-    <p class="mt-4 text-gray-600">Completing login...</p>
+    <p class="mt-4 text-gray-600 dark:text-gray-400">Completing login...</p>
   </div>
 </div>

@@ -140,7 +140,7 @@
 <Card>
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h2 class="text-lg font-medium text-gray-900">
+			<h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
 				Poll Options ({options.length})
 			</h2>
 			{#if !showAddForm}
@@ -159,16 +159,16 @@
 		{/if}
 
 		{#if showAddForm}
-			<div class="mb-4 p-4 bg-gray-50 rounded-lg space-y-4">
+			<div class="mb-4 p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg space-y-4">
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
-						<label for="option-type" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="option-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 							Type
 						</label>
 						<select
 							id="option-type"
 							bind:value={optionType}
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 						>
 							{#each optionTypeOptions as option (option.value)}
 								<option value={option.value}>{option.label}</option>
@@ -177,14 +177,14 @@
 					</div>
 
 					<div>
-						<label for="option-date" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="option-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 							{optionType === 3 ? 'Start Date' : 'Date'}
 						</label>
 						<input
 							id="option-date"
 							type="date"
 							bind:value={date}
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 						/>
 					</div>
 				</div>
@@ -192,38 +192,38 @@
 				{#if optionType === 1}
 					<div class="grid grid-cols-2 gap-4">
 						<div>
-							<label for="start-time" class="block text-sm font-medium text-gray-700 mb-1">
+							<label for="start-time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 								Start Time
 							</label>
 							<input
 								id="start-time"
 								type="time"
 								bind:value={startTime}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+								class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 							/>
 						</div>
 						<div>
-							<label for="end-time" class="block text-sm font-medium text-gray-700 mb-1">
+							<label for="end-time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 								End Time
 							</label>
 							<input
 								id="end-time"
 								type="time"
 								bind:value={endTime}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+								class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 							/>
 						</div>
 					</div>
 				{:else if optionType === 3}
 					<div>
-						<label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="end-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 							End Date
 						</label>
 						<input
 							id="end-date"
 							type="date"
 							bind:value={endTime}
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 						/>
 					</div>
 				{/if}
@@ -240,26 +240,26 @@
 		{/if}
 
 		{#if options.length === 0}
-			<p class="text-gray-500 text-center py-4">
+			<p class="text-gray-500 dark:text-gray-400 text-center py-4">
 				No options yet. Add options for people to vote on.
 			</p>
 		{:else}
-			<div class="divide-y divide-gray-100">
+			<div class="divide-y divide-gray-100 dark:divide-neutral-700">
 				{#each options as option (option.id)}
 					<div class="flex items-center justify-between py-3">
 						<div class="flex items-center gap-3">
-							<div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-								<svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
+								<svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 								</svg>
 							</div>
-							<span class="text-gray-900">{formatOption(option)}</span>
+							<span class="text-gray-900 dark:text-gray-100">{formatOption(option)}</span>
 						</div>
 						<button
 							type="button"
 							onclick={() => handleDelete(option.id)}
 							disabled={deletingId === option.id}
-							class="p-1 text-gray-400 hover:text-red-500 disabled:opacity-50"
+							class="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 disabled:opacity-50"
 							aria-label="Delete option"
 						>
 							{#if deletingId === option.id}

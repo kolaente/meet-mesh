@@ -84,7 +84,7 @@
 		<button
 			type="button"
 			onclick={prevMonth}
-			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-[var(--radius-md)] transition-colors"
 			aria-label="Previous month"
 		>
 			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -92,12 +92,12 @@
 			</svg>
 		</button>
 
-		<h2 class="text-base sm:text-lg font-semibold text-gray-900">{monthName}</h2>
+		<h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">{monthName}</h2>
 
 		<button
 			type="button"
 			onclick={nextMonth}
-			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-[var(--radius-md)] transition-colors"
 			aria-label="Next month"
 		>
 			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -109,7 +109,7 @@
 	<!-- Weekday headers - abbreviated on mobile -->
 	<div class="grid grid-cols-7 mb-2">
 		{#each weekDays as day}
-			<div class="text-center text-xs sm:text-sm font-medium text-gray-500 py-2">
+			<div class="text-center text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 py-2">
 				<span class="sm:hidden">{day.charAt(0)}</span>
 				<span class="hidden sm:inline">{day}</span>
 			</div>
@@ -133,8 +133,8 @@
 						{selected
 							? 'bg-indigo-600 text-white'
 							: available
-								? 'hover:bg-gray-100 text-gray-900 cursor-pointer active:bg-gray-200'
-								: 'text-gray-300 cursor-not-allowed'}
+								? 'hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-900 dark:text-gray-100 cursor-pointer active:bg-gray-200 dark:active:bg-neutral-700'
+								: 'text-gray-300 dark:text-gray-600 cursor-not-allowed'}
 						{today && !selected ? 'ring-2 ring-indigo-600 ring-inset' : ''}"
 				>
 					<span>{day}</span>

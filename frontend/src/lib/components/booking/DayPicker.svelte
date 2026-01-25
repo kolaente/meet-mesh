@@ -33,18 +33,18 @@
 </script>
 
 <div class="space-y-1.5 {className}">
-	<span id="day-picker-label" class="block text-sm font-medium text-gray-700">Select Date</span>
+	<span id="day-picker-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Date</span>
 
 	<Select.Root type="single" bind:value={selectedDate}>
 		<Select.Trigger
 			aria-labelledby="day-picker-label"
-			class="flex h-12 w-full items-center justify-between rounded-[var(--radius-md)] border border-gray-300 bg-white px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
+			class="flex h-12 w-full items-center justify-between rounded-[var(--radius-md)] border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
 		>
-			<span class={selectedOption ? 'text-gray-900' : 'text-gray-400'}>
+			<span class={selectedOption ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}>
 				{selectedOption?.label ?? 'Choose a date'}
 			</span>
 			<svg
-				class="h-5 w-5 text-gray-400"
+				class="h-5 w-5 text-gray-400 dark:text-gray-500"
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 20 20"
 				fill="currentColor"
@@ -60,7 +60,7 @@
 
 		<Select.Portal>
 			<Select.Content
-				class="z-50 max-h-60 min-w-[8rem] overflow-auto rounded-[var(--radius-md)] border border-gray-200 bg-white shadow-md animate-in fade-in-0 zoom-in-95"
+				class="z-50 max-h-60 min-w-[8rem] overflow-auto rounded-[var(--radius-md)] border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-md animate-in fade-in-0 zoom-in-95"
 				sideOffset={4}
 			>
 				<Select.Viewport class="p-1">
@@ -68,7 +68,7 @@
 						<Select.Item
 							value={option.value}
 							label={option.label}
-							class="relative flex cursor-pointer select-none items-center rounded-[var(--radius-sm)] py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition-colors hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+							class="relative flex cursor-pointer select-none items-center rounded-[var(--radius-sm)] py-3 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 outline-none transition-colors hover:bg-gray-100 dark:hover:bg-neutral-800 focus:bg-gray-100 dark:focus:bg-neutral-800 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
 						>
 							{#snippet children({ selected })}
 								{#if selected}
@@ -97,7 +97,7 @@
 	</Select.Root>
 
 	{#if selectedDate}
-		<p class="text-sm text-gray-600 mt-2">
+		<p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
 			Selected: <span class="font-medium">{selectedOption?.label}</span>
 		</p>
 	{/if}

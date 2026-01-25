@@ -36,13 +36,13 @@
 	};
 </script>
 
-<div class="flex items-center py-3 border-b border-gray-100 last:border-b-0">
+<div class="flex items-center py-3 border-b border-gray-100 dark:border-neutral-700 last:border-b-0">
 	<div class="w-40 flex-shrink-0">
-		<p class="font-medium text-gray-900 truncate">
+		<p class="font-medium text-gray-900 dark:text-gray-100 truncate">
 			{vote.guest_name || 'Anonymous'}
 		</p>
 		{#if vote.guest_email}
-			<p class="text-sm text-gray-500 truncate">{vote.guest_email}</p>
+			<p class="text-sm text-gray-500 dark:text-gray-400 truncate">{vote.guest_email}</p>
 		{/if}
 	</div>
 
@@ -51,7 +51,7 @@
 			{@const response = vote.responses[String(slot.id)]}
 			{#if response}
 				<div class="flex items-center gap-1 text-xs">
-					<span class="text-gray-500">{formatSlotLabel(slot)}:</span>
+					<span class="text-gray-500 dark:text-gray-400">{formatSlotLabel(slot)}:</span>
 					<span class="px-1.5 py-0.5 rounded {responseColors[response]}">
 						{responseLabels[response]}
 					</span>
