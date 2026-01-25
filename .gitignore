@@ -5,6 +5,7 @@ api/embedded/dist/
 /config.yaml
 /data
 *.db
+/.playwright-mcp
 
 # Devenv
 .devenv*
