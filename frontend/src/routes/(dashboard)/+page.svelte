@@ -2,7 +2,14 @@
 	import { onMount } from 'svelte';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
-	import { DashboardHeader, StatsCard, BookingRow } from '$lib/components/dashboard';
+	import {
+		DashboardHeader,
+		StatsCard,
+		BookingRow,
+		QuickActions,
+		MiniCalendar,
+		ActivityFeed
+	} from '$lib/components/dashboard';
 	import { Card, Button, Spinner } from '$lib/components/ui';
 
 	type BookingLink = components['schemas']['BookingLink'];
@@ -14,9 +21,41 @@
 	let recentBookings = $state<Booking[]>([]);
 	let loading = $state(true);
 
-	const totalLinks = $derived(bookingLinks.length + polls.length);
 	const pendingBookings = $derived(recentBookings.filter((b) => b.status === 1).length);
 	const totalBookings = $derived(recentBookings.length);
+
+	// Extract event dates from bookings for the mini calendar
+	const eventDates = $derived(
+		recentBookings.map((b) => new Date(b.slot.start_time))
+	);
+
+	// Sample activity data (would come from API in a real implementation)
+	const sampleActivities = [
+		{
+			type: 'booking' as const,
+			text: 'Sarah Johnson requested a booking',
+			time: '2 minutes ago',
+			boldParts: ['Sarah Johnson']
+		},
+		{
+			type: 'vote' as const,
+			text: '3 new votes on Team Offsite poll',
+			time: '15 minutes ago',
+			boldParts: ['3 new votes']
+		},
+		{
+			type: 'poll' as const,
+			text: 'You created Q1 Planning poll',
+			time: '1 hour ago',
+			boldParts: ['Q1 Planning']
+		},
+		{
+			type: 'booking' as const,
+			text: 'Booking with Alex Rivera confirmed',
+			time: '3 hours ago',
+			boldParts: ['Alex Rivera']
+		}
+	];
 
 	onMount(async () => {
 		try {
@@ -63,15 +102,77 @@
 	function handleBookingUpdate(updated: Booking) {
 		recentBookings = recentBookings.map((b) => (b.id === updated.id ? updated : b));
 	}
+
+	// Quick actions configuration
+	const quickActions = [
+		{
+			href: '/booking-links/new',
+			title: 'Create Booking Link',
+			description: 'Set up 1:1 scheduling',
+			icon: plusIcon
+		},
+		{
+			href: '/polls/new',
+			title: 'Start New Poll',
+			description: 'Coordinate group availability',
+			icon: usersIcon
+		},
+		{
+			href: '/settings',
+			title: 'Sync Calendar',
+			description: 'Update availability',
+			icon: syncIcon
+		}
+	];
 </script>
 
-<DashboardHeader title="Dashboard">
+{#snippet plusIcon()}
+	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path stroke-linecap="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+	</svg>
+{/snippet}
+
+{#snippet usersIcon()}
+	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path
+			stroke-linecap="round"
+			stroke-width="2"
+			d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet syncIcon()}
+	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path
+			stroke-linecap="round"
+			stroke-width="2"
+			d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+		/>
+	</svg>
+{/snippet}
+
+<DashboardHeader title="Dashboard" subtitle="Welcome back! Here's what's happening.">
 	{#snippet actions()}
 		<Button variant="secondary" onclick={() => (window.location.href = '/booking-links/new')}>
-			{#snippet children()}New Booking Link{/snippet}
+			{#snippet children()}
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-width="2"
+						d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"
+					/>
+				</svg>
+				New Link
+			{/snippet}
 		</Button>
 		<Button variant="primary" onclick={() => (window.location.href = '/polls/new')}>
-			{#snippet children()}New Poll{/snippet}
+			{#snippet children()}
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+				</svg>
+				New Poll
+			{/snippet}
 		</Button>
 	{/snippet}
 </DashboardHeader>
@@ -81,28 +182,26 @@
 		<Spinner size="lg" />
 	</div>
 {:else}
-	<div class="space-y-4 sm:space-y-6">
-		<!-- Stats - stack on mobile, 3 columns on tablet and up -->
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-			<StatsCard label="Booking Links" value={bookingLinks.length}>
+	<div class="space-y-6">
+		<!-- Stats Grid: 4 columns on desktop, 2 on tablet/mobile -->
+		<div class="stats-grid">
+			<StatsCard label="Booking Links" value={bookingLinks.length} color="sky">
 				{#snippet icon()}
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
-							stroke-linejoin="round"
 							stroke-width="2"
-							d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"
 						/>
 					</svg>
 				{/snippet}
 			</StatsCard>
 
-			<StatsCard label="Polls" value={polls.length}>
+			<StatsCard label="Active Polls" value={polls.length} color="violet">
 				{#snippet icon()}
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
-							stroke-linejoin="round"
 							stroke-width="2"
 							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
 						/>
@@ -110,12 +209,16 @@
 				{/snippet}
 			</StatsCard>
 
-			<StatsCard label="Pending Bookings" value={pendingBookings}>
+			<StatsCard
+				label="Pending Approval"
+				value={pendingBookings}
+				color="amber"
+				trend={pendingBookings > 0 ? { value: `${pendingBookings} new`, type: 'alert' } : undefined}
+			>
 				{#snippet icon()}
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
-							stroke-linejoin="round"
 							stroke-width="2"
 							d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
 						/>
@@ -123,40 +226,167 @@
 				{/snippet}
 			</StatsCard>
 
-			<StatsCard label="Total Bookings" value={totalBookings}>
+			<StatsCard label="Total Bookings" value={totalBookings} color="emerald">
 				{#snippet icon()}
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
-							stroke-linejoin="round"
 							stroke-width="2"
-							d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 						/>
 					</svg>
 				{/snippet}
 			</StatsCard>
 		</div>
 
-		<!-- Recent Bookings -->
-		<Card>
-			{#snippet header()}
-				<div class="flex items-center justify-between">
-					<h2 class="text-lg font-medium text-gray-900">Recent Bookings</h2>
-					<a href="/booking-links" class="text-sm text-indigo-600 hover:text-indigo-700">View all booking links</a>
-				</div>
-			{/snippet}
-
-			{#snippet children()}
-				{#if recentBookings.length === 0}
-					<p class="text-gray-500 text-center py-4">No bookings yet</p>
-				{:else}
-					<div class="divide-y divide-gray-100">
-						{#each recentBookings as booking (booking.id)}
-							<BookingRow {booking} onUpdate={handleBookingUpdate} />
-						{/each}
+		<!-- Two-column content grid -->
+		<div class="content-grid">
+			<!-- Left: Recent Bookings -->
+			<Card>
+				{#snippet header()}
+					<div class="flex items-center justify-between w-full">
+						<span class="card-title">Recent Bookings</span>
+						{#if pendingBookings > 0}
+							<span class="card-badge">{pendingBookings} pending</span>
+						{/if}
 					</div>
-				{/if}
-			{/snippet}
-		</Card>
+				{/snippet}
+
+				{#snippet children()}
+					{#if recentBookings.length === 0}
+						<p class="text-[var(--text-muted)] text-center py-4">No bookings yet</p>
+					{:else}
+						<div class="booking-list">
+							{#each recentBookings as booking (booking.id)}
+								<BookingRow {booking} onUpdate={handleBookingUpdate} />
+							{/each}
+						</div>
+					{/if}
+				{/snippet}
+			</Card>
+
+			<!-- Right column: stacked cards -->
+			<div class="right-column">
+				<!-- Quick Actions -->
+				<Card>
+					{#snippet header()}
+						<span class="card-title">Quick Actions</span>
+					{/snippet}
+
+					{#snippet children()}
+					<div class="component-fullbleed">
+						<QuickActions actions={quickActions} />
+					</div>
+				{/snippet}
+				</Card>
+
+				<!-- Mini Calendar -->
+				<Card>
+					{#snippet header()}
+						<div class="flex items-center justify-between w-full">
+							<span class="card-title">Calendar</span>
+							<a href="/calendar" class="card-link">View full</a>
+						</div>
+					{/snippet}
+
+					{#snippet children()}
+					<div class="component-fullbleed">
+						<MiniCalendar events={eventDates} />
+					</div>
+				{/snippet}
+				</Card>
+
+				<!-- Activity Feed -->
+				<Card>
+					{#snippet header()}
+						<div class="flex items-center justify-between w-full">
+							<span class="card-title">Recent Activity</span>
+							<a href="#" class="card-link">View all</a>
+						</div>
+					{/snippet}
+
+					{#snippet children()}
+					<div class="component-fullbleed">
+						<ActivityFeed activities={sampleActivities} />
+					</div>
+				{/snippet}
+				</Card>
+			</div>
+		</div>
 	</div>
 {/if}
+
+<style>
+	/* Stats Grid */
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1rem;
+	}
+
+	/* Content Grid: 1.6fr 1fr like the prototype */
+	.content-grid {
+		display: grid;
+		grid-template-columns: 1.6fr 1fr;
+		gap: 1.5rem;
+	}
+
+	/* Right column stacked cards */
+	.right-column {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	/* Card header typography */
+	.card-title {
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: var(--text-primary);
+	}
+
+	.card-badge {
+		font-size: 0.7rem;
+		font-weight: 700;
+		padding: 0.25rem 0.6rem;
+		border-radius: var(--radius);
+		background: var(--amber);
+		color: white;
+		border: 1px solid var(--border-color);
+	}
+
+	.card-link {
+		font-size: 0.8rem;
+		color: var(--sky);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.card-link:hover {
+		text-decoration: underline;
+	}
+
+	/* Remove default Card padding for components with their own padding */
+	.booking-list,
+	.component-fullbleed {
+		margin: -1rem -1.25rem;
+	}
+
+	/* Responsive: tablet */
+	@media (max-width: 1100px) {
+		.stats-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.content-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Responsive: mobile */
+	@media (max-width: 600px) {
+		.stats-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+</style>
