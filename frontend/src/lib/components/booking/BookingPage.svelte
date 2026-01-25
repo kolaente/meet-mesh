@@ -184,19 +184,29 @@
 	<!-- Step indicator -->
 	<div class="flex items-center justify-center gap-2 mb-8">
 		{#each ['date', 'time', 'form'] as s, i}
-			{@const isActive = step === s || (s === 'time' && step === 'form' && slotType === 1) || (s === 'date' && (step === 'time' || step === 'form'))}
-			{@const isCurrent = step === s}
+			{@const steps = slotType === 1 ? ['date', 'time', 'form'] : ['date', 'form']}
+			{@const stepIndex = steps.indexOf(s)}
+			{@const currentIndex = steps.indexOf(step)}
 			{@const shouldShow = s !== 'time' || slotType === 1}
+			{@const isCurrent = step === s}
+			{@const isCompleted = stepIndex !== -1 && stepIndex < currentIndex}
+			{@const isUpcoming = stepIndex !== -1 && stepIndex > currentIndex}
 			{#if shouldShow}
 				<div class="flex items-center gap-2">
 					<div
-						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-							{isCurrent ? 'bg-indigo-600 text-white' : isActive ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}"
+						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border
+							{isCurrent ? 'bg-[var(--sky)] text-white border-[var(--sky)]' : isCompleted ? 'bg-[var(--emerald)] text-white border-[var(--emerald)]' : 'bg-[var(--bg-tertiary)] text-[var(--text-muted)] border-[var(--border-color)]'}"
 					>
-						{i + 1}
+						{#if isCompleted}
+							<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+							</svg>
+						{:else}
+							{stepIndex + 1}
+						{/if}
 					</div>
 					{#if i < 2 && (s !== 'time' || slotType === 1)}
-						<div class="w-8 h-px {isActive ? 'bg-indigo-200' : 'bg-gray-200'}"></div>
+						<div class="w-8 h-px bg-[var(--border-color)]"></div>
 					{/if}
 				</div>
 			{/if}
@@ -214,6 +224,7 @@
 	{/if}
 
 	<!-- Content based on slot type and step -->
+	<div class="booking-sections">
 	<Card>
 		{#if loading}
 			<div class="flex items-center justify-center py-12">
@@ -399,4 +410,13 @@
 			</div>
 		</Card>
 	{/if}
+	</div>
 </div>
+
+<style>
+	.booking-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+</style>

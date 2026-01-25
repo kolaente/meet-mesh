@@ -149,12 +149,12 @@
 		<!-- Voting interface -->
 		<div class="space-y-4">
 			<!-- Instructions -->
-			<p class="text-sm text-gray-600 mb-4">
+			<p class="text-sm text-gray-600">
 				Select your availability for each option below. You can choose Yes, No, or Maybe.
 			</p>
 
 			<!-- Vote progress -->
-			<div class="flex items-center justify-between text-sm text-gray-500 mb-2">
+			<div class="flex items-center justify-between text-sm text-gray-500">
 				<span>
 					{voteCount} of {link.slots.length} options voted
 				</span>
@@ -163,8 +163,9 @@
 				{/if}
 			</div>
 
-			<!-- Vote cards -->
-			<div class="space-y-4">
+			<!-- Poll cards container with consistent spacing -->
+			<div class="flex flex-col gap-4">
+				<!-- Vote cards -->
 				{#each link.slots as slot (slot.id)}
 					<VoteCard
 						option={slot}
@@ -172,16 +173,16 @@
 						onVote={handleVote}
 					/>
 				{/each}
-			</div>
 
-			<!-- Voter form -->
-			<Card class="mt-6">
-				<VoterForm
-					onSubmit={handleSubmit}
-					loading={submitting}
-					requireEmail={link.require_email}
-				/>
-			</Card>
+				<!-- Voter form -->
+				<Card>
+					<VoterForm
+						onSubmit={handleSubmit}
+						loading={submitting}
+						requireEmail={link.require_email}
+					/>
+				</Card>
+			</div>
 		</div>
 	{/if}
 </div>
