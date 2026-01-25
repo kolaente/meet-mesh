@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   /* Legacy color variables (for backward compatibility) */
   --color-accent: 99 102 241;      /* Indigo - primary actions */
