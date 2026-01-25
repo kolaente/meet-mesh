@@ -3,24 +3,6 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  /* Legacy color variables (for backward compatibility) */
-  --color-accent: 99 102 241;      /* Indigo - primary actions */
-  --color-accent-hover: 79 70 229;
-  --color-surface: 255 255 255;
-  --color-muted: 248 250 252;
-  --color-border: 226 232 240;
-
-  --color-success: 34 197 94;
-  --color-warning: 251 191 36;
-  --color-danger: 239 68 68;
-
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-
   /* Neo-brutalist design system - Light mode */
   --bg-primary: #f5f3f0;
   --bg-secondary: #ffffff;
@@ -55,8 +37,13 @@
   --border-light: 1px solid var(--border-color);
 
   /* Radius - rounded but not too soft */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
   --radius: 8px;
   --radius-lg: 12px;
+
+  /* Standard shadow for components that need it */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 
   --transition: 0.15s ease;
   --sidebar-width: 250px;
