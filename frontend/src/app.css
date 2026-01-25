@@ -60,19 +60,19 @@
   --sidebar-width: 250px;
 }
 
-[data-theme="dark"] {
+:root[data-theme="dark"] {
   --bg-primary: #1a1a1a;
   --bg-secondary: #0a0a0a;
   --bg-tertiary: #111111;
   --text-primary: #f5f5f5;
   --text-secondary: #a0a0a0;
   --text-muted: #606060;
-  --border-color: #000000;
+  --border-color: #333333;
 
-  /* Same offset shadows as light mode */
-  --shadow: 3px 3px 0 var(--border-color);
-  --shadow-hover: 5px 5px 0 var(--border-color);
-  --shadow-sm: 2px 2px 0 var(--border-color);
+  /* Dark shadows need lighter color to be visible */
+  --shadow: 3px 3px 0 #000000;
+  --shadow-hover: 5px 5px 0 #000000;
+  --shadow-sm: 2px 2px 0 #000000;
 }
 
 body {
