@@ -138,6 +138,7 @@
     margin-bottom: 1.5rem;
     border-bottom: var(--border-light);
     text-decoration: none;
+    cursor: pointer;
   }
 
   .logo-icon {
@@ -191,6 +192,7 @@
     font-weight: 600;
     transition: all var(--transition);
     border: 2px solid transparent;
+    cursor: pointer;
   }
 
   .nav-item:hover {

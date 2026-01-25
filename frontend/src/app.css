@@ -71,3 +71,7 @@ body {
   min-height: 100vh;
   transition: background var(--transition), color var(--transition);
 }
+
+button {
+  cursor: pointer;
+}
