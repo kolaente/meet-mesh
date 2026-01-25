@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { components } from '$lib/api/types';
-	import { Card, Button } from '$lib/components/ui';
+	import { Card, Button, Badge } from '$lib/components/ui';
 
 	type CalendarConnection = components['schemas']['CalendarConnection'];
 
@@ -38,9 +38,7 @@
 					<p class="text-sm text-[var(--text-secondary)] truncate">{calendar.username}</p>
 				</div>
 				<div class="flex items-center gap-2">
-					<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-[var(--emerald)] text-white border border-[var(--border-color)]">
-						CalDAV
-					</span>
+					<Badge variant="caldav" size="xs" />
 				</div>
 			</div>
 

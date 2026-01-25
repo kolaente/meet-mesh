@@ -114,9 +114,7 @@
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
 						<p class="text-sm font-medium text-[var(--text-secondary)]">Type</p>
-						<span class="inline-flex items-center px-2.5 py-1 text-sm font-medium rounded-full bg-[var(--violet)] text-white border border-[var(--border-color)]">
-							Poll
-						</span>
+						<Badge variant="poll" size="md" />
 					</div>
 
 					<div>

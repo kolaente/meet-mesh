@@ -108,9 +108,7 @@
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
 						<p class="text-sm font-medium text-[var(--text-secondary)]">Type</p>
-						<span class="inline-flex items-center px-2.5 py-1 text-sm font-medium rounded-full bg-[var(--emerald)] text-white border border-[var(--border-color)]">
-							Booking
-						</span>
+						<Badge variant="booking" size="md" />
 					</div>
 
 					<div>
