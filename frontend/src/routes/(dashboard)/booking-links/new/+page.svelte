@@ -2,15 +2,20 @@
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
+	import { AvailabilityEditor } from '$lib/components/booking';
 	import { DashboardHeader } from '$lib/components/dashboard';
 	import { Button, Card, Checkbox, Input, Textarea } from '$lib/components/ui';
 
+	type AvailabilityRule = components['schemas']['AvailabilityRule'];
 	type CustomField = components['schemas']['CustomField'];
 	type CustomFieldType = components['schemas']['CustomFieldType'];
 
 	let name = $state('');
 	let description = $state('');
 	let customFields = $state<CustomField[]>([]);
+	let availabilityRules = $state<AvailabilityRule[]>([
+		{ days_of_week: [1, 2, 3, 4, 5], start_time: '09:00', end_time: '17:00' }
+	]);
 	let saving = $state(false);
 	let error = $state('');
 
@@ -56,6 +61,7 @@
 				body: {
 					name,
 					description: description || undefined,
+					availability_rules: availabilityRules.length > 0 ? availabilityRules : undefined,
 					custom_fields: customFields.length > 0 ? customFields : undefined
 				}
 			});
@@ -95,6 +101,12 @@
 				bind:value={description}
 				rows={3}
 				placeholder="A brief description of this booking link..."
+			/>
+
+			<!-- Availability -->
+			<AvailabilityEditor
+				rules={availabilityRules}
+				onchange={(rules) => availabilityRules = rules}
 			/>
 
 			<!-- Custom Fields -->
