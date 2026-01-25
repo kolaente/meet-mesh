@@ -19,7 +19,7 @@
   ]
 
   const settingsItems: NavItem[] = [
-    { href: '/settings', label: 'Settings', icon: 'settings' }
+    { href: '/settings', label: 'Calendar', icon: 'calendar' }
   ]
 
   function isActive(href: string): boolean {
@@ -67,7 +67,6 @@
 
   <!-- Navigation -->
   <nav class="nav">
-    <div class="nav-label">Menu</div>
     {#each menuItems as item}
       <a href={item.href} class="nav-item" class:active={isActive(item.href)}>
         {#if item.icon === 'dashboard'}
@@ -90,13 +89,11 @@
       </a>
     {/each}
 
-    <div class="nav-label">Settings</div>
     {#each settingsItems as item}
       <a href={item.href} class="nav-item" class:active={isActive(item.href)}>
-        {#if item.icon === 'settings'}
+        {#if item.icon === 'calendar'}
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-            <circle cx="12" cy="12" r="3"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
         {/if}
         {item.label}
@@ -180,15 +177,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-  }
-
-  .nav-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    padding: 1rem 0.5rem 0.5rem;
   }
 
   .nav-item {
