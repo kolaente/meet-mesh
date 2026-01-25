@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '@fontsource-variable/outfit';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { ToastContainer } from '$lib/components/ui';

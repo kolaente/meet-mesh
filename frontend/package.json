@@ -29,6 +29,7 @@
 		"vite": "^7.2.6"
 	},
 	"dependencies": {
+		"@fontsource-variable/outfit": "^5.2.8",
 		"bits-ui": "^2.15.4"
 	}
 }
