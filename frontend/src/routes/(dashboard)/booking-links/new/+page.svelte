@@ -3,7 +3,7 @@
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
 	import { DashboardHeader } from '$lib/components/dashboard';
-	import { Button, Card, Input } from '$lib/components/ui';
+	import { Button, Card, Checkbox, Input } from '$lib/components/ui';
 
 	type CustomField = components['schemas']['CustomField'];
 	type CustomFieldType = components['schemas']['CustomFieldType'];
@@ -169,16 +169,11 @@
 										</select>
 									</div>
 									<div class="flex items-end pb-1">
-										<label class="flex items-center gap-2 text-sm text-gray-700">
-											<input
-												type="checkbox"
-												checked={field.required}
-												onchange={(e: Event) =>
-													updateField(index, 'required', (e.target as HTMLInputElement).checked)}
-												class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-											/>
-											Required
-										</label>
+										<Checkbox
+											checked={field.required}
+											onchange={(checked) => updateField(index, 'required', checked)}
+											label="Required"
+										/>
 									</div>
 								</div>
 
