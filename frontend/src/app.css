@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 :root {
+  /* Legacy color variables (for backward compatibility) */
   --color-accent: 99 102 241;      /* Indigo - primary actions */
   --color-accent-hover: 79 70 229;
   --color-surface: 255 255 255;
@@ -17,4 +18,67 @@
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+  /* Neo-brutalist design system - Light mode */
+  --bg-primary: #f5f3f0;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #ebe8e4;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border-color: #1a1a1a;
+
+  /* Accent colors - Tailwind 500 palette */
+  --amber: #f59e0b;
+  --emerald: #10b981;
+  --sky: #0ea5e9;
+  --violet: #8b5cf6;
+  --rose: #f43f5e;
+
+  /* Aliases for compatibility */
+  --cyan: var(--sky);
+  --purple: var(--violet);
+  --pink: var(--rose);
+  --orange: var(--amber);
+  --green: var(--emerald);
+  --blue: var(--sky);
+
+  /* Neo-brutalist shadows - visible but not extreme */
+  --shadow: 3px 3px 0 var(--border-color);
+  --shadow-hover: 5px 5px 0 var(--border-color);
+  --shadow-sm: 2px 2px 0 var(--border-color);
+
+  /* Borders - present but refined */
+  --border: 2px solid var(--border-color);
+  --border-light: 1px solid var(--border-color);
+
+  /* Radius - rounded but not too soft */
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  --transition: 0.15s ease;
+  --sidebar-width: 250px;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a0;
+  --text-muted: #606060;
+  --border-color: #000000;
+
+  /* Same offset shadows as light mode */
+  --shadow: 3px 3px 0 var(--border-color);
+  --shadow-hover: 5px 5px 0 var(--border-color);
+  --shadow-sm: 2px 2px 0 var(--border-color);
+}
+
+body {
+  font-family: 'Outfit', -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
 }
