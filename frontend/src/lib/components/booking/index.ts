@@ -1,3 +1,5 @@
+export { default as AvailabilityEditor } from './AvailabilityEditor.svelte';
+export { default as AvailabilityRuleForm } from './AvailabilityRuleForm.svelte';
 export { default as BookingForm } from './BookingForm.svelte';
 export { default as BookingPage } from './BookingPage.svelte';
 export { default as DateCalendar } from './DateCalendar.svelte';
