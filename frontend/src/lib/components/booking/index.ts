@@ -1,6 +1,7 @@
-export { default as DateCalendar } from './DateCalendar.svelte';
-export { default as TimeSlotList } from './TimeSlotList.svelte';
-export { default as DayPicker } from './DayPicker.svelte';
-export { default as DateRangePicker } from './DateRangePicker.svelte';
 export { default as BookingForm } from './BookingForm.svelte';
 export { default as BookingPage } from './BookingPage.svelte';
+export { default as DateCalendar } from './DateCalendar.svelte';
+export { default as DateRangePicker } from './DateRangePicker.svelte';
+export { default as DayPicker } from './DayPicker.svelte';
+export { default as TimeSlotList } from './TimeSlotList.svelte';
+export { default as WeekAvailabilityDisplay } from './WeekAvailabilityDisplay.svelte';
