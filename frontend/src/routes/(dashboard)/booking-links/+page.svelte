@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
@@ -66,12 +67,6 @@
 						<div class="space-y-2 sm:space-y-3">
 							<div class="flex items-start justify-between gap-2">
 								<h3 class="font-medium text-[var(--text-primary)] truncate text-sm sm:text-base">{link.name}</h3>
-								<span class="inline-flex items-center flex-shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700 border border-green-200">
-									Booking
-								</span>
-							</div>
-
-							<div class="flex items-center gap-2">
 								<Badge variant={link.status === 1 ? 'active' : 'cancelled'} size="sm" />
 							</div>
 
