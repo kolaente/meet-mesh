@@ -40,16 +40,16 @@
 		if (isSelected) {
 			switch (optionValue) {
 				case 1: // Yes
-					return `${base} bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500`;
+					return `${base} bg-[var(--emerald)] text-white hover:opacity-90 focus:ring-[var(--emerald)]`;
 				case 2: // No
-					return `${base} bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500`;
+					return `${base} bg-[var(--rose)] text-white hover:opacity-90 focus:ring-[var(--rose)]`;
 				case 3: // Maybe
-					return `${base} bg-amber-100 text-amber-700 hover:bg-amber-200 focus:ring-amber-500`;
+					return `${base} bg-[var(--amber)] text-white hover:opacity-90 focus:ring-[var(--amber)]`;
 			}
 		}
 
 		// Unselected/ghost style
-		return `${base} bg-white text-gray-700 hover:bg-gray-50 border-y border-gray-300 first:border-l first:rounded-l-[var(--radius-md)] last:border-r last:rounded-r-[var(--radius-md)]`;
+		return `${base} bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] border-y border-[var(--border-color)] first:border-l first:rounded-l-[var(--radius-md)] last:border-r last:rounded-r-[var(--radius-md)]`;
 	}
 </script>
 
@@ -65,6 +65,7 @@
 			onclick={() => handleClick(option.value)}
 			class="{getButtonClasses(option.value)} flex-1 sm:flex-none"
 			class:border-l={!isSelected && option.value !== 1}
+			class:border-[var(--border-color)]={!isSelected}
 			class:border-y={!isSelected}
 			class:border-r={!isSelected && option.value === 3}
 			class:first:border-l={!isSelected}
