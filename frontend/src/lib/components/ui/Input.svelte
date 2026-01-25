@@ -41,7 +41,7 @@
 
 <div class="space-y-1.5 {className}">
 	{#if label}
-		<label for={inputId} class="block text-sm font-medium text-gray-700">
+		<label for={inputId} class="block text-sm font-medium text-[var(--text-secondary)]">
 			{label}
 			{#if required}
 				<span class="text-red-500">*</span>
@@ -50,7 +50,7 @@
 	{/if}
 
 	{#if description}
-		<p id={descriptionId} class="text-sm text-gray-500">
+		<p id={descriptionId} class="text-sm text-[var(--text-muted)]">
 			{description}
 		</p>
 	{/if}
@@ -66,10 +66,8 @@
 		inputmode={effectiveInputmode}
 		aria-invalid={!!error}
 		aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
-		class="block w-full min-h-[44px] rounded-[var(--radius-md)] border px-3 py-2.5 sm:py-2 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-0 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500
-		{error
-			? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-			: 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}"
+		class="block w-full min-h-[44px] rounded-[var(--radius)] border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] px-3 py-2.5 sm:py-2 text-base sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--sky)] disabled:cursor-not-allowed disabled:opacity-50
+		{error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}"
 		{...restProps}
 	/>
 
