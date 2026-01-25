@@ -237,7 +237,7 @@
 					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date</h2>
 					<DateCalendar
 						{availableDates}
-						selectedDate={selectedDate}
+						bind:selectedDate
 						class="mx-auto max-w-sm"
 					/>
 					{#if selectedDate}
