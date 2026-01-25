@@ -175,9 +175,9 @@
 <div class="max-w-2xl mx-auto">
 	<!-- Header -->
 	<div class="text-center mb-8">
-		<h1 class="text-2xl font-bold text-gray-900">{link.name}</h1>
+		<h1 class="text-2xl font-bold text-[var(--text-primary)]">{link.name}</h1>
 		{#if link.description}
-			<p class="mt-2 text-gray-600">{link.description}</p>
+			<p class="mt-2 text-[var(--text-secondary)]">{link.description}</p>
 		{/if}
 	</div>
 
@@ -234,7 +234,7 @@
 			<!-- Time slot flow -->
 			{#if step === 'date'}
 				<div in:fly={{ x: -50, duration: 200 }}>
-					<h2 class="text-lg font-semibold text-gray-900 mb-4">Select a Date</h2>
+					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date</h2>
 					<DateCalendar
 						{availableDates}
 						selectedDate={selectedDate}
@@ -254,16 +254,16 @@
 						<button
 							type="button"
 							onclick={goBack}
-							class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+							class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-[var(--radius-md)] transition-colors"
 							aria-label="Go back"
 						>
 							<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>
 						</button>
-						<h2 class="text-lg font-semibold text-gray-900">Select a Time</h2>
+						<h2 class="text-lg font-semibold text-[var(--text-primary)]">Select a Time</h2>
 					</div>
-					<p class="text-sm text-gray-600 mb-4">
+					<p class="text-sm text-[var(--text-secondary)] mb-4">
 						{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
 							weekday: 'long',
 							month: 'long',
@@ -282,18 +282,18 @@
 						<button
 							type="button"
 							onclick={goBack}
-							class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+							class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-[var(--radius-md)] transition-colors"
 							aria-label="Go back"
 						>
 							<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>
 						</button>
-						<h2 class="text-lg font-semibold text-gray-900">Your Details</h2>
+						<h2 class="text-lg font-semibold text-[var(--text-primary)]">Your Details</h2>
 					</div>
 					{#if selectedSlot}
-						<div class="mb-6 p-3 bg-indigo-50 rounded-[var(--radius-md)] border border-indigo-100">
-							<p class="text-sm text-indigo-800 font-medium">
+						<div class="mb-6 p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-[var(--radius-md)] border border-indigo-100 dark:border-indigo-800">
+							<p class="text-sm text-indigo-800 dark:text-indigo-200 font-medium">
 								{formatSlotSummary(selectedSlot)}
 							</p>
 						</div>
@@ -309,7 +309,7 @@
 			<!-- Full day flow -->
 			{#if step === 'date'}
 				<div in:fly={{ x: -50, duration: 200 }}>
-					<h2 class="text-lg font-semibold text-gray-900 mb-4">Select a Date</h2>
+					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date</h2>
 					<DayPicker
 						{availableDates}
 						bind:selectedDate
@@ -328,18 +328,18 @@
 						<button
 							type="button"
 							onclick={goBack}
-							class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+							class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-[var(--radius-md)] transition-colors"
 							aria-label="Go back"
 						>
 							<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>
 						</button>
-						<h2 class="text-lg font-semibold text-gray-900">Your Details</h2>
+						<h2 class="text-lg font-semibold text-[var(--text-primary)]">Your Details</h2>
 					</div>
 					{#if selectedSlot}
-						<div class="mb-6 p-3 bg-indigo-50 rounded-[var(--radius-md)] border border-indigo-100">
-							<p class="text-sm text-indigo-800 font-medium">
+						<div class="mb-6 p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-[var(--radius-md)] border border-indigo-100 dark:border-indigo-800">
+							<p class="text-sm text-indigo-800 dark:text-indigo-200 font-medium">
 								{formatSlotSummary(selectedSlot)}
 							</p>
 						</div>
@@ -355,7 +355,7 @@
 			<!-- Multi-day flow -->
 			{#if step === 'date'}
 				<div in:fly={{ x: -50, duration: 200 }}>
-					<h2 class="text-lg font-semibold text-gray-900 mb-4">Select Date Range</h2>
+					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select Date Range</h2>
 					<DateRangePicker
 						{availableDates}
 						bind:startDate
@@ -375,18 +375,18 @@
 						<button
 							type="button"
 							onclick={goBack}
-							class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-[var(--radius-md)] transition-colors"
+							class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-[var(--radius-md)] transition-colors"
 							aria-label="Go back"
 						>
 							<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>
 						</button>
-						<h2 class="text-lg font-semibold text-gray-900">Your Details</h2>
+						<h2 class="text-lg font-semibold text-[var(--text-primary)]">Your Details</h2>
 					</div>
 					{#if selectedSlot}
-						<div class="mb-6 p-3 bg-indigo-50 rounded-[var(--radius-md)] border border-indigo-100">
-							<p class="text-sm text-indigo-800 font-medium">
+						<div class="mb-6 p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-[var(--radius-md)] border border-indigo-100 dark:border-indigo-800">
+							<p class="text-sm text-indigo-800 dark:text-indigo-200 font-medium">
 								{formatSlotSummary(selectedSlot)}
 							</p>
 						</div>
@@ -405,8 +405,8 @@
 	{#if link.slots.length === 0}
 		<Card>
 			<div class="text-center py-8">
-				<p class="text-gray-600">No available time slots at the moment.</p>
-				<p class="text-sm text-gray-500 mt-2">Please check back later.</p>
+				<p class="text-[var(--text-secondary)]">No available time slots at the moment.</p>
+				<p class="text-sm text-[var(--text-muted)] mt-2">Please check back later.</p>
 			</div>
 		</Card>
 	{/if}

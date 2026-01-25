@@ -74,19 +74,19 @@
 			<div class="flex-shrink-0 text-2xl" aria-hidden="true">
 				{#if option.type === 3}
 					<!-- Multi-day icon -->
-					<svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<svg class="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 					</svg>
 				{:else}
 					<!-- Calendar icon -->
-					<svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<svg class="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
 					</svg>
 				{/if}
 			</div>
 			<div class="flex-1 min-w-0">
-				<p class="text-sm sm:text-base font-medium text-gray-900">{formattedDate}</p>
-				<p class="text-xs sm:text-sm text-gray-500">{formattedTime}</p>
+				<p class="text-sm sm:text-base font-medium text-[var(--text-primary)]">{formattedDate}</p>
+				<p class="text-xs sm:text-sm text-[var(--text-secondary)]">{formattedTime}</p>
 			</div>
 		</div>
 

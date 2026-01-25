@@ -37,7 +37,7 @@
 {:else if bookingLinks.length === 0}
 	<div class="text-center py-12">
 		<svg
-			class="mx-auto h-12 w-12 text-gray-400"
+			class="mx-auto h-12 w-12 text-[var(--text-muted)]"
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
@@ -49,8 +49,8 @@
 				d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 			/>
 		</svg>
-		<h3 class="mt-2 text-sm font-medium text-gray-900">No booking links</h3>
-		<p class="mt-1 text-sm text-gray-500">Get started by creating a booking link for 1:1 scheduling.</p>
+		<h3 class="mt-2 text-sm font-medium text-[var(--text-primary)]">No booking links</h3>
+		<p class="mt-1 text-sm text-[var(--text-secondary)]">Get started by creating a booking link for 1:1 scheduling.</p>
 		<div class="mt-6">
 			<Button variant="primary" onclick={() => (window.location.href = '/booking-links/new')}>
 				{#snippet children()}Create your first booking link{/snippet}
@@ -65,7 +65,7 @@
 					{#snippet children()}
 						<div class="space-y-2 sm:space-y-3">
 							<div class="flex items-start justify-between gap-2">
-								<h3 class="font-medium text-gray-900 truncate text-sm sm:text-base">{link.name}</h3>
+								<h3 class="font-medium text-[var(--text-primary)] truncate text-sm sm:text-base">{link.name}</h3>
 								<span class="inline-flex items-center flex-shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700 border border-green-200">
 									Booking
 								</span>
@@ -75,7 +75,7 @@
 								<Badge variant={link.status === 1 ? 'active' : 'cancelled'} size="sm" />
 							</div>
 
-							<div class="text-xs sm:text-sm text-gray-500 truncate">
+							<div class="text-xs sm:text-sm text-[var(--text-secondary)] truncate">
 								<span class="font-mono">/p/booking/{link.slug}</span>
 							</div>
 						</div>
