@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
@@ -154,7 +155,7 @@
 
 <DashboardHeader title="Dashboard" subtitle="Welcome back! Here's what's happening.">
 	{#snippet actions()}
-		<Button variant="secondary" onclick={() => (window.location.href = '/booking-links/new')}>
+		<Button variant="secondary" onclick={() => goto('/booking-links/new')}>
 			{#snippet children()}
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
@@ -167,7 +168,7 @@
 				New Link
 			{/snippet}
 		</Button>
-		<Button variant="primary" onclick={() => (window.location.href = '/polls/new')}>
+		<Button variant="primary" onclick={() => goto('/polls/new')}>
 			{#snippet children()}
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-width="2.5" d="M12 4v16m8-8H4" />

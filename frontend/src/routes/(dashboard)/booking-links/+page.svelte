@@ -25,7 +25,7 @@
 
 <DashboardHeader title="Booking Links">
 	{#snippet actions()}
-		<Button variant="primary" onclick={() => (window.location.href = '/booking-links/new')}>
+		<Button variant="primary" onclick={() => goto('/booking-links/new')}>
 			{#snippet children()}New Booking Link{/snippet}
 		</Button>
 	{/snippet}
@@ -53,7 +53,7 @@
 		<h3 class="mt-2 text-sm font-medium text-[var(--text-primary)]">No booking links</h3>
 		<p class="mt-1 text-sm text-[var(--text-secondary)]">Get started by creating a booking link for 1:1 scheduling.</p>
 		<div class="mt-6">
-			<Button variant="primary" onclick={() => (window.location.href = '/booking-links/new')}>
+			<Button variant="primary" onclick={() => goto('/booking-links/new')}>
 				{#snippet children()}Create your first booking link{/snippet}
 			</Button>
 		</div>

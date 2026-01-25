@@ -25,7 +25,7 @@
 
 <DashboardHeader title="Polls">
 	{#snippet actions()}
-		<Button variant="primary" onclick={() => (window.location.href = '/polls/new')}>
+		<Button variant="primary" onclick={() => goto('/polls/new')}>
 			{#snippet children()}New Poll{/snippet}
 		</Button>
 	{/snippet}
@@ -53,7 +53,7 @@
 		<h3 class="mt-2 text-sm font-medium text-[var(--text-primary)]">No polls</h3>
 		<p class="mt-1 text-sm text-[var(--text-secondary)]">Get started by creating a poll for group scheduling.</p>
 		<div class="mt-6">
-			<Button variant="primary" onclick={() => (window.location.href = '/polls/new')}>
+			<Button variant="primary" onclick={() => goto('/polls/new')}>
 				{#snippet children()}Create your first poll{/snippet}
 			</Button>
 		</div>
