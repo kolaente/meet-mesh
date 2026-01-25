@@ -9,21 +9,6 @@
 
 	let { variant = 'pending', size = 'md' }: Props = $props();
 
-	const baseClasses = 'inline-flex items-center font-medium rounded-full';
-
-	const variantClasses: Record<Variant, string> = {
-		pending: 'bg-amber-50 text-amber-700 border border-amber-200',
-		confirmed: 'bg-green-50 text-green-700 border border-green-200',
-		active: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-		cancelled: 'bg-gray-100 text-gray-600 border border-gray-200',
-		draft: 'bg-slate-100 text-slate-600 border border-slate-200'
-	};
-
-	const sizeClasses: Record<Size, string> = {
-		sm: 'px-2 py-0.5 text-xs',
-		md: 'px-2.5 py-1 text-sm'
-	};
-
 	const labels: Record<Variant, string> = {
 		pending: 'Pending',
 		confirmed: 'Confirmed',
@@ -33,6 +18,51 @@
 	};
 </script>
 
-<span class="{baseClasses} {variantClasses[variant]} {sizeClasses[size]}">
+<span
+	class="badge badge-{variant} badge-{size}"
+>
 	{labels[variant]}
 </span>
+
+<style>
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		font-weight: 700;
+		border-radius: var(--radius, 8px);
+		border: 1px solid var(--border-color, #1a1a1a);
+		color: white;
+	}
+
+	/* Sizes */
+	.badge-sm {
+		font-size: 0.7rem;
+		padding: 0.2rem 0.5rem;
+	}
+
+	.badge-md {
+		font-size: 0.75rem;
+		padding: 0.25rem 0.6rem;
+	}
+
+	/* Variants - Neo-brutalist with solid accent backgrounds */
+	.badge-pending {
+		background: var(--amber, #f59e0b);
+	}
+
+	.badge-confirmed {
+		background: var(--emerald, #10b981);
+	}
+
+	.badge-active {
+		background: var(--sky, #0ea5e9);
+	}
+
+	.badge-cancelled {
+		background: var(--text-muted, #888888);
+	}
+
+	.badge-draft {
+		background: var(--text-secondary, #555555);
+	}
+</style>
