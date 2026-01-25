@@ -292,6 +292,15 @@ func (UnimplementedHandler) SubmitVote(ctx context.Context, req *SubmitVoteReq, 
 	return r, ht.ErrNotImplemented
 }
 
+// TestCalendar implements testCalendar operation.
+//
+// Test calendar connection by fetching events.
+//
+// POST /calendars/{id}/test
+func (UnimplementedHandler) TestCalendar(ctx context.Context, params TestCalendarParams) (r TestCalendarRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // UpdateBookingLink implements updateBookingLink operation.
 //
 // Update a booking link.

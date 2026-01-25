@@ -123,6 +123,29 @@ components:
         write_url:
           type: string
 
+    CalendarTestResult:
+      type: object
+      required: [success, events]
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        events:
+          type: array
+          items:
+            type: object
+            required: [title, start, end]
+            properties:
+              title:
+                type: string
+              start:
+                type: string
+                format: date-time
+              end:
+                type: string
+                format: date-time
+
     BookingLink:
       type: object
       required: [id, slug, name, status]
@@ -414,6 +437,32 @@ paths:
       responses:
         '204':
           description: Calendar removed
+
+  /calendars/{id}/test:
+    post:
+      operationId: testCalendar
+      summary: Test calendar connection by fetching events
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Test results with events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarTestResult'
+        '404':
+          description: Calendar not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # Booking Links endpoints
   /booking-links:

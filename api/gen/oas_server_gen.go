@@ -194,6 +194,12 @@ type Handler interface {
 	//
 	// POST /p/poll/{slug}/vote
 	SubmitVote(ctx context.Context, req *SubmitVoteReq, params SubmitVoteParams) (*Vote, error)
+	// TestCalendar implements testCalendar operation.
+	//
+	// Test calendar connection by fetching events.
+	//
+	// POST /calendars/{id}/test
+	TestCalendar(ctx context.Context, params TestCalendarParams) (TestCalendarRes, error)
 	// UpdateBookingLink implements updateBookingLink operation.
 	//
 	// Update a booking link.

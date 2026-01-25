@@ -62,3 +62,31 @@ func (h *Handler) RemoveCalendar(ctx context.Context, params gen.RemoveCalendarP
 
 	return h.db.Where("id = ? AND user_id = ?", params.ID, userID).Delete(&CalendarConnection{}).Error
 }
+
+// TestCalendar tests a calendar connection by fetching events
+func (h *Handler) TestCalendar(ctx context.Context, params gen.TestCalendarParams) (gen.TestCalendarRes, error) {
+	userID, _ := GetUserID(ctx)
+
+	events, err := h.caldav.TestCalendarConnection(ctx, uint(params.ID), userID)
+	if err != nil {
+		return &gen.CalendarTestResult{
+			Success: false,
+			Error:   gen.NewOptString(err.Error()),
+			Events:  []gen.CalendarTestResultEventsItem{},
+		}, nil
+	}
+
+	resultEvents := make([]gen.CalendarTestResultEventsItem, len(events))
+	for i, e := range events {
+		resultEvents[i] = gen.CalendarTestResultEventsItem{
+			Title: e.Title,
+			Start: e.Start,
+			End:   e.End,
+		}
+	}
+
+	return &gen.CalendarTestResult{
+		Success: true,
+		Events:  resultEvents,
+	}, nil
+}

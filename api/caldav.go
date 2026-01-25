@@ -3,6 +3,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sort"
 	"strings"
@@ -84,6 +85,79 @@ func (c *CalDAVClient) GetBusyTimes(ctx context.Context, userID uint, start, end
 	}
 
 	return mergePeriods(allBusy), nil
+}
+
+// CalendarEvent represents a single calendar event for test results
+type CalendarEvent struct {
+	Title string
+	Start time.Time
+	End   time.Time
+}
+
+// TestCalendarConnection tests a specific calendar by fetching events for the next 7 days
+func (c *CalDAVClient) TestCalendarConnection(ctx context.Context, connID uint, userID uint) ([]CalendarEvent, error) {
+	var conn CalendarConnection
+	if err := c.db.Where("id = ? AND user_id = ?", connID, userID).First(&conn).Error; err != nil {
+		return nil, err
+	}
+
+	client, err := c.createClient(&conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create CalDAV client: %w", err)
+	}
+
+	start := time.Now()
+	end := start.AddDate(0, 0, 7) // 7 days ahead
+
+	var events []CalendarEvent
+	for _, calURL := range conn.CalendarURLs {
+		query := &caldav.CalendarQuery{
+			CompRequest: caldav.CalendarCompRequest{
+				Name: "VCALENDAR",
+				Comps: []caldav.CalendarCompRequest{{
+					Name:     "VEVENT",
+					AllProps: true,
+				}},
+			},
+			CompFilter: caldav.CompFilter{
+				Name: "VCALENDAR",
+				Comps: []caldav.CompFilter{{
+					Name:  "VEVENT",
+					Start: start,
+					End:   end,
+				}},
+			},
+		}
+
+		objs, err := client.QueryCalendar(ctx, calURL, query)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query calendar %s: %w", calURL, err)
+		}
+
+		for _, obj := range objs {
+			for _, event := range obj.Data.Events() {
+				dtstart, _ := event.DateTimeStart(nil)
+				dtend, _ := event.DateTimeEnd(nil)
+				summary := event.Props.Get(ical.PropSummary)
+				title := "(No title)"
+				if summary != nil {
+					title = summary.Value
+				}
+				events = append(events, CalendarEvent{
+					Title: title,
+					Start: dtstart,
+					End:   dtend,
+				})
+			}
+		}
+	}
+
+	// Sort by start time
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].Start.Before(events[j].Start)
+	})
+
+	return events, nil
 }
 
 // CreateBookingEvent creates a calendar event for a confirmed booking

@@ -501,6 +501,81 @@ func (s *CalendarConnection) SetWriteURL(val OptString) {
 	s.WriteURL = val
 }
 
+// Ref: #/components/schemas/CalendarTestResult
+type CalendarTestResult struct {
+	Success bool                           `json:"success"`
+	Error   OptString                      `json:"error"`
+	Events  []CalendarTestResultEventsItem `json:"events"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *CalendarTestResult) GetSuccess() bool {
+	return s.Success
+}
+
+// GetError returns the value of Error.
+func (s *CalendarTestResult) GetError() OptString {
+	return s.Error
+}
+
+// GetEvents returns the value of Events.
+func (s *CalendarTestResult) GetEvents() []CalendarTestResultEventsItem {
+	return s.Events
+}
+
+// SetSuccess sets the value of Success.
+func (s *CalendarTestResult) SetSuccess(val bool) {
+	s.Success = val
+}
+
+// SetError sets the value of Error.
+func (s *CalendarTestResult) SetError(val OptString) {
+	s.Error = val
+}
+
+// SetEvents sets the value of Events.
+func (s *CalendarTestResult) SetEvents(val []CalendarTestResultEventsItem) {
+	s.Events = val
+}
+
+func (*CalendarTestResult) testCalendarRes() {}
+
+type CalendarTestResultEventsItem struct {
+	Title string    `json:"title"`
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
+}
+
+// GetTitle returns the value of Title.
+func (s *CalendarTestResultEventsItem) GetTitle() string {
+	return s.Title
+}
+
+// GetStart returns the value of Start.
+func (s *CalendarTestResultEventsItem) GetStart() time.Time {
+	return s.Start
+}
+
+// GetEnd returns the value of End.
+func (s *CalendarTestResultEventsItem) GetEnd() time.Time {
+	return s.End
+}
+
+// SetTitle sets the value of Title.
+func (s *CalendarTestResultEventsItem) SetTitle(val string) {
+	s.Title = val
+}
+
+// SetStart sets the value of Start.
+func (s *CalendarTestResultEventsItem) SetStart(val time.Time) {
+	s.Start = val
+}
+
+// SetEnd sets the value of End.
+func (s *CalendarTestResultEventsItem) SetEnd(val time.Time) {
+	s.End = val
+}
+
 type CookieAuth struct {
 	APIKey string
 	Roles  []string
@@ -879,6 +954,7 @@ func (*Error) getCurrentUserRes()       {}
 func (*Error) getPollResultsRes()       {}
 func (*Error) getPublicBookingLinkRes() {}
 func (*Error) getPublicPollRes()        {}
+func (*Error) testCalendarRes()         {}
 
 // Ref: #/components/schemas/EventTemplate
 type EventTemplate struct {

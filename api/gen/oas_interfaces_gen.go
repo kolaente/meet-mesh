@@ -32,3 +32,7 @@ type GetPublicBookingLinkRes interface {
 type GetPublicPollRes interface {
 	getPublicPollRes()
 }
+
+type TestCalendarRes interface {
+	testCalendarRes()
+}
