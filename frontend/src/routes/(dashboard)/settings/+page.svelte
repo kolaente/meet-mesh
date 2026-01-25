@@ -100,8 +100,8 @@
 		<section>
 			<div class="flex items-center justify-between mb-4">
 				<div>
-					<h2 class="text-lg font-medium text-gray-900">Calendar Connections</h2>
-					<p class="text-sm text-gray-500">Connect your CalDAV calendars to check availability</p>
+					<h2 class="text-lg font-medium text-[var(--text-primary)]">Calendar Connections</h2>
+					<p class="text-sm text-[var(--text-secondary)]">Connect your CalDAV calendars to check availability</p>
 				</div>
 				{#if !showAddForm}
 					<Button variant="primary" onclick={() => (showAddForm = true)}>
@@ -115,7 +115,7 @@
 				<Card class="mb-4">
 					{#snippet children()}
 						<form onsubmit={handleAddCalendar} class="space-y-4">
-							<h3 class="font-medium text-gray-900">Add CalDAV Calendar</h3>
+							<h3 class="font-medium text-[var(--text-primary)]">Add CalDAV Calendar</h3>
 
 							{#if error}
 								<div class="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
@@ -172,7 +172,7 @@
 					{#snippet children()}
 						<div class="text-center py-8">
 							<svg
-								class="mx-auto h-12 w-12 text-gray-400"
+								class="mx-auto h-12 w-12 text-[var(--text-muted)]"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -184,8 +184,8 @@
 									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 								/>
 							</svg>
-							<h3 class="mt-2 text-sm font-medium text-gray-900">No calendars connected</h3>
-							<p class="mt-1 text-sm text-gray-500">
+							<h3 class="mt-2 text-sm font-medium text-[var(--text-primary)]">No calendars connected</h3>
+							<p class="mt-1 text-sm text-[var(--text-secondary)]">
 								Connect a CalDAV calendar to enable availability checking.
 							</p>
 							<div class="mt-6">

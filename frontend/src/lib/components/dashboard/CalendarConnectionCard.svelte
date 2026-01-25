@@ -34,27 +34,23 @@
 		<div class="space-y-3">
 			<div class="flex items-start justify-between gap-2">
 				<div class="min-w-0 flex-1">
-					<h3 class="font-medium text-gray-900 truncate">{getProviderName(calendar.server_url)}</h3>
-					<p class="text-sm text-gray-500 truncate">{calendar.username}</p>
+					<h3 class="font-medium text-[var(--text-primary)] truncate">{getProviderName(calendar.server_url)}</h3>
+					<p class="text-sm text-[var(--text-secondary)] truncate">{calendar.username}</p>
 				</div>
 				<div class="flex items-center gap-2">
-					<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700 border border-green-200">
+					<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-[var(--emerald)] text-white border border-[var(--border-color)]">
 						CalDAV
 					</span>
 				</div>
 			</div>
 
-			<div class="text-sm text-gray-500">
-				<span class="font-mono text-xs truncate block">{calendar.server_url}</span>
-			</div>
-
 			{#if calendar.calendar_urls && calendar.calendar_urls.length > 0}
-				<div class="text-sm text-gray-500">
+				<div class="text-sm text-[var(--text-secondary)]">
 					{calendar.calendar_urls.length} calendar{calendar.calendar_urls.length === 1 ? '' : 's'} connected
 				</div>
 			{/if}
 
-			<div class="flex justify-end pt-2 border-t border-gray-100">
+			<div class="flex justify-end pt-2 border-t border-[var(--border-color)]">
 				<Button
 					variant="danger"
 					size="sm"

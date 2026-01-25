@@ -107,24 +107,24 @@
 			{#snippet children()}
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
-						<p class="text-sm font-medium text-gray-500">Type</p>
-						<span class="inline-flex items-center px-2.5 py-1 text-sm font-medium rounded-full bg-green-50 text-green-700 border border-green-200">
+						<p class="text-sm font-medium text-[var(--text-secondary)]">Type</p>
+						<span class="inline-flex items-center px-2.5 py-1 text-sm font-medium rounded-full bg-[var(--emerald)] text-white border border-[var(--border-color)]">
 							Booking
 						</span>
 					</div>
 
 					<div>
-						<p class="text-sm font-medium text-gray-500">Status</p>
+						<p class="text-sm font-medium text-[var(--text-secondary)]">Status</p>
 						<Badge variant={statusVariant} size="md" />
 					</div>
 
 					<div class="col-span-2">
-						<p class="text-sm font-medium text-gray-500">Public URL</p>
+						<p class="text-sm font-medium text-[var(--text-secondary)]">Public URL</p>
 						<a
 							href={publicUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-indigo-600 hover:text-indigo-700 font-mono text-sm"
+							class="text-[var(--sky)] hover:opacity-80 font-mono text-sm"
 						>
 							{publicUrl}
 						</a>
@@ -132,8 +132,8 @@
 
 					{#if link?.description}
 						<div class="col-span-2 md:col-span-4">
-							<p class="text-sm font-medium text-gray-500">Description</p>
-							<p class="text-gray-700">{link?.description}</p>
+							<p class="text-sm font-medium text-[var(--text-secondary)]">Description</p>
+							<p class="text-[var(--text-primary)]">{link?.description}</p>
 						</div>
 					{/if}
 				</div>
@@ -143,16 +143,16 @@
 		<!-- Bookings -->
 		<Card>
 			{#snippet header()}
-				<h2 class="text-lg font-medium text-gray-900">
+				<h2 class="text-lg font-medium text-[var(--text-primary)]">
 					Bookings ({bookings.length})
 				</h2>
 			{/snippet}
 
 			{#snippet children()}
 				{#if bookings.length === 0}
-					<p class="text-gray-500 text-center py-4">No bookings yet</p>
+					<p class="text-[var(--text-secondary)] text-center py-4">No bookings yet</p>
 				{:else}
-					<div class="divide-y divide-gray-100">
+					<div class="divide-y divide-[var(--border-color)]">
 						{#each bookings as booking (booking.id)}
 							<BookingRow {booking} onUpdate={handleBookingUpdate} />
 						{/each}
