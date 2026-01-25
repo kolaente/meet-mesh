@@ -3,7 +3,7 @@
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
 	import { DashboardHeader } from '$lib/components/dashboard';
-	import { Button, Card, Checkbox, Input } from '$lib/components/ui';
+	import { Button, Card, Checkbox, Input, Textarea } from '$lib/components/ui';
 
 	type CustomField = components['schemas']['CustomField'];
 	type CustomFieldType = components['schemas']['CustomFieldType'];
@@ -89,17 +89,13 @@
 
 			<Input label="Name" name="name" bind:value={name} required placeholder="30 Minute Meeting" />
 
-			<div class="space-y-1.5">
-				<label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-				<textarea
-					id="description"
-					name="description"
-					bind:value={description}
-					rows="3"
-					class="block w-full rounded-[var(--radius-md)] border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
-					placeholder="A brief description of this booking link..."
-				></textarea>
-			</div>
+			<Textarea
+				label="Description"
+				name="description"
+				bind:value={description}
+				rows={3}
+				placeholder="A brief description of this booking link..."
+			/>
 
 			<!-- Custom Fields -->
 			<div class="space-y-4">

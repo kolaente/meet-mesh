@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Input from '../ui/Input.svelte';
 	import Select from '../ui/Select.svelte';
+	import Textarea from '../ui/Textarea.svelte';
 	import Button from '../ui/Button.svelte';
 	import type { components } from '$lib/api/types';
 
@@ -107,22 +108,13 @@
 				placeholder="Select an option"
 			/>
 		{:else if isTextarea(field)}
-			<div class="space-y-1.5">
-				<label for={`field-${field.name}`} class="block text-sm font-medium text-gray-700">
-					{field.label}
-					{#if field.required}
-						<span class="text-red-500">*</span>
-					{/if}
-				</label>
-				<textarea
-					id={`field-${field.name}`}
-					name={field.name}
-					bind:value={customFieldValues[field.name]}
-					required={field.required}
-					rows="3"
-					class="block w-full min-h-[100px] rounded-[var(--radius-md)] border border-gray-300 px-3 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
-				></textarea>
-			</div>
+			<Textarea
+				name={field.name}
+				label={field.label}
+				bind:value={customFieldValues[field.name]}
+				required={field.required}
+				rows={3}
+			/>
 		{:else}
 			<Input
 				name={field.name}
