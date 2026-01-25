@@ -88,7 +88,15 @@
 	}
 </script>
 
-<DashboardHeader title="Settings" />
+<DashboardHeader title="Settings">
+	{#snippet actions()}
+		{#if !showAddForm}
+			<Button variant="primary" onclick={() => (showAddForm = true)}>
+				{#snippet children()}Add Calendar{/snippet}
+			</Button>
+		{/if}
+	{/snippet}
+</DashboardHeader>
 
 {#if loading}
 	<div class="flex items-center justify-center py-12">
@@ -98,16 +106,9 @@
 	<div class="space-y-6">
 		<!-- Calendar Connections Section -->
 		<section>
-			<div class="flex items-center justify-between mb-4">
-				<div>
-					<h2 class="text-lg font-medium text-[var(--text-primary)]">Calendar Connections</h2>
-					<p class="text-sm text-[var(--text-secondary)]">Connect your CalDAV calendars to check availability</p>
-				</div>
-				{#if !showAddForm}
-					<Button variant="primary" onclick={() => (showAddForm = true)}>
-						{#snippet children()}Add Calendar{/snippet}
-					</Button>
-				{/if}
+			<div class="mb-4">
+				<h2 class="text-lg font-medium text-[var(--text-primary)]">Calendar Connections</h2>
+				<p class="text-sm text-[var(--text-secondary)]">Connect your CalDAV calendars to check availability</p>
 			</div>
 
 			<!-- Add Calendar Form -->
