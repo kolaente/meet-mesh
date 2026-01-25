@@ -6,6 +6,6 @@ export { default as VoteRow } from './VoteRow.svelte';
 export { default as StatsCard } from './StatsCard.svelte';
 export { default as CalendarConnectionCard } from './CalendarConnectionCard.svelte';
 export { default as PollOptionManager } from './PollOptionManager.svelte';
-export { default as QuickActions } from './QuickActions.svelte';
+export { default as ActivityFeed } from './ActivityFeed.svelte';
 export { default as QuickActions } from './QuickActions.svelte';
 export { default as MiniCalendar } from './MiniCalendar.svelte';
