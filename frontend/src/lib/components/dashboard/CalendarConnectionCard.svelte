@@ -44,11 +44,9 @@
 				</div>
 			</div>
 
-			{#if calendar.calendar_urls && calendar.calendar_urls.length > 0}
-				<div class="text-sm text-[var(--text-secondary)]">
-					{calendar.calendar_urls.length} calendar{calendar.calendar_urls.length === 1 ? '' : 's'} connected
-				</div>
-			{/if}
+			<div class="text-sm text-[var(--text-secondary)]">
+				<span class="font-mono text-xs truncate block">{calendar.server_url}</span>
+			</div>
 
 			<div class="flex justify-end pt-2 border-t border-[var(--border-color)]">
 				<Button
