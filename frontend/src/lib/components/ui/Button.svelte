@@ -26,7 +26,7 @@
 	}: Props = $props();
 
 	const baseClasses =
-		'inline-flex items-center justify-center font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+		'cursor-pointer inline-flex items-center justify-center font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
 
 	const variantClasses: Record<Variant, string> = {
 		primary: 'btn-primary',
