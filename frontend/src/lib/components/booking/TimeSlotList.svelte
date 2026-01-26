@@ -42,7 +42,7 @@
 </script>
 
 <div class="space-y-2 {className}">
-	{#each slots as slot, index (slot.id)}
+	{#each slots as slot, index (slot.start_time)}
 		<button
 			type="button"
 			onclick={() => handleSelect(slot)}
