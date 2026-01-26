@@ -14,7 +14,7 @@
     <ThemeToggle />
   </div>
 
-  <div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto px-4 py-8">
     {#key page.url.pathname}
       <div in:fade={pageIn} out:fade={pageOut}>
         {@render children()}

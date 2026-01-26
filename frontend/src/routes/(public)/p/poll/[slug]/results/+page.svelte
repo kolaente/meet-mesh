@@ -62,7 +62,7 @@
 	<title>{pollName ? pollName + ' - Results' : 'Poll Results'} | Meet Mesh</title>
 </svelte:head>
 
-<div class="max-w-2xl mx-auto">
+<div class="max-w-3xl mx-auto">
 	<h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">Poll Results</h1>
 
 	{#if loading}

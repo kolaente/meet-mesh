@@ -211,7 +211,7 @@
 	}
 </script>
 
-<div class="max-w-2xl mx-auto">
+<div class="max-w-3xl mx-auto">
 	<!-- Header -->
 	<div class="text-center mb-8">
 		<h1 class="text-2xl font-bold text-[var(--text-primary)]">{link.name}</h1>
@@ -284,12 +284,11 @@
 					<!-- Desktop: side-by-side, Mobile: stacked -->
 					<div class="flex flex-col lg:flex-row lg:gap-8">
 						<!-- Calendar -->
-						<div class="lg:flex-shrink-0">
+						<div class="lg:flex-shrink-0 lg:w-sm">
 							<DateCalendar
 								{availableDates}
 								bind:selectedDate
 								onSelect={handleDateSelect}
-								class="mx-auto max-w-sm"
 							/>
 						</div>
 
