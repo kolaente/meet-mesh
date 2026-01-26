@@ -6,7 +6,7 @@
 	import type { components } from '$lib/api/types';
 	import { AvailabilityEditor } from '$lib/components/booking';
 	import { DashboardHeader } from '$lib/components/dashboard';
-	import { Button, Card, Input, Select, Spinner, Textarea } from '$lib/components/ui';
+	import { Button, Card, Checkbox, Input, Select, Spinner, Textarea } from '$lib/components/ui';
 
 	type BookingLink = components['schemas']['BookingLink'];
 	type CustomField = components['schemas']['CustomField'];
@@ -22,6 +22,7 @@
 	let bufferMinutes = $state('0');
 	let customFields = $state<CustomField[]>([]);
 	let availabilityRules = $state<AvailabilityRule[]>([]);
+	let autoConfirm = $state(true);
 	let loading = $state(true);
 	let saving = $state(false);
 	let error = $state('');
@@ -79,6 +80,7 @@
 			availabilityRules = data.availability_rules || [
 				{ days_of_week: [1, 2, 3, 4, 5], start_time: '09:00', end_time: '17:00' }
 			];
+			autoConfirm = data.auto_confirm ?? true;
 		} finally {
 			loading = false;
 		}
@@ -122,6 +124,7 @@
 					description: description || undefined,
 					slot_duration_minutes: Number(slotDurationMinutes),
 					buffer_minutes: Number(bufferMinutes),
+					auto_confirm: autoConfirm,
 					availability_rules: availabilityRules.length > 0 ? availabilityRules : undefined,
 					custom_fields: customFields.length > 0 ? customFields : undefined
 				}
@@ -184,6 +187,15 @@
 						name="bufferMinutes"
 						options={bufferTimeOptions}
 						bind:value={bufferMinutes}
+					/>
+				</div>
+
+				<!-- Confirmation Setting -->
+				<div class="pt-2">
+					<Checkbox
+						bind:checked={autoConfirm}
+						label="Auto-confirm bookings"
+						description="When disabled, bookings require your approval before guests receive confirmation"
 					/>
 				</div>
 

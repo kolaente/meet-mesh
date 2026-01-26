@@ -14,6 +14,7 @@
 	let description = $state('');
 	let slotDurationMinutes = $state('30');
 	let bufferMinutes = $state('0');
+	let autoConfirm = $state(true);
 	let customFields = $state<CustomField[]>([]);
 	let availabilityRules = $state<AvailabilityRule[]>([
 		{ days_of_week: [1, 2, 3, 4, 5], start_time: '09:00', end_time: '17:00' }
@@ -82,6 +83,7 @@
 					description: description || undefined,
 					slot_duration_minutes: Number(slotDurationMinutes),
 					buffer_minutes: Number(bufferMinutes),
+					auto_confirm: autoConfirm,
 					availability_rules: availabilityRules.length > 0 ? availabilityRules : undefined,
 					custom_fields: customFields.length > 0 ? customFields : undefined
 				}
@@ -137,6 +139,15 @@
 					name="bufferMinutes"
 					options={bufferTimeOptions}
 					bind:value={bufferMinutes}
+				/>
+			</div>
+
+			<!-- Confirmation Setting -->
+			<div class="pt-2">
+				<Checkbox
+					bind:checked={autoConfirm}
+					label="Auto-confirm bookings"
+					description="When disabled, bookings require your approval before guests receive confirmation"
 				/>
 			</div>
 

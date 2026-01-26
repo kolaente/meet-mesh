@@ -121,8 +121,9 @@
 				return;
 			}
 
-			// Redirect to confirmed page
-			goto(`/p/booking/${slug}/confirmed`);
+			// Redirect to confirmed page with status
+			const status = response.data?.status;
+			goto(`/p/booking/${slug}/confirmed?status=${status}`);
 		} catch (err) {
 			error = 'An unexpected error occurred. Please try again.';
 			submitting = false;
