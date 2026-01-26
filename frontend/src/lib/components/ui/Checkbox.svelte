@@ -90,8 +90,8 @@
 	}
 
 	.checkbox:focus-visible {
-		outline: 2px solid var(--sky);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--sky);
 	}
 
 	.label-container {

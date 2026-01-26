@@ -33,7 +33,7 @@
 
 <div class="space-y-1.5">
 	{#if label}
-		<label for={selectId} class="block text-sm font-medium text-[var(--text-primary)]">
+		<label for={selectId} class="block text-sm font-medium text-[var(--text-secondary)]">
 			{label}
 		</label>
 	{/if}
@@ -48,7 +48,7 @@
 			id={selectId}
 			aria-invalid={!!error}
 			aria-describedby={errorId}
-			class="flex min-h-[44px] h-auto sm:h-10 w-full items-center justify-between rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--bg-secondary)] px-3 py-2.5 sm:py-2 text-base sm:text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--sky)] focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50
+			class="flex min-h-[44px] h-auto sm:h-10 w-full items-center justify-between rounded-[var(--radius)] border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] px-3 py-2.5 sm:py-2 text-base sm:text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--sky)] focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50
 			{error ? 'border-red-500 focus:ring-red-500' : ''}"
 		>
 			<span class={selectedOption ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)] opacity-50'}>

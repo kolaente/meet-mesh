@@ -139,16 +139,14 @@
 
 <Card>
 	{#snippet header()}
-		<div class="flex items-center justify-between">
-			<h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-				Poll Options ({options.length})
-			</h2>
-			{#if !showAddForm}
-				<Button variant="secondary" size="sm" onclick={() => (showAddForm = true)}>
-					{#snippet children()}Add Option{/snippet}
-				</Button>
-			{/if}
-		</div>
+		<h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+			Poll Options ({options.length})
+		</h2>
+		{#if !showAddForm}
+			<Button variant="secondary" size="sm" onclick={() => (showAddForm = true)}>
+				{#snippet children()}Add Option{/snippet}
+			</Button>
+		{/if}
 	{/snippet}
 
 	{#snippet children()}
