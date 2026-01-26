@@ -12,6 +12,7 @@
 
 	let name = $state('');
 	let description = $state('');
+	let meetingLink = $state('');
 	let slotDurationMinutes = $state('30');
 	let bufferMinutes = $state('0');
 	let autoConfirm = $state(true);
@@ -81,6 +82,7 @@
 				body: {
 					name,
 					description: description || undefined,
+					meeting_link: meetingLink || undefined,
 					slot_duration_minutes: Number(slotDurationMinutes),
 					buffer_minutes: Number(bufferMinutes),
 					auto_confirm: autoConfirm,
@@ -124,6 +126,15 @@
 				bind:value={description}
 				rows={3}
 				placeholder="A brief description of this booking link..."
+			/>
+
+			<Input
+				label="Meeting Link"
+				name="meetingLink"
+				type="url"
+				bind:value={meetingLink}
+				placeholder="https://zoom.us/j/... or https://meet.google.com/..."
+				description="Video conference link (Zoom, Google Meet, etc.) to include in calendar events"
 			/>
 
 			<!-- Slot Duration & Buffer -->

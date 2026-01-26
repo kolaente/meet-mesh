@@ -121,9 +121,10 @@ func (m *Mailer) SendBookingApproved(booking *Booking, link *BookingLink) error 
 // SendBookingConfirmationWithICS sends confirmation to guest with ICS attachment
 func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
 	body := m.renderTemplate("booking_confirmed_guest", map[string]any{
-		"LinkName":  link.Name,
-		"GuestName": booking.GuestName,
-		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":    link.Name,
+		"GuestName":   booking.GuestName,
+		"Time":        booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"MeetingLink": link.MeetingLink,
 	})
 
 	// Generate ICS data
@@ -146,9 +147,10 @@ func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingL
 // SendBookingApprovedWithICS sends approval notification to guest with ICS attachment
 func (m *Mailer) SendBookingApprovedWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
 	body := m.renderTemplate("booking_approved", map[string]any{
-		"LinkName":  link.Name,
-		"GuestName": booking.GuestName,
-		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":    link.Name,
+		"GuestName":   booking.GuestName,
+		"Time":        booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"MeetingLink": link.MeetingLink,
 	})
 
 	// Generate ICS data
@@ -201,6 +203,9 @@ const emailTemplates = `
 <p>Hi {{.GuestName}},</p>
 <p>Your booking for <strong>{{.LinkName}}</strong> has been confirmed.</p>
 <p><strong>When:</strong> {{.Time}}</p>
+{{if .MeetingLink}}
+<p><strong>Meeting Link:</strong> <a href="{{.MeetingLink}}">{{.MeetingLink}}</a></p>
+{{end}}
 <p style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
 📅 <strong>Add to your calendar:</strong> Open the attached <code>invite.ics</code> file to add this event to your calendar.
 </p>
@@ -230,6 +235,9 @@ const emailTemplates = `
 <p>Hi {{.GuestName}},</p>
 <p>Great news! Your booking for <strong>{{.LinkName}}</strong> has been approved.</p>
 <p><strong>When:</strong> {{.Time}}</p>
+{{if .MeetingLink}}
+<p><strong>Meeting Link:</strong> <a href="{{.MeetingLink}}">{{.MeetingLink}}</a></p>
+{{end}}
 <p style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
 📅 <strong>Add to your calendar:</strong> Open the attached <code>invite.ics</code> file to add this event to your calendar.
 </p>

@@ -18,6 +18,7 @@
 	let name = $state('');
 	let status = $state<'1' | '2'>('1');
 	let description = $state('');
+	let meetingLink = $state('');
 	let slotDurationMinutes = $state('30');
 	let bufferMinutes = $state('0');
 	let customFields = $state<CustomField[]>([]);
@@ -74,6 +75,7 @@
 			name = data.name;
 			status = String(data.status) as '1' | '2';
 			description = data.description || '';
+			meetingLink = data.meeting_link || '';
 			slotDurationMinutes = String(data.slot_duration_minutes);
 			bufferMinutes = String(data.buffer_minutes);
 			customFields = data.custom_fields || [];
@@ -122,6 +124,7 @@
 					name,
 					status: Number(status) as LinkStatus,
 					description: description || undefined,
+					meeting_link: meetingLink || undefined,
 					slot_duration_minutes: Number(slotDurationMinutes),
 					buffer_minutes: Number(bufferMinutes),
 					auto_confirm: autoConfirm,
@@ -172,6 +175,15 @@
 					bind:value={description}
 					rows={3}
 					placeholder="A brief description of this booking link..."
+				/>
+
+				<Input
+					label="Meeting Link"
+					name="meetingLink"
+					type="url"
+					bind:value={meetingLink}
+					placeholder="https://zoom.us/j/... or https://meet.google.com/..."
+					description="Video conference link (Zoom, Google Meet, etc.) to include in calendar events"
 				/>
 
 				<!-- Slot Duration & Buffer -->

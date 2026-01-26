@@ -134,6 +134,20 @@
 							<p class="text-[var(--text-primary)]">{link?.description}</p>
 						</div>
 					{/if}
+
+					{#if link?.meeting_link}
+						<div class="col-span-2 md:col-span-4">
+							<p class="text-sm font-medium text-[var(--text-secondary)]">Meeting Link</p>
+							<a
+								href={link.meeting_link}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-[var(--sky)] hover:opacity-80 font-mono text-sm"
+							>
+								{link.meeting_link}
+							</a>
+						</div>
+					{/if}
 				</div>
 			{/snippet}
 		</Card>

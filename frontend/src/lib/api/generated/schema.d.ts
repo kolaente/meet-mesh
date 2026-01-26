@@ -575,6 +575,8 @@ export interface components {
              */
             buffer_minutes: number;
             require_email?: boolean;
+            /** @description Video meeting link (Zoom, Google Meet, etc.) to include in calendar events */
+            meeting_link?: string;
             availability_rules?: components["schemas"]["AvailabilityRule"][];
             custom_fields?: components["schemas"]["CustomField"][];
             event_template?: components["schemas"]["EventTemplate"];
@@ -919,6 +921,8 @@ export interface operations {
                     /** @default 0 */
                     buffer_minutes?: number;
                     require_email?: boolean;
+                    /** @description Video meeting link (Zoom, Google Meet, etc.) */
+                    meeting_link?: string;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
                     event_template?: components["schemas"]["EventTemplate"];
@@ -978,6 +982,8 @@ export interface operations {
                     slot_duration_minutes?: number;
                     buffer_minutes?: number;
                     require_email?: boolean;
+                    /** @description Video meeting link (Zoom, Google Meet, etc.) */
+                    meeting_link?: string;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
                     event_template?: components["schemas"]["EventTemplate"];
