@@ -32,14 +32,22 @@ func (h *Handler) ApproveBooking(ctx context.Context, params gen.ApproveBookingP
 		return nil, err
 	}
 
-	// Send confirmation email
+	// Get organizer email
+	var organizer User
+	h.db.First(&organizer, booking.BookingLink.UserID)
+
+	// Send confirmation email with ICS
 	if h.mailer != nil {
-		h.mailer.SendBookingApproved(&booking, &booking.BookingLink)
+		h.mailer.SendBookingApprovedWithICS(&booking, &booking.BookingLink, organizer.Email)
 	}
 
 	// Create calendar event
 	if h.caldav != nil {
-		h.caldav.CreateBookingEvent(ctx, booking.BookingLink.UserID, &booking, &booking.Slot, booking.BookingLink.EventTemplate)
+		uid, err := h.caldav.CreateBookingEvent(ctx, booking.BookingLink.UserID, &booking, &booking.Slot, booking.BookingLink.EventTemplate)
+		if err == nil && uid != "" {
+			booking.CalendarUID = uid
+			h.db.Save(&booking)
+		}
 	}
 
 	return mapBookingToGen(&booking), nil

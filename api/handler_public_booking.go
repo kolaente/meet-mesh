@@ -224,21 +224,26 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		return nil, err
 	}
 
+	// Get organizer for emails
+	var organizer User
+	h.db.First(&organizer, link.UserID)
+
 	// Send notification email and create calendar event if auto-confirmed
 	if link.AutoConfirm {
 		if h.mailer != nil {
-			h.mailer.SendBookingConfirmation(&booking, &link)
+			h.mailer.SendBookingConfirmationWithICS(&booking, &link, organizer.Email)
 		}
 		// Create calendar event
 		if h.caldav != nil {
-			h.caldav.CreateBookingEvent(ctx, link.UserID, &booking, &slot, link.EventTemplate)
+			uid, err := h.caldav.CreateBookingEvent(ctx, link.UserID, &booking, &slot, link.EventTemplate)
+			if err == nil && uid != "" {
+				booking.CalendarUID = uid
+				h.db.Save(&booking)
+			}
 		}
 	} else {
 		if h.mailer != nil {
-			var organizer User
-			if err := h.db.First(&organizer, link.UserID).Error; err == nil {
-				h.mailer.SendBookingPending(&booking, &link, &organizer)
-			}
+			h.mailer.SendBookingPending(&booking, &link, &organizer)
 		}
 	}
 

@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io"
+	"log"
 
 	"gopkg.in/gomail.v2"
 )
@@ -14,6 +16,13 @@ type Mailer struct {
 	baseURL   string
 	dialer    *gomail.Dialer
 	templates *template.Template
+}
+
+// EmailAttachment represents an email attachment
+type EmailAttachment struct {
+	Filename    string
+	ContentType string
+	Data        []byte
 }
 
 func NewMailer(cfg *SMTPConfig, baseURL string) (*Mailer, error) {
@@ -39,6 +48,29 @@ func (m *Mailer) send(to, subject, body string) error {
 	msg.SetHeader("To", to)
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body)
+
+	return m.dialer.DialAndSend(msg)
+}
+
+// sendWithAttachment sends an email with optional attachments
+func (m *Mailer) sendWithAttachment(to, subject, body string, attachments ...*EmailAttachment) error {
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", m.config.From)
+	msg.SetHeader("To", to)
+	msg.SetHeader("Subject", subject)
+	msg.SetBody("text/html", body)
+
+	for _, att := range attachments {
+		msg.Attach(att.Filename,
+			gomail.SetCopyFunc(func(w io.Writer) error {
+				_, err := w.Write(att.Data)
+				return err
+			}),
+			gomail.SetHeader(map[string][]string{
+				"Content-Type": {att.ContentType},
+			}),
+		)
+	}
 
 	return m.dialer.DialAndSend(msg)
 }
@@ -86,6 +118,56 @@ func (m *Mailer) SendBookingApproved(booking *Booking, link *BookingLink) error 
 	return m.send(booking.GuestEmail, "Booking Approved: "+link.Name, body)
 }
 
+// SendBookingConfirmationWithICS sends confirmation to guest with ICS attachment
+func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
+	body := m.renderTemplate("booking_confirmed_guest", map[string]any{
+		"LinkName":  link.Name,
+		"GuestName": booking.GuestName,
+		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+	})
+
+	// Generate ICS data
+	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizerEmail)
+	if err != nil {
+		log.Printf("[WARN] Failed to generate ICS for booking %d: %v", booking.ID, err)
+		// Send email without attachment
+		return m.send(booking.GuestEmail, "Booking Confirmed: "+link.Name, body)
+	}
+
+	attachment := &EmailAttachment{
+		Filename:    "invite.ics",
+		ContentType: "text/calendar; charset=utf-8; method=REQUEST",
+		Data:        []byte(icsData),
+	}
+
+	return m.sendWithAttachment(booking.GuestEmail, "Booking Confirmed: "+link.Name, body, attachment)
+}
+
+// SendBookingApprovedWithICS sends approval notification to guest with ICS attachment
+func (m *Mailer) SendBookingApprovedWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
+	body := m.renderTemplate("booking_approved", map[string]any{
+		"LinkName":  link.Name,
+		"GuestName": booking.GuestName,
+		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+	})
+
+	// Generate ICS data
+	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizerEmail)
+	if err != nil {
+		log.Printf("[WARN] Failed to generate ICS for booking %d: %v", booking.ID, err)
+		// Send email without attachment
+		return m.send(booking.GuestEmail, "Booking Approved: "+link.Name, body)
+	}
+
+	attachment := &EmailAttachment{
+		Filename:    "invite.ics",
+		ContentType: "text/calendar; charset=utf-8; method=REQUEST",
+		Data:        []byte(icsData),
+	}
+
+	return m.sendWithAttachment(booking.GuestEmail, "Booking Approved: "+link.Name, body, attachment)
+}
+
 // SendBookingDeclined sends decline notification to guest
 func (m *Mailer) SendBookingDeclined(booking *Booking, link *BookingLink) error {
 	body := m.renderTemplate("booking_declined", map[string]any{
@@ -119,6 +201,9 @@ const emailTemplates = `
 <p>Hi {{.GuestName}},</p>
 <p>Your booking for <strong>{{.LinkName}}</strong> has been confirmed.</p>
 <p><strong>When:</strong> {{.Time}}</p>
+<p style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
+📅 <strong>Add to your calendar:</strong> Open the attached <code>invite.ics</code> file to add this event to your calendar.
+</p>
 </body>
 </html>
 {{end}}
@@ -145,6 +230,9 @@ const emailTemplates = `
 <p>Hi {{.GuestName}},</p>
 <p>Great news! Your booking for <strong>{{.LinkName}}</strong> has been approved.</p>
 <p><strong>When:</strong> {{.Time}}</p>
+<p style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
+📅 <strong>Add to your calendar:</strong> Open the attached <code>invite.ics</code> file to add this event to your calendar.
+</p>
 </body>
 </html>
 {{end}}
