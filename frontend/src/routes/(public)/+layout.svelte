@@ -3,6 +3,7 @@
   import { fade } from 'svelte/transition'
   import { pageIn, pageOut } from '$lib/utils/transitions'
   import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte'
+  import { DateFormatToggle } from '$lib/components/ui'
 
   let { children } = $props()
 </script>
@@ -19,5 +20,10 @@
         {@render children()}
       </div>
     {/key}
+  </div>
+
+  <!-- Date Format Toggle -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <DateFormatToggle />
   </div>
 </div>

@@ -2,6 +2,7 @@
 	import type { components } from '$lib/api/types';
 	import { IconButton } from '$lib/components/ui';
 	import { api } from '$lib/api/client';
+	import { formatTime } from '$lib/utils/dates';
 
 	type Booking = components['schemas']['Booking'];
 	type BookingStatus = components['schemas']['BookingStatus'];
@@ -36,10 +37,7 @@
 		const isToday = date.toDateString() === now.toDateString();
 		const isTomorrow = date.toDateString() === tomorrow.toDateString();
 
-		const timeStr = date.toLocaleTimeString(undefined, {
-			hour: 'numeric',
-			minute: '2-digit'
-		});
+		const timeStr = formatTime(date);
 
 		if (isToday) {
 			return `Today, ${timeStr}`;

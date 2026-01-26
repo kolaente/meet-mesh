@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
+	import { formatTime, formatDate, formatDateShort } from '$lib/utils/dates';
 	import Spinner from '../ui/Spinner.svelte';
 	import Button from '../ui/Button.svelte';
 	import Card from '../ui/Card.svelte';
@@ -145,15 +146,10 @@
 
 		if (slotType === 2) {
 			// Full day
-			return start.toLocaleDateString('en-US', {
-				weekday: 'long',
-				month: 'long',
-				day: 'numeric',
-				year: 'numeric'
-			});
+			return formatDate(start);
 		} else if (slotType === 3) {
 			// Multi-day
-			return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+			return `${formatDateShort(start)} - ${formatDateShort(end)}, ${end.getFullYear()}`;
 		} else {
 			// Time slot
 			const dateStr = start.toLocaleDateString('en-US', {
@@ -161,8 +157,7 @@
 				month: 'long',
 				day: 'numeric'
 			});
-			const timeStr = `${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} - ${end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
-			return `${dateStr} at ${timeStr}`;
+			return `${dateStr} at ${formatTime(start)} - ${formatTime(end)}`;
 		}
 	}
 </script>

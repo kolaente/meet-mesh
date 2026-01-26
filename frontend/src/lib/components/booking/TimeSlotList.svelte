@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import type { components } from '$lib/api/types';
+	import { formatTime } from '$lib/utils/dates';
 
 	type Slot = components['schemas']['Slot'];
 
@@ -17,15 +18,6 @@
 		onSelect,
 		class: className = ''
 	}: Props = $props();
-
-	function formatTime(dateStr: string): string {
-		const date = new Date(dateStr);
-		return date.toLocaleTimeString('en-US', {
-			hour: 'numeric',
-			minute: '2-digit',
-			hour12: true
-		});
-	}
 
 	function formatTimeRange(slot: Slot): string {
 		return `${formatTime(slot.start_time)} - ${formatTime(slot.end_time)}`;

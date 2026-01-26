@@ -2,6 +2,7 @@
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
 	import { Button, Card } from '$lib/components/ui';
+	import { formatTime } from '$lib/utils/dates';
 
 	type PollOption = components['schemas']['PollOption'];
 	type SlotType = components['schemas']['SlotType'];
@@ -47,15 +48,15 @@
 				' - ' +
 				end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 		} else {
-			// Time slot
+			// Time slot - use centralized formatTime
 			return start.toLocaleDateString(undefined, {
 				weekday: 'long',
 				month: 'short',
 				day: 'numeric'
 			}) + ' - ' +
-				start.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }) +
+				formatTime(start) +
 				' to ' +
-				end.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+				formatTime(end);
 		}
 	}
 

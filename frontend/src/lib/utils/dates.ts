@@ -1,3 +1,5 @@
+import { getDateFormat } from '$lib/stores/dateFormat.svelte';
+
 /**
  * Format a date for display (e.g., "Monday, January 20, 2025")
  */
@@ -23,14 +25,15 @@ export function formatDateShort(date: Date | string): string {
 }
 
 /**
- * Format a time (e.g., "2:00 PM")
+ * Format a time (e.g., "2:00 PM" or "14:00" based on user preference)
  */
 export function formatTime(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date
+  const dateFormat = getDateFormat()
   return d.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
-    hour12: true
+    hour12: dateFormat.timeFormat === '12h'
   })
 }
 
@@ -84,4 +87,20 @@ export function isToday(date: Date | string): boolean {
  */
 export function toISODateString(date: Date): string {
   return date.toISOString().split('T')[0]
+}
+
+/**
+ * Get day names ordered by week start preference from the dateFormat store
+ */
+export function getWeekDays(format: 'short' | 'narrow' | 'long' = 'short'): string[] {
+  const dateFormat = getDateFormat()
+  return dateFormat.getWeekDays(format)
+}
+
+/**
+ * Get day index adjusted for week start preference (0 = first day of week)
+ */
+export function getDayIndex(date: Date): number {
+  const dateFormat = getDateFormat()
+  return dateFormat.getDayIndex(date)
 }

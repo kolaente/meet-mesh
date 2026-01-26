@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { components } from '$lib/api/types';
+	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
 
 	type AvailabilityRule = components['schemas']['AvailabilityRule'];
 
@@ -9,8 +10,16 @@
 
 	let { rules = [] }: Props = $props();
 
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	const dayIndexMap = [1, 2, 3, 4, 5, 6, 0]; // Map display order to day-of-week numbers (Mon=1, Sun=0)
+	const dateFormat = getDateFormat();
+	const days = $derived(dateFormat.getWeekDays('short'));
+	// Map display order to day-of-week numbers based on week start preference
+	// Sunday start: [0, 1, 2, 3, 4, 5, 6] (Sun=0, Mon=1, ..., Sat=6)
+	// Monday start: [1, 2, 3, 4, 5, 6, 0] (Mon=1, Tue=2, ..., Sun=0)
+	const dayIndexMap = $derived(
+		dateFormat.weekStartDay === 'monday'
+			? [1, 2, 3, 4, 5, 6, 0]
+			: [0, 1, 2, 3, 4, 5, 6]
+	);
 
 	// Hours to display (6am to 10pm covers most use cases)
 	const startHour = 6;

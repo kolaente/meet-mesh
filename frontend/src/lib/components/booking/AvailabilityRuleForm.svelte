@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { components } from '$lib/api/types';
+	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
 
 	type AvailabilityRule = components['schemas']['AvailabilityRule'];
 
@@ -11,16 +12,18 @@
 
 	let { rule, onchange, onremove }: Props = $props();
 
-	// Day values: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=0
-	const days = [
-		{ label: 'Mon', value: 1 },
-		{ label: 'Tue', value: 2 },
-		{ label: 'Wed', value: 3 },
-		{ label: 'Thu', value: 4 },
-		{ label: 'Fri', value: 5 },
-		{ label: 'Sat', value: 6 },
-		{ label: 'Sun', value: 0 }
-	];
+	const dateFormat = getDateFormat();
+
+	// Day values ordered by week start preference
+	// JS Date.getDay(): Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
+	const days = $derived.by(() => {
+		const dayLabels = dateFormat.getWeekDays('short');
+		// Map display index to JS day-of-week value based on week start
+		const dayValues = dateFormat.weekStartDay === 'monday'
+			? [1, 2, 3, 4, 5, 6, 0] // Mon, Tue, Wed, Thu, Fri, Sat, Sun
+			: [0, 1, 2, 3, 4, 5, 6]; // Sun, Mon, Tue, Wed, Thu, Fri, Sat
+		return dayLabels.map((label, i) => ({ label, value: dayValues[i] }));
+	});
 
 	// Generate time options in 15-minute intervals, 24h format (00:00 to 23:45)
 	const timeOptions: string[] = [];

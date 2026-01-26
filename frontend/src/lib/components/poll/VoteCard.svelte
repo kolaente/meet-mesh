@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { components } from '$lib/api/types';
+	import { formatTime } from '$lib/utils/dates';
 	import Card from '../ui/Card.svelte';
 	import VoteButtons from './VoteButtons.svelte';
 
@@ -48,16 +49,8 @@
 			});
 			return `to ${endDate}`;
 		} else {
-			// Time slot - show time range
-			const startTime = start.toLocaleTimeString('en-US', {
-				hour: 'numeric',
-				minute: '2-digit'
-			});
-			const endTime = end.toLocaleTimeString('en-US', {
-				hour: 'numeric',
-				minute: '2-digit'
-			});
-			return `${startTime} - ${endTime}`;
+			// Time slot - show time range using centralized formatting
+			return `${formatTime(start)} - ${formatTime(end)}`;
 		}
 	});
 

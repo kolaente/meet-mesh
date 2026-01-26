@@ -14,6 +14,7 @@
 		placeholder?: string;
 		error?: string;
 		disabled?: boolean;
+		onchange?: (value: string) => void;
 	}
 
 	let {
@@ -23,7 +24,8 @@
 		value = $bindable(''),
 		placeholder = 'Select an option',
 		error,
-		disabled = false
+		disabled = false,
+		onchange
 	}: Props = $props();
 
 	let selectId = $derived(`select-${name}`);
@@ -43,6 +45,7 @@
 		{name}
 		{disabled}
 		bind:value
+		onValueChange={(v) => onchange?.(v)}
 	>
 		<Select.Trigger
 			id={selectId}

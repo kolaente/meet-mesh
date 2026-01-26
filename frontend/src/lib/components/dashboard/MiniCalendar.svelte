@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
+
 	interface Props {
 		events?: Date[];
 		onDateClick?: (date: Date) => void;
@@ -9,7 +11,8 @@
 	// Current displayed month (starts with current month)
 	let displayedDate = $state(new Date());
 
-	const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+	const dateFormat = getDateFormat();
+	const weekDays = $derived(dateFormat.getWeekDays('narrow'));
 	const MONTHS = [
 		'January',
 		'February',
@@ -61,7 +64,7 @@
 
 		// First day of the month
 		const firstDayOfMonth = new Date(year, month, 1);
-		const startDayOfWeek = firstDayOfMonth.getDay();
+		const startDayOfWeek = dateFormat.getDayIndex(firstDayOfMonth);
 
 		// Last day of the month
 		const lastDayOfMonth = new Date(year, month + 1, 0);
@@ -136,7 +139,7 @@
 		</div>
 	</div>
 	<div class="calendar-grid">
-		{#each WEEKDAYS as day}
+		{#each weekDays as day}
 			<div class="calendar-day-label">{day}</div>
 		{/each}
 		{#each calendarDays as { date, isOtherMonth }}

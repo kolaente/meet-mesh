@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Select } from 'bits-ui';
+	import { formatDate } from '$lib/utils/dates';
 
 	interface Props {
 		availableDates: string[];
@@ -19,12 +20,7 @@
 			const date = new Date(dateStr);
 			return {
 				value: dateStr,
-				label: date.toLocaleDateString('en-US', {
-					weekday: 'long',
-					year: 'numeric',
-					month: 'long',
-					day: 'numeric'
-				})
+				label: formatDate(date)
 			};
 		})
 	);

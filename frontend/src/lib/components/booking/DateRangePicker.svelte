@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Input from '../ui/Input.svelte';
+	import { formatDateShort } from '$lib/utils/dates';
 
 	interface Props {
 		availableDates: string[];

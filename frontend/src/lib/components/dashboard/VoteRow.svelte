@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { components } from '$lib/api/types';
+	import { formatTime } from '$lib/utils/dates';
 
 	type Vote = components['schemas']['Vote'];
 	type Slot = components['schemas']['Slot'];
@@ -27,12 +28,11 @@
 
 	const formatSlotLabel = (slot: Slot) => {
 		const start = new Date(slot.start_time);
-		return start.toLocaleDateString(undefined, {
+		const dateStr = start.toLocaleDateString(undefined, {
 			month: 'short',
-			day: 'numeric',
-			hour: 'numeric',
-			minute: '2-digit'
+			day: 'numeric'
 		});
+		return `${dateStr}, ${formatTime(start)}`;
 	};
 </script>
 

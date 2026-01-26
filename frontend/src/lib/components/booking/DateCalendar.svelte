@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
+
 	interface Props {
 		availableDates: string[];
 		selectedDate?: string;
@@ -13,6 +15,9 @@
 		class: className = ''
 	}: Props = $props();
 
+	// Get dateFormat store instance
+	const dateFormat = getDateFormat();
+
 	// Current view state
 	let viewDate = $state(new Date());
 
@@ -24,7 +29,7 @@
 	let month = $derived(viewDate.getMonth());
 	let monthName = $derived(viewDate.toLocaleString('default', { month: 'long', year: 'numeric' }));
 
-	let firstDayOfMonth = $derived(new Date(year, month, 1).getDay());
+	let firstDayOfMonth = $derived(dateFormat.getDayIndex(new Date(year, month, 1)));
 	let daysInMonth = $derived(new Date(year, month + 1, 0).getDate());
 
 	// Generate calendar grid
@@ -44,7 +49,7 @@
 		return days;
 	});
 
-	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+	let weekDays = $derived(dateFormat.getWeekDays('short'));
 
 	function prevMonth() {
 		viewDate = new Date(year, month - 1, 1);
