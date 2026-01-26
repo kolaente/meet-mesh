@@ -33,8 +33,8 @@
 
 	let { link, slug }: Props = $props();
 
-	// Step management: 'date' | 'time' | 'form' | 'submitting' | 'confirmed'
-	type Step = 'date' | 'time' | 'form' | 'submitting' | 'confirmed';
+	// Step management: 'date' | 'form' | 'submitting' | 'confirmed'
+	type Step = 'date' | 'form' | 'submitting' | 'confirmed';
 	let step = $state<Step>('date');
 
 	// Selection state
@@ -65,16 +65,16 @@
 	// Handle date selection
 	function handleDateSelect(date: string) {
 		selectedDate = date;
-		if (slotType === 1) {
-			// Time slot type - move to time selection
-			step = 'time';
-		} else if (slotType === 2) {
-			// Full day type - find the slot for this date and go to form
+		selectedSlot = undefined; // Clear any previously selected slot
+		if (slotType === 2) {
+			// Full day type - auto-select the slot for this date and go to form
 			selectedSlot = link.slots.find((s) => s.start_time.startsWith(date));
 			if (selectedSlot) {
 				step = 'form';
 			}
 		}
+		// For time slot type (slotType === 1), stay on 'date' step
+		// Time slots will be shown inline below the calendar
 	}
 
 	// Handle time slot selection
@@ -132,15 +132,8 @@
 
 	// Navigation helpers
 	function goBack() {
-		if (step === 'time') {
+		if (step === 'form') {
 			step = 'date';
-			selectedSlot = undefined;
-		} else if (step === 'form') {
-			if (slotType === 1) {
-				step = 'time';
-			} else {
-				step = 'date';
-			}
 			selectedSlot = undefined;
 		}
 	}
@@ -185,33 +178,28 @@
 
 	<!-- Step indicator -->
 	<div class="flex items-center justify-center gap-2 mb-8">
-		{#each ['date', 'time', 'form'] as s, i}
-			{@const steps = slotType === 1 ? ['date', 'time', 'form'] : ['date', 'form']}
-			{@const stepIndex = steps.indexOf(s)}
-			{@const currentIndex = steps.indexOf(step)}
-			{@const shouldShow = s !== 'time' || slotType === 1}
-			{@const isCurrent = step === s}
-			{@const isCompleted = stepIndex !== -1 && stepIndex < currentIndex}
-			{@const isUpcoming = stepIndex !== -1 && stepIndex > currentIndex}
-			{#if shouldShow}
-				<div class="flex items-center gap-2">
-					<div
-						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border
-							{isCurrent ? 'bg-[var(--sky)] text-white border-[var(--sky)]' : isCompleted ? 'bg-[var(--emerald)] text-white border-[var(--emerald)]' : 'bg-[var(--bg-tertiary)] text-[var(--text-muted)] border-[var(--border-color)]'}"
-					>
-						{#if isCompleted}
-							<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-							</svg>
-						{:else}
-							{stepIndex + 1}
-						{/if}
-					</div>
-					{#if i < 2 && (s !== 'time' || slotType === 1)}
-						<div class="w-8 h-px bg-[var(--border-color)]"></div>
+		{#each ['date', 'form'] as s, i}
+			{@const currentIndex = ['date', 'form'].indexOf(step === 'date' ? 'date' : 'form')}
+			{@const stepIndex = i}
+			{@const isCurrent = stepIndex === currentIndex}
+			{@const isCompleted = stepIndex < currentIndex}
+			<div class="flex items-center gap-2">
+				<div
+					class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border
+						{isCurrent ? 'bg-[var(--sky)] text-white border-[var(--sky)]' : isCompleted ? 'bg-[var(--emerald)] text-white border-[var(--emerald)]' : 'bg-[var(--bg-tertiary)] text-[var(--text-muted)] border-[var(--border-color)]'}"
+				>
+					{#if isCompleted}
+						<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+						</svg>
+					{:else}
+						{stepIndex + 1}
 					{/if}
 				</div>
-			{/if}
+				{#if i < 1}
+					<div class="w-8 h-px bg-[var(--border-color)]"></div>
+				{/if}
+			</div>
 		{/each}
 	</div>
 
@@ -236,47 +224,42 @@
 			<!-- Time slot flow -->
 			{#if step === 'date'}
 				<div in:fly={{ x: -50, duration: 200 }}>
-					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date</h2>
-					<DateCalendar
-						{availableDates}
-						bind:selectedDate
-						class="mx-auto max-w-sm"
-					/>
-					{#if selectedDate}
-						<div class="mt-4 flex justify-end">
-							<Button onclick={() => handleDateSelect(selectedDate!)}>
-								Continue
-							</Button>
+					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date & Time</h2>
+
+					<!-- Desktop: side-by-side, Mobile: stacked -->
+					<div class="flex flex-col lg:flex-row lg:gap-8">
+						<!-- Calendar -->
+						<div class="lg:flex-shrink-0">
+							<DateCalendar
+								{availableDates}
+								bind:selectedDate
+								onSelect={handleDateSelect}
+								class="mx-auto max-w-sm"
+							/>
 						</div>
-					{/if}
-				</div>
-			{:else if step === 'time'}
-				<div in:fly={{ x: 50, duration: 200 }}>
-					<div class="flex items-center gap-2 mb-4">
-						<button
-							type="button"
-							onclick={goBack}
-							class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-[var(--radius-md)] transition-colors"
-							aria-label="Go back"
-						>
-							<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-							</svg>
-						</button>
-						<h2 class="text-lg font-semibold text-[var(--text-primary)]">Select a Time</h2>
+
+						<!-- Time slots (shown when date selected) -->
+						{#if selectedDate}
+							<div class="mt-6 lg:mt-0 lg:flex-1 lg:min-w-[200px]" in:fly={{ y: 20, duration: 200 }}>
+								<p class="text-sm font-medium text-[var(--text-secondary)] mb-3">
+									{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
+										weekday: 'long',
+										month: 'long',
+										day: 'numeric'
+									})}
+								</p>
+								<TimeSlotList
+									slots={slotsForSelectedDate}
+									bind:selectedSlot
+									onSelect={handleSlotSelect}
+								/>
+							</div>
+						{:else}
+							<div class="hidden lg:flex lg:flex-1 lg:min-w-[200px] items-center justify-center">
+								<p class="text-sm text-[var(--text-muted)]">Select a date to see available times</p>
+							</div>
+						{/if}
 					</div>
-					<p class="text-sm text-[var(--text-secondary)] mb-4">
-						{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
-							weekday: 'long',
-							month: 'long',
-							day: 'numeric'
-						})}
-					</p>
-					<TimeSlotList
-						slots={slotsForSelectedDate}
-						bind:selectedSlot
-						onSelect={handleSlotSelect}
-					/>
 				</div>
 			{:else if step === 'form'}
 				<div in:fly={{ x: 50, duration: 200 }}>

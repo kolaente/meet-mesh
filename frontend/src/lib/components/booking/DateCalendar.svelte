@@ -2,12 +2,14 @@
 	interface Props {
 		availableDates: string[];
 		selectedDate?: string;
+		onSelect?: (date: string) => void;
 		class?: string;
 	}
 
 	let {
 		availableDates,
 		selectedDate = $bindable(),
+		onSelect,
 		class: className = ''
 	}: Props = $props();
 
@@ -55,6 +57,7 @@
 	function selectDate(day: number) {
 		const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 		selectedDate = dateStr;
+		onSelect?.(dateStr);
 	}
 
 	function isAvailable(day: number): boolean {
