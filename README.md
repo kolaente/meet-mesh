@@ -123,6 +123,27 @@ cd api && go run ./cmd
 
 The frontend dev server proxies API requests to the backend.
 
+### Local Email Testing with Mailhog
+
+For local development, [Mailhog](https://github.com/mailhog/MailHog) is included to capture outgoing emails:
+
+```bash
+# Start Mailhog alongside other services
+devenv up
+```
+
+Then use the development config:
+
+```bash
+cp config.dev.yaml config.yaml
+# Edit OIDC settings as needed
+```
+
+- **SMTP**: localhost:1025 (captured by Mailhog)
+- **Web UI**: http://localhost:8025 (view captured emails)
+
+All emails sent by the application will appear in the Mailhog web interface instead of being delivered.
+
 ### Build Commands
 
 ```bash
