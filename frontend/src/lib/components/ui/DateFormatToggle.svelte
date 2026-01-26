@@ -21,7 +21,7 @@
     aria-expanded={expanded}
     aria-label="Date format settings"
   >
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
@@ -59,8 +59,8 @@
   }
 
   .toggle-button {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius);
     border: var(--border);
     background: var(--bg-secondary);
@@ -80,9 +80,9 @@
 
   .settings-panel {
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     right: 0;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     padding: 0.5rem;
     background: var(--bg-secondary);
     border: var(--border);

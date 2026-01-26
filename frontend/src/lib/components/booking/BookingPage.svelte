@@ -7,6 +7,8 @@
 	import Spinner from '../ui/Spinner.svelte';
 	import Button from '../ui/Button.svelte';
 	import Card from '../ui/Card.svelte';
+	import ThemeToggle from '../ui/ThemeToggle.svelte';
+	import { DateFormatToggle } from '$lib/components/ui';
 	import DateCalendar from './DateCalendar.svelte';
 	import TimeSlotList from './TimeSlotList.svelte';
 	import DayPicker from './DayPicker.svelte';
@@ -212,6 +214,12 @@
 </script>
 
 <div class="max-w-3xl mx-auto">
+	<!-- Settings toggles in top-right corner -->
+	<div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+		<DateFormatToggle />
+		<ThemeToggle />
+	</div>
+
 	<!-- Header -->
 	<div class="text-center mb-8">
 		<h1 class="text-2xl font-bold text-[var(--text-primary)]">{link.name}</h1>
