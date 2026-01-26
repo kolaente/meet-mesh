@@ -35,6 +35,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Decline Booking | Meet Mesh</title>
+</svelte:head>
+
 <Card>
   <div class="text-center py-6">
     {#if pageState === 'loading'}

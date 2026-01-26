@@ -3,6 +3,10 @@
 	import { Card } from '$lib/components/ui';
 </script>
 
+<svelte:head>
+	<title>Booking Confirmed | Meet Mesh</title>
+</svelte:head>
+
 <Card class="text-center py-8">
 	<div class="text-green-500 mb-4">
 		<svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

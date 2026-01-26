@@ -64,6 +64,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{bookingLink?.name || 'Book a Time'} | Meet Mesh</title>
+</svelte:head>
+
 {#if loading}
 	<div class="flex items-center justify-center py-12">
 		<Spinner size="lg" />

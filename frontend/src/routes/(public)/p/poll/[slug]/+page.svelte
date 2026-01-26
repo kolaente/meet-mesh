@@ -50,6 +50,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{poll?.name || 'Vote'} | Meet Mesh</title>
+</svelte:head>
+
 {#if loading}
 	<div class="flex items-center justify-center py-12">
 		<Spinner size="lg" />

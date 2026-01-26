@@ -5,6 +5,10 @@
   let { title, subtitle, actions }: { title: string; subtitle?: string; actions?: Snippet } = $props()
 </script>
 
+<svelte:head>
+  <title>{title} | Meet Mesh</title>
+</svelte:head>
+
 <header class="header">
   <div class="header-content">
     <h1 class="header-title">{title}</h1>

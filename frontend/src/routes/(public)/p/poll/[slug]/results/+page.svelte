@@ -7,6 +7,7 @@
 	type VoteTally = components['schemas']['VoteTally'];
 	type Vote = components['schemas']['Vote'];
 
+	let pollName = $state<string | null>(null);
 	let tally = $state<VoteTally[]>([]);
 	let votes = $state<Vote[]>([]);
 	let loading = $state(true);
@@ -25,6 +26,15 @@
 
 		loading = true;
 		error = null;
+
+		// Fetch poll info for the name
+		const { data: pollData } = await api.GET('/p/poll/{slug}', {
+			params: { path: { slug } }
+		});
+
+		if (pollData) {
+			pollName = pollData.name;
+		}
 
 		const { data, error: apiError } = await api.GET('/p/poll/{slug}/results', {
 			params: { path: { slug } }
@@ -47,6 +57,10 @@
 		return t.yes_count + t.no_count + t.maybe_count;
 	}
 </script>
+
+<svelte:head>
+	<title>{pollName ? pollName + ' - Results' : 'Poll Results'} | Meet Mesh</title>
+</svelte:head>
 
 <div class="max-w-2xl mx-auto">
 	<h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">Poll Results</h1>

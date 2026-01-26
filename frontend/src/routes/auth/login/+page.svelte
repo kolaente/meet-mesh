@@ -7,6 +7,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Sign In | Meet Mesh</title>
+</svelte:head>
+
 <div class="min-h-screen flex items-center justify-center">
   <div class="text-center">
     <Spinner size="lg" />
