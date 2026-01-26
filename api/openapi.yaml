@@ -203,6 +203,9 @@ components:
           default: 0
         require_email:
           type: boolean
+        meeting_link:
+          type: string
+          description: Video meeting link (Zoom, Google Meet, etc.) to include in calendar events
         availability_rules:
           type: array
           items:
@@ -577,6 +580,9 @@ paths:
                   default: 0
                 require_email:
                   type: boolean
+                meeting_link:
+                  type: string
+                  description: Video meeting link (Zoom, Google Meet, etc.)
                 availability_rules:
                   type: array
                   items:
@@ -647,6 +653,9 @@ paths:
                   type: integer
                 require_email:
                   type: boolean
+                meeting_link:
+                  type: string
+                  description: Video meeting link (Zoom, Google Meet, etc.)
                 availability_rules:
                   type: array
                   items:

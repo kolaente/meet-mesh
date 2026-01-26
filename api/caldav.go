@@ -209,7 +209,7 @@ func (c *CalDAVClient) TestCalendarConnection(ctx context.Context, connID uint, 
 }
 
 // CreateBookingEvent creates a calendar event for a confirmed booking
-func (c *CalDAVClient) CreateBookingEvent(ctx context.Context, userID uint, booking *Booking, slot *Slot, template *EventTemplate) (string, error) {
+func (c *CalDAVClient) CreateBookingEvent(ctx context.Context, userID uint, booking *Booking, slot *Slot, template *EventTemplate, meetingLink string) (string, error) {
 	var conn CalendarConnection
 	if err := c.db.Where("user_id = ? AND write_url != ''", userID).First(&conn).Error; err != nil {
 		return "", err
@@ -233,15 +233,22 @@ func (c *CalDAVClient) CreateBookingEvent(ctx context.Context, userID uint, book
 
 	title := "Meeting"
 	if template != nil && template.TitleTemplate != "" {
-		title = expandTemplate(template.TitleTemplate, booking)
+		title = expandTemplate(template.TitleTemplate, booking, meetingLink)
 	}
 	event.Props.SetText(ical.PropSummary, title)
 
 	if template != nil && template.DescriptionTemplate != "" {
-		event.Props.SetText(ical.PropDescription, expandTemplate(template.DescriptionTemplate, booking))
+		event.Props.SetText(ical.PropDescription, expandTemplate(template.DescriptionTemplate, booking, meetingLink))
 	}
 
-	if template != nil && template.Location != "" {
+	// Use meeting link as location if provided and no location set in template
+	if meetingLink != "" {
+		if template == nil || template.Location == "" {
+			event.Props.SetText(ical.PropLocation, meetingLink)
+		} else {
+			event.Props.SetText(ical.PropLocation, template.Location)
+		}
+	} else if template != nil && template.Location != "" {
 		event.Props.SetText(ical.PropLocation, template.Location)
 	}
 
@@ -289,7 +296,7 @@ func generateUID() string {
 	return time.Now().Format("20060102T150405") + "@meet-mesh"
 }
 
-func expandTemplate(template string, booking *Booking) string {
+func expandTemplate(template string, booking *Booking, meetingLink string) string {
 	// Simple template expansion
 	result := template
 	if booking != nil {
@@ -299,5 +306,7 @@ func expandTemplate(template string, booking *Booking) string {
 		result = strings.ReplaceAll(result, "{{guest_name}}", booking.GuestName)
 		result = strings.ReplaceAll(result, "{{guest_email}}", booking.GuestEmail)
 	}
+	// Replace {{meeting_link}} with the meeting link
+	result = strings.ReplaceAll(result, "{{meeting_link}}", meetingLink)
 	return result
 }

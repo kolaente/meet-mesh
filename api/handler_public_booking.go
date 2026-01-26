@@ -235,7 +235,7 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		}
 		// Create calendar event
 		if h.caldav != nil {
-			uid, err := h.caldav.CreateBookingEvent(ctx, link.UserID, &booking, &slot, link.EventTemplate)
+			uid, err := h.caldav.CreateBookingEvent(ctx, link.UserID, &booking, &slot, link.EventTemplate, link.MeetingLink)
 			if err == nil && uid != "" {
 				booking.CalendarUID = uid
 				h.db.Save(&booking)

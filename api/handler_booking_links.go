@@ -46,6 +46,7 @@ func (h *Handler) CreateBookingLink(ctx context.Context, req *gen.CreateBookingL
 		SlotDurationMinutes: slotDuration,
 		BufferMinutes:       bufferMinutes,
 		RequireEmail:        req.RequireEmail.Value,
+		MeetingLink:         req.MeetingLink.Value,
 		AvailabilityRules:   mapAvailabilityRulesFromGen(req.AvailabilityRules),
 		CustomFields:        mapCustomFieldsFromGen(req.CustomFields),
 		EventTemplate:       mapEventTemplateFromGen(req.EventTemplate),
@@ -109,6 +110,9 @@ func (h *Handler) UpdateBookingLink(ctx context.Context, req *gen.UpdateBookingL
 	if req.BufferMinutes.Set {
 		link.BufferMinutes = req.BufferMinutes.Value
 	}
+	if req.MeetingLink.Set {
+		link.MeetingLink = req.MeetingLink.Value
+	}
 
 	if err := h.db.Save(&link).Error; err != nil {
 		return nil, err
@@ -168,6 +172,7 @@ func mapBookingLinkToGen(link *BookingLink) *gen.BookingLink {
 		SlotDurationMinutes: gen.NewOptInt(link.SlotDurationMinutes),
 		BufferMinutes:       gen.NewOptInt(link.BufferMinutes),
 		RequireEmail:        gen.NewOptBool(link.RequireEmail),
+		MeetingLink:         gen.NewOptString(link.MeetingLink),
 		AvailabilityRules:   mapAvailabilityRulesToGen(link.AvailabilityRules),
 		CustomFields:        mapCustomFieldsToGen(link.CustomFields),
 		EventTemplate:       mapEventTemplateToGen(link.EventTemplate),

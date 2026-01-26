@@ -103,6 +103,7 @@ type BookingLink struct {
 	BufferMinutes       int                `gorm:"not null;default:0"`
 	AvailabilityRules   []AvailabilityRule `gorm:"serializer:json"`
 	RequireEmail        bool
+	MeetingLink         string
 	CustomFields        []CustomField      `gorm:"serializer:json"`
 	EventTemplate       *EventTemplate     `gorm:"serializer:json"`
 	CreatedAt           time.Time

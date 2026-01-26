@@ -309,8 +309,10 @@ type BookingLink struct {
 	// Duration of each bookable slot in minutes.
 	SlotDurationMinutes OptInt `json:"slot_duration_minutes"`
 	// Buffer time between slots in minutes.
-	BufferMinutes     OptInt             `json:"buffer_minutes"`
-	RequireEmail      OptBool            `json:"require_email"`
+	BufferMinutes OptInt  `json:"buffer_minutes"`
+	RequireEmail  OptBool `json:"require_email"`
+	// Video meeting link (Zoom, Google Meet, etc.) to include in calendar events.
+	MeetingLink       OptString          `json:"meeting_link"`
 	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
 	CustomFields      []CustomField      `json:"custom_fields"`
 	EventTemplate     OptEventTemplate   `json:"event_template"`
@@ -360,6 +362,11 @@ func (s *BookingLink) GetBufferMinutes() OptInt {
 // GetRequireEmail returns the value of RequireEmail.
 func (s *BookingLink) GetRequireEmail() OptBool {
 	return s.RequireEmail
+}
+
+// GetMeetingLink returns the value of MeetingLink.
+func (s *BookingLink) GetMeetingLink() OptString {
+	return s.MeetingLink
 }
 
 // GetAvailabilityRules returns the value of AvailabilityRules.
@@ -425,6 +432,11 @@ func (s *BookingLink) SetBufferMinutes(val OptInt) {
 // SetRequireEmail sets the value of RequireEmail.
 func (s *BookingLink) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
+}
+
+// SetMeetingLink sets the value of MeetingLink.
+func (s *BookingLink) SetMeetingLink(val OptString) {
+	s.MeetingLink = val
 }
 
 // SetAvailabilityRules sets the value of AvailabilityRules.
@@ -690,15 +702,17 @@ func (s *CreateBookingCreated) SetMessage(val OptString) {
 func (*CreateBookingCreated) createBookingRes() {}
 
 type CreateBookingLinkReq struct {
-	Name                string             `json:"name"`
-	Description         OptString          `json:"description"`
-	AutoConfirm         OptBool            `json:"auto_confirm"`
-	SlotDurationMinutes OptInt             `json:"slot_duration_minutes"`
-	BufferMinutes       OptInt             `json:"buffer_minutes"`
-	RequireEmail        OptBool            `json:"require_email"`
-	AvailabilityRules   []AvailabilityRule `json:"availability_rules"`
-	CustomFields        []CustomField      `json:"custom_fields"`
-	EventTemplate       OptEventTemplate   `json:"event_template"`
+	Name                string    `json:"name"`
+	Description         OptString `json:"description"`
+	AutoConfirm         OptBool   `json:"auto_confirm"`
+	SlotDurationMinutes OptInt    `json:"slot_duration_minutes"`
+	BufferMinutes       OptInt    `json:"buffer_minutes"`
+	RequireEmail        OptBool   `json:"require_email"`
+	// Video meeting link (Zoom, Google Meet, etc.).
+	MeetingLink       OptString          `json:"meeting_link"`
+	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
+	CustomFields      []CustomField      `json:"custom_fields"`
+	EventTemplate     OptEventTemplate   `json:"event_template"`
 }
 
 // GetName returns the value of Name.
@@ -729,6 +743,11 @@ func (s *CreateBookingLinkReq) GetBufferMinutes() OptInt {
 // GetRequireEmail returns the value of RequireEmail.
 func (s *CreateBookingLinkReq) GetRequireEmail() OptBool {
 	return s.RequireEmail
+}
+
+// GetMeetingLink returns the value of MeetingLink.
+func (s *CreateBookingLinkReq) GetMeetingLink() OptString {
+	return s.MeetingLink
 }
 
 // GetAvailabilityRules returns the value of AvailabilityRules.
@@ -774,6 +793,11 @@ func (s *CreateBookingLinkReq) SetBufferMinutes(val OptInt) {
 // SetRequireEmail sets the value of RequireEmail.
 func (s *CreateBookingLinkReq) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
+}
+
+// SetMeetingLink sets the value of MeetingLink.
+func (s *CreateBookingLinkReq) SetMeetingLink(val OptString) {
+	s.MeetingLink = val
 }
 
 // SetAvailabilityRules sets the value of AvailabilityRules.
@@ -2151,16 +2175,18 @@ func (s *SubmitVoteReqResponses) init() SubmitVoteReqResponses {
 }
 
 type UpdateBookingLinkReq struct {
-	Name                OptString          `json:"name"`
-	Description         OptString          `json:"description"`
-	Status              OptLinkStatus      `json:"status"`
-	AutoConfirm         OptBool            `json:"auto_confirm"`
-	SlotDurationMinutes OptInt             `json:"slot_duration_minutes"`
-	BufferMinutes       OptInt             `json:"buffer_minutes"`
-	RequireEmail        OptBool            `json:"require_email"`
-	AvailabilityRules   []AvailabilityRule `json:"availability_rules"`
-	CustomFields        []CustomField      `json:"custom_fields"`
-	EventTemplate       OptEventTemplate   `json:"event_template"`
+	Name                OptString     `json:"name"`
+	Description         OptString     `json:"description"`
+	Status              OptLinkStatus `json:"status"`
+	AutoConfirm         OptBool       `json:"auto_confirm"`
+	SlotDurationMinutes OptInt        `json:"slot_duration_minutes"`
+	BufferMinutes       OptInt        `json:"buffer_minutes"`
+	RequireEmail        OptBool       `json:"require_email"`
+	// Video meeting link (Zoom, Google Meet, etc.).
+	MeetingLink       OptString          `json:"meeting_link"`
+	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
+	CustomFields      []CustomField      `json:"custom_fields"`
+	EventTemplate     OptEventTemplate   `json:"event_template"`
 }
 
 // GetName returns the value of Name.
@@ -2196,6 +2222,11 @@ func (s *UpdateBookingLinkReq) GetBufferMinutes() OptInt {
 // GetRequireEmail returns the value of RequireEmail.
 func (s *UpdateBookingLinkReq) GetRequireEmail() OptBool {
 	return s.RequireEmail
+}
+
+// GetMeetingLink returns the value of MeetingLink.
+func (s *UpdateBookingLinkReq) GetMeetingLink() OptString {
+	return s.MeetingLink
 }
 
 // GetAvailabilityRules returns the value of AvailabilityRules.
@@ -2246,6 +2277,11 @@ func (s *UpdateBookingLinkReq) SetBufferMinutes(val OptInt) {
 // SetRequireEmail sets the value of RequireEmail.
 func (s *UpdateBookingLinkReq) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
+}
+
+// SetMeetingLink sets the value of MeetingLink.
+func (s *UpdateBookingLinkReq) SetMeetingLink(val OptString) {
+	s.MeetingLink = val
 }
 
 // SetAvailabilityRules sets the value of AvailabilityRules.

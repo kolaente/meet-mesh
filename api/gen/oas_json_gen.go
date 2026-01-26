@@ -829,6 +829,12 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.MeetingLink.Set {
+			e.FieldStart("meeting_link")
+			s.MeetingLink.Encode(e)
+		}
+	}
+	{
 		if s.AvailabilityRules != nil {
 			e.FieldStart("availability_rules")
 			e.ArrStart()
@@ -862,7 +868,7 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfBookingLink = [13]string{
+var jsonFieldsNameOfBookingLink = [14]string{
 	0:  "id",
 	1:  "slug",
 	2:  "name",
@@ -872,10 +878,11 @@ var jsonFieldsNameOfBookingLink = [13]string{
 	6:  "slot_duration_minutes",
 	7:  "buffer_minutes",
 	8:  "require_email",
-	9:  "availability_rules",
-	10: "custom_fields",
-	11: "event_template",
-	12: "created_at",
+	9:  "meeting_link",
+	10: "availability_rules",
+	11: "custom_fields",
+	12: "event_template",
+	13: "created_at",
 }
 
 // Decode decodes BookingLink from json.
@@ -983,6 +990,16 @@ func (s *BookingLink) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "meeting_link":
+			if err := func() error {
+				s.MeetingLink.Reset()
+				if err := s.MeetingLink.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"meeting_link\"")
 			}
 		case "availability_rules":
 			if err := func() error {
@@ -1869,6 +1886,12 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.MeetingLink.Set {
+			e.FieldStart("meeting_link")
+			s.MeetingLink.Encode(e)
+		}
+	}
+	{
 		if s.AvailabilityRules != nil {
 			e.FieldStart("availability_rules")
 			e.ArrStart()
@@ -1896,16 +1919,17 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateBookingLinkReq = [9]string{
+var jsonFieldsNameOfCreateBookingLinkReq = [10]string{
 	0: "name",
 	1: "description",
 	2: "auto_confirm",
 	3: "slot_duration_minutes",
 	4: "buffer_minutes",
 	5: "require_email",
-	6: "availability_rules",
-	7: "custom_fields",
-	8: "event_template",
+	6: "meeting_link",
+	7: "availability_rules",
+	8: "custom_fields",
+	9: "event_template",
 }
 
 // Decode decodes CreateBookingLinkReq from json.
@@ -1979,6 +2003,16 @@ func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "meeting_link":
+			if err := func() error {
+				s.MeetingLink.Reset()
+				if err := s.MeetingLink.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"meeting_link\"")
 			}
 		case "availability_rules":
 			if err := func() error {
@@ -5170,6 +5204,12 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.MeetingLink.Set {
+			e.FieldStart("meeting_link")
+			s.MeetingLink.Encode(e)
+		}
+	}
+	{
 		if s.AvailabilityRules != nil {
 			e.FieldStart("availability_rules")
 			e.ArrStart()
@@ -5197,17 +5237,18 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateBookingLinkReq = [10]string{
-	0: "name",
-	1: "description",
-	2: "status",
-	3: "auto_confirm",
-	4: "slot_duration_minutes",
-	5: "buffer_minutes",
-	6: "require_email",
-	7: "availability_rules",
-	8: "custom_fields",
-	9: "event_template",
+var jsonFieldsNameOfUpdateBookingLinkReq = [11]string{
+	0:  "name",
+	1:  "description",
+	2:  "status",
+	3:  "auto_confirm",
+	4:  "slot_duration_minutes",
+	5:  "buffer_minutes",
+	6:  "require_email",
+	7:  "meeting_link",
+	8:  "availability_rules",
+	9:  "custom_fields",
+	10: "event_template",
 }
 
 // Decode decodes UpdateBookingLinkReq from json.
@@ -5287,6 +5328,16 @@ func (s *UpdateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "meeting_link":
+			if err := func() error {
+				s.MeetingLink.Reset()
+				if err := s.MeetingLink.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"meeting_link\"")
 			}
 		case "availability_rules":
 			if err := func() error {
