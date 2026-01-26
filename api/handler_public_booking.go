@@ -22,11 +22,20 @@ func (h *Handler) GetPublicBookingLink(ctx context.Context, params gen.GetPublic
 		return nil, err
 	}
 
+	// Determine available durations
+	var durations []int
+	if len(link.SlotDurationsMinutes) > 0 {
+		durations = link.SlotDurationsMinutes
+	} else {
+		durations = []int{link.SlotDurationMinutes}
+	}
+
 	return &gen.GetPublicBookingLinkOK{
-		Name:         link.Name,
-		Description:  gen.NewOptString(link.Description),
-		CustomFields: mapCustomFieldsToGen(link.CustomFields),
-		RequireEmail: gen.NewOptBool(link.RequireEmail),
+		Name:                 link.Name,
+		Description:          gen.NewOptString(link.Description),
+		CustomFields:         mapCustomFieldsToGen(link.CustomFields),
+		RequireEmail:         gen.NewOptBool(link.RequireEmail),
+		SlotDurationsMinutes: durations,
 	}, nil
 }
 
@@ -35,6 +44,31 @@ func (h *Handler) GetBookingAvailability(ctx context.Context, params gen.GetBook
 	var link BookingLink
 	if err := h.db.Where("slug = ? AND status = ?", params.Slug, LinkStatusActive).First(&link).Error; err != nil {
 		return nil, err
+	}
+
+	// Determine which duration to use
+	duration := link.SlotDurationMinutes // Default
+	if params.Duration.Set {
+		requestedDuration := params.Duration.Value
+		// Validate requested duration is allowed
+		allowed := false
+		if len(link.SlotDurationsMinutes) > 0 {
+			for _, d := range link.SlotDurationsMinutes {
+				if d == requestedDuration {
+					allowed = true
+					break
+				}
+			}
+		} else if requestedDuration == link.SlotDurationMinutes {
+			allowed = true
+		}
+		if !allowed {
+			return &gen.GetBookingAvailabilityOK{Slots: []gen.Slot{}}, nil
+		}
+		duration = requestedDuration
+	} else if len(link.SlotDurationsMinutes) > 0 {
+		// Use first duration as default
+		duration = link.SlotDurationsMinutes[0]
 	}
 
 	// Fetch busy times from CalDAV
@@ -49,7 +83,7 @@ func (h *Handler) GetBookingAvailability(ctx context.Context, params gen.GetBook
 	}
 
 	// Generate available slots based on availability rules
-	slots := h.generateAvailableSlots(link, params.Start, params.End, busyTimes)
+	slots := h.generateAvailableSlotsWithDuration(link, params.Start, params.End, busyTimes, duration)
 
 	return &gen.GetBookingAvailabilityOK{
 		Slots: mapSlotsToGen(slots),
@@ -57,6 +91,10 @@ func (h *Handler) GetBookingAvailability(ctx context.Context, params gen.GetBook
 }
 
 func (h *Handler) generateAvailableSlots(link BookingLink, start, end time.Time, busyTimes []TimePeriod) []Slot {
+	return h.generateAvailableSlotsWithDuration(link, start, end, busyTimes, link.SlotDurationMinutes)
+}
+
+func (h *Handler) generateAvailableSlotsWithDuration(link BookingLink, start, end time.Time, busyTimes []TimePeriod, durationMinutes int) []Slot {
 	var slots []Slot
 
 	// If no availability rules, return empty
@@ -64,7 +102,7 @@ func (h *Handler) generateAvailableSlots(link BookingLink, start, end time.Time,
 		return slots
 	}
 
-	slotDuration := time.Duration(link.SlotDurationMinutes) * time.Minute
+	slotDuration := time.Duration(durationMinutes) * time.Minute
 	bufferDuration := time.Duration(link.BufferMinutes) * time.Minute
 
 	// Generate slots for each day in the range
@@ -153,10 +191,23 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		return nil, err
 	}
 
-	// Validate slot duration matches the booking link's configuration
+	// Validate slot duration matches one of the booking link's configurations
 	requestedDuration := req.EndTime.Sub(req.StartTime)
-	expectedDuration := time.Duration(link.SlotDurationMinutes) * time.Minute
-	if requestedDuration != expectedDuration {
+	requestedMinutes := int(requestedDuration.Minutes())
+
+	validDuration := false
+	if len(link.SlotDurationsMinutes) > 0 {
+		for _, d := range link.SlotDurationsMinutes {
+			if requestedMinutes == d {
+				validDuration = true
+				break
+			}
+		}
+	} else if requestedMinutes == link.SlotDurationMinutes {
+		validDuration = true
+	}
+
+	if !validDuration {
 		return &gen.Error{Message: "Invalid slot duration"}, nil
 	}
 

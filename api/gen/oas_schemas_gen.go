@@ -306,8 +306,10 @@ type BookingLink struct {
 	Description OptString  `json:"description"`
 	Status      LinkStatus `json:"status"`
 	AutoConfirm OptBool    `json:"auto_confirm"`
-	// Duration of each bookable slot in minutes.
+	// Duration of each bookable slot in minutes (deprecated, use slot_durations_minutes).
 	SlotDurationMinutes OptInt `json:"slot_duration_minutes"`
+	// Available slot durations in minutes. If empty, slot_duration_minutes is used.
+	SlotDurationsMinutes []int `json:"slot_durations_minutes"`
 	// Buffer time between slots in minutes.
 	BufferMinutes OptInt  `json:"buffer_minutes"`
 	RequireEmail  OptBool `json:"require_email"`
@@ -352,6 +354,11 @@ func (s *BookingLink) GetAutoConfirm() OptBool {
 // GetSlotDurationMinutes returns the value of SlotDurationMinutes.
 func (s *BookingLink) GetSlotDurationMinutes() OptInt {
 	return s.SlotDurationMinutes
+}
+
+// GetSlotDurationsMinutes returns the value of SlotDurationsMinutes.
+func (s *BookingLink) GetSlotDurationsMinutes() []int {
+	return s.SlotDurationsMinutes
 }
 
 // GetBufferMinutes returns the value of BufferMinutes.
@@ -422,6 +429,11 @@ func (s *BookingLink) SetAutoConfirm(val OptBool) {
 // SetSlotDurationMinutes sets the value of SlotDurationMinutes.
 func (s *BookingLink) SetSlotDurationMinutes(val OptInt) {
 	s.SlotDurationMinutes = val
+}
+
+// SetSlotDurationsMinutes sets the value of SlotDurationsMinutes.
+func (s *BookingLink) SetSlotDurationsMinutes(val []int) {
+	s.SlotDurationsMinutes = val
 }
 
 // SetBufferMinutes sets the value of BufferMinutes.
@@ -706,8 +718,10 @@ type CreateBookingLinkReq struct {
 	Description         OptString `json:"description"`
 	AutoConfirm         OptBool   `json:"auto_confirm"`
 	SlotDurationMinutes OptInt    `json:"slot_duration_minutes"`
-	BufferMinutes       OptInt    `json:"buffer_minutes"`
-	RequireEmail        OptBool   `json:"require_email"`
+	// Available slot durations in minutes.
+	SlotDurationsMinutes []int   `json:"slot_durations_minutes"`
+	BufferMinutes        OptInt  `json:"buffer_minutes"`
+	RequireEmail         OptBool `json:"require_email"`
 	// Video meeting link (Zoom, Google Meet, etc.).
 	MeetingLink       OptString          `json:"meeting_link"`
 	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
@@ -733,6 +747,11 @@ func (s *CreateBookingLinkReq) GetAutoConfirm() OptBool {
 // GetSlotDurationMinutes returns the value of SlotDurationMinutes.
 func (s *CreateBookingLinkReq) GetSlotDurationMinutes() OptInt {
 	return s.SlotDurationMinutes
+}
+
+// GetSlotDurationsMinutes returns the value of SlotDurationsMinutes.
+func (s *CreateBookingLinkReq) GetSlotDurationsMinutes() []int {
+	return s.SlotDurationsMinutes
 }
 
 // GetBufferMinutes returns the value of BufferMinutes.
@@ -783,6 +802,11 @@ func (s *CreateBookingLinkReq) SetAutoConfirm(val OptBool) {
 // SetSlotDurationMinutes sets the value of SlotDurationMinutes.
 func (s *CreateBookingLinkReq) SetSlotDurationMinutes(val OptInt) {
 	s.SlotDurationMinutes = val
+}
+
+// SetSlotDurationsMinutes sets the value of SlotDurationsMinutes.
+func (s *CreateBookingLinkReq) SetSlotDurationsMinutes(val []int) {
+	s.SlotDurationsMinutes = val
 }
 
 // SetBufferMinutes sets the value of BufferMinutes.
@@ -1246,6 +1270,8 @@ type GetPublicBookingLinkOK struct {
 	Description  OptString     `json:"description"`
 	CustomFields []CustomField `json:"custom_fields"`
 	RequireEmail OptBool       `json:"require_email"`
+	// Available slot durations in minutes.
+	SlotDurationsMinutes []int `json:"slot_durations_minutes"`
 }
 
 // GetName returns the value of Name.
@@ -1268,6 +1294,11 @@ func (s *GetPublicBookingLinkOK) GetRequireEmail() OptBool {
 	return s.RequireEmail
 }
 
+// GetSlotDurationsMinutes returns the value of SlotDurationsMinutes.
+func (s *GetPublicBookingLinkOK) GetSlotDurationsMinutes() []int {
+	return s.SlotDurationsMinutes
+}
+
 // SetName sets the value of Name.
 func (s *GetPublicBookingLinkOK) SetName(val string) {
 	s.Name = val
@@ -1286,6 +1317,11 @@ func (s *GetPublicBookingLinkOK) SetCustomFields(val []CustomField) {
 // SetRequireEmail sets the value of RequireEmail.
 func (s *GetPublicBookingLinkOK) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
+}
+
+// SetSlotDurationsMinutes sets the value of SlotDurationsMinutes.
+func (s *GetPublicBookingLinkOK) SetSlotDurationsMinutes(val []int) {
+	s.SlotDurationsMinutes = val
 }
 
 func (*GetPublicBookingLinkOK) getPublicBookingLinkRes() {}
@@ -2175,13 +2211,14 @@ func (s *SubmitVoteReqResponses) init() SubmitVoteReqResponses {
 }
 
 type UpdateBookingLinkReq struct {
-	Name                OptString     `json:"name"`
-	Description         OptString     `json:"description"`
-	Status              OptLinkStatus `json:"status"`
-	AutoConfirm         OptBool       `json:"auto_confirm"`
-	SlotDurationMinutes OptInt        `json:"slot_duration_minutes"`
-	BufferMinutes       OptInt        `json:"buffer_minutes"`
-	RequireEmail        OptBool       `json:"require_email"`
+	Name                 OptString     `json:"name"`
+	Description          OptString     `json:"description"`
+	Status               OptLinkStatus `json:"status"`
+	AutoConfirm          OptBool       `json:"auto_confirm"`
+	SlotDurationMinutes  OptInt        `json:"slot_duration_minutes"`
+	SlotDurationsMinutes []int         `json:"slot_durations_minutes"`
+	BufferMinutes        OptInt        `json:"buffer_minutes"`
+	RequireEmail         OptBool       `json:"require_email"`
 	// Video meeting link (Zoom, Google Meet, etc.).
 	MeetingLink       OptString          `json:"meeting_link"`
 	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
@@ -2212,6 +2249,11 @@ func (s *UpdateBookingLinkReq) GetAutoConfirm() OptBool {
 // GetSlotDurationMinutes returns the value of SlotDurationMinutes.
 func (s *UpdateBookingLinkReq) GetSlotDurationMinutes() OptInt {
 	return s.SlotDurationMinutes
+}
+
+// GetSlotDurationsMinutes returns the value of SlotDurationsMinutes.
+func (s *UpdateBookingLinkReq) GetSlotDurationsMinutes() []int {
+	return s.SlotDurationsMinutes
 }
 
 // GetBufferMinutes returns the value of BufferMinutes.
@@ -2267,6 +2309,11 @@ func (s *UpdateBookingLinkReq) SetAutoConfirm(val OptBool) {
 // SetSlotDurationMinutes sets the value of SlotDurationMinutes.
 func (s *UpdateBookingLinkReq) SetSlotDurationMinutes(val OptInt) {
 	s.SlotDurationMinutes = val
+}
+
+// SetSlotDurationsMinutes sets the value of SlotDurationsMinutes.
+func (s *UpdateBookingLinkReq) SetSlotDurationsMinutes(val []int) {
+	s.SlotDurationsMinutes = val
 }
 
 // SetBufferMinutes sets the value of BufferMinutes.

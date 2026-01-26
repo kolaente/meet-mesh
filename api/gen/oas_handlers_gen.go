@@ -2652,6 +2652,10 @@ func (s *Server) handleGetBookingAvailabilityRequest(args [1]string, argsEscaped
 					Name: "end",
 					In:   "query",
 				}: params.End,
+				{
+					Name: "duration",
+					In:   "query",
+				}: params.Duration,
 			},
 			Raw: r,
 		}

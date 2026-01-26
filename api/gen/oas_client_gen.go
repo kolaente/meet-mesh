@@ -2002,6 +2002,23 @@ func (c *Client) sendGetBookingAvailability(ctx context.Context, params GetBooki
 			return res, errors.Wrap(err, "encode query")
 		}
 	}
+	{
+		// Encode "duration" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "duration",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Duration.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
 	u.RawQuery = q.Values().Encode()
 
 	stage = "EncodeRequest"

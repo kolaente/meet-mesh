@@ -629,6 +629,8 @@ type GetBookingAvailabilityParams struct {
 	Slug  string
 	Start time.Time
 	End   time.Time
+	// Filter availability by slot duration in minutes.
+	Duration OptInt `json:",omitempty,omitzero"`
 }
 
 func unpackGetBookingAvailabilityParams(packed middleware.Parameters) (params GetBookingAvailabilityParams) {
@@ -652,6 +654,15 @@ func unpackGetBookingAvailabilityParams(packed middleware.Parameters) (params Ge
 			In:   "query",
 		}
 		params.End = packed[key].(time.Time)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "duration",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.Duration = v.(OptInt)
+		}
 	}
 	return params
 }
@@ -771,6 +782,72 @@ func decodeGetBookingAvailabilityParams(args [1]string, argsEscaped bool, r *htt
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "end",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: duration.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "duration",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotDurationVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotDurationVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Duration.SetTo(paramsDotDurationVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+			if err := func() error {
+				if value, ok := params.Duration.Get(); ok {
+					if err := func() error {
+						if err := (validate.Int{
+							MinSet:        true,
+							Min:           5,
+							MaxSet:        true,
+							Max:           480,
+							MinExclusive:  false,
+							MaxExclusive:  false,
+							MultipleOfSet: false,
+							MultipleOf:    0,
+							Pattern:       nil,
+						}).Validate(int64(value)); err != nil {
+							return errors.Wrap(err, "int")
+						}
+						return nil
+					}(); err != nil {
+						return err
+					}
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "duration",
 			In:   "query",
 			Err:  err,
 		}

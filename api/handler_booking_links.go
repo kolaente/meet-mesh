@@ -37,19 +37,20 @@ func (h *Handler) CreateBookingLink(ctx context.Context, req *gen.CreateBookingL
 	}
 
 	link := BookingLink{
-		UserID:              userID,
-		Slug:                generateSlug(),
-		Name:                req.Name,
-		Description:         req.Description.Value,
-		Status:              LinkStatusActive,
-		AutoConfirm:         req.AutoConfirm.Value,
-		SlotDurationMinutes: slotDuration,
-		BufferMinutes:       bufferMinutes,
-		RequireEmail:        req.RequireEmail.Value,
-		MeetingLink:         req.MeetingLink.Value,
-		AvailabilityRules:   mapAvailabilityRulesFromGen(req.AvailabilityRules),
-		CustomFields:        mapCustomFieldsFromGen(req.CustomFields),
-		EventTemplate:       mapEventTemplateFromGen(req.EventTemplate),
+		UserID:               userID,
+		Slug:                 generateSlug(),
+		Name:                 req.Name,
+		Description:          req.Description.Value,
+		Status:               LinkStatusActive,
+		AutoConfirm:          req.AutoConfirm.Value,
+		SlotDurationMinutes:  slotDuration,
+		SlotDurationsMinutes: req.SlotDurationsMinutes,
+		BufferMinutes:        bufferMinutes,
+		RequireEmail:         req.RequireEmail.Value,
+		MeetingLink:          req.MeetingLink.Value,
+		AvailabilityRules:    mapAvailabilityRulesFromGen(req.AvailabilityRules),
+		CustomFields:         mapCustomFieldsFromGen(req.CustomFields),
+		EventTemplate:        mapEventTemplateFromGen(req.EventTemplate),
 	}
 
 	if err := h.db.Create(&link).Error; err != nil {
@@ -113,6 +114,9 @@ func (h *Handler) UpdateBookingLink(ctx context.Context, req *gen.UpdateBookingL
 	if req.MeetingLink.Set {
 		link.MeetingLink = req.MeetingLink.Value
 	}
+	if req.SlotDurationsMinutes != nil {
+		link.SlotDurationsMinutes = req.SlotDurationsMinutes
+	}
 
 	if err := h.db.Save(&link).Error; err != nil {
 		return nil, err
@@ -163,20 +167,21 @@ func mapBookingLinksToGen(links []BookingLink) []gen.BookingLink {
 
 func mapBookingLinkToGen(link *BookingLink) *gen.BookingLink {
 	return &gen.BookingLink{
-		ID:                  int(link.ID),
-		Slug:                link.Slug,
-		Name:                link.Name,
-		Description:         gen.NewOptString(link.Description),
-		Status:              gen.LinkStatus(link.Status),
-		AutoConfirm:         gen.NewOptBool(link.AutoConfirm),
-		SlotDurationMinutes: gen.NewOptInt(link.SlotDurationMinutes),
-		BufferMinutes:       gen.NewOptInt(link.BufferMinutes),
-		RequireEmail:        gen.NewOptBool(link.RequireEmail),
-		MeetingLink:         gen.NewOptString(link.MeetingLink),
-		AvailabilityRules:   mapAvailabilityRulesToGen(link.AvailabilityRules),
-		CustomFields:        mapCustomFieldsToGen(link.CustomFields),
-		EventTemplate:       mapEventTemplateToGen(link.EventTemplate),
-		CreatedAt:           gen.NewOptDateTime(link.CreatedAt),
+		ID:                   int(link.ID),
+		Slug:                 link.Slug,
+		Name:                 link.Name,
+		Description:          gen.NewOptString(link.Description),
+		Status:               gen.LinkStatus(link.Status),
+		AutoConfirm:          gen.NewOptBool(link.AutoConfirm),
+		SlotDurationMinutes:  gen.NewOptInt(link.SlotDurationMinutes),
+		SlotDurationsMinutes: link.SlotDurationsMinutes,
+		BufferMinutes:        gen.NewOptInt(link.BufferMinutes),
+		RequireEmail:         gen.NewOptBool(link.RequireEmail),
+		MeetingLink:          gen.NewOptString(link.MeetingLink),
+		AvailabilityRules:    mapAvailabilityRulesToGen(link.AvailabilityRules),
+		CustomFields:         mapCustomFieldsToGen(link.CustomFields),
+		EventTemplate:        mapEventTemplateToGen(link.EventTemplate),
+		CreatedAt:            gen.NewOptDateTime(link.CreatedAt),
 	}
 }
 

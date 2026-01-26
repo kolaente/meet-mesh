@@ -92,23 +92,24 @@ type CalendarConnection struct {
 }
 
 type BookingLink struct {
-	ID                  uint               `gorm:"primaryKey"`
-	UserID              uint               `gorm:"index;not null"`
-	Slug                string             `gorm:"uniqueIndex;not null"`
-	Name                string             `gorm:"not null"`
-	Description         string
-	Status              LinkStatus         `gorm:"not null;default:1"`
-	AutoConfirm         bool
-	SlotDurationMinutes int                `gorm:"not null;default:30"`
-	BufferMinutes       int                `gorm:"not null;default:0"`
-	AvailabilityRules   []AvailabilityRule `gorm:"serializer:json"`
-	RequireEmail        bool
-	MeetingLink         string
-	CustomFields        []CustomField      `gorm:"serializer:json"`
-	EventTemplate       *EventTemplate     `gorm:"serializer:json"`
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	Bookings            []Booking          `gorm:"foreignKey:BookingLinkID"`
+	ID                   uint               `gorm:"primaryKey"`
+	UserID               uint               `gorm:"index;not null"`
+	Slug                 string             `gorm:"uniqueIndex;not null"`
+	Name                 string             `gorm:"not null"`
+	Description          string
+	Status               LinkStatus         `gorm:"not null;default:1"`
+	AutoConfirm          bool
+	SlotDurationMinutes  int                `gorm:"not null;default:30"`
+	SlotDurationsMinutes []int              `gorm:"serializer:json"`
+	BufferMinutes        int                `gorm:"not null;default:0"`
+	AvailabilityRules    []AvailabilityRule `gorm:"serializer:json"`
+	RequireEmail         bool
+	MeetingLink          string
+	CustomFields         []CustomField      `gorm:"serializer:json"`
+	EventTemplate        *EventTemplate     `gorm:"serializer:json"`
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
+	Bookings             []Booking          `gorm:"foreignKey:BookingLinkID"`
 }
 
 type Poll struct {

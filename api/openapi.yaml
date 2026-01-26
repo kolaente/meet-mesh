@@ -195,8 +195,16 @@ components:
           type: boolean
         slot_duration_minutes:
           type: integer
-          description: Duration of each bookable slot in minutes
+          description: Duration of each bookable slot in minutes (deprecated, use slot_durations_minutes)
           default: 30
+        slot_durations_minutes:
+          type: array
+          items:
+            type: integer
+            minimum: 5
+            maximum: 480
+          description: Available slot durations in minutes. If empty, slot_duration_minutes is used.
+          example: [15, 30, 60]
         buffer_minutes:
           type: integer
           description: Buffer time between slots in minutes
@@ -575,6 +583,13 @@ paths:
                 slot_duration_minutes:
                   type: integer
                   default: 30
+                slot_durations_minutes:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 5
+                    maximum: 480
+                  description: Available slot durations in minutes
                 buffer_minutes:
                   type: integer
                   default: 0
@@ -649,6 +664,12 @@ paths:
                   type: boolean
                 slot_duration_minutes:
                   type: integer
+                slot_durations_minutes:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 5
+                    maximum: 480
                 buffer_minutes:
                   type: integer
                 require_email:
@@ -1033,6 +1054,11 @@ paths:
                       $ref: '#/components/schemas/CustomField'
                   require_email:
                     type: boolean
+                  slot_durations_minutes:
+                    type: array
+                    items:
+                      type: integer
+                    description: Available slot durations in minutes
         '404':
           description: Not found
           content:
@@ -1062,6 +1088,14 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: duration
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 5
+            maximum: 480
+          description: Filter availability by slot duration in minutes
       responses:
         '200':
           description: Available slots

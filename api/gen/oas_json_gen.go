@@ -817,6 +817,16 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationsMinutes != nil {
+			e.FieldStart("slot_durations_minutes")
+			e.ArrStart()
+			for _, elem := range s.SlotDurationsMinutes {
+				e.Int(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		if s.BufferMinutes.Set {
 			e.FieldStart("buffer_minutes")
 			s.BufferMinutes.Encode(e)
@@ -868,7 +878,7 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfBookingLink = [14]string{
+var jsonFieldsNameOfBookingLink = [15]string{
 	0:  "id",
 	1:  "slug",
 	2:  "name",
@@ -876,13 +886,14 @@ var jsonFieldsNameOfBookingLink = [14]string{
 	4:  "status",
 	5:  "auto_confirm",
 	6:  "slot_duration_minutes",
-	7:  "buffer_minutes",
-	8:  "require_email",
-	9:  "meeting_link",
-	10: "availability_rules",
-	11: "custom_fields",
-	12: "event_template",
-	13: "created_at",
+	7:  "slot_durations_minutes",
+	8:  "buffer_minutes",
+	9:  "require_email",
+	10: "meeting_link",
+	11: "availability_rules",
+	12: "custom_fields",
+	13: "event_template",
+	14: "created_at",
 }
 
 // Decode decodes BookingLink from json.
@@ -970,6 +981,25 @@ func (s *BookingLink) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "slot_durations_minutes":
+			if err := func() error {
+				s.SlotDurationsMinutes = make([]int, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem int
+					v, err := d.Int()
+					elem = int(v)
+					if err != nil {
+						return err
+					}
+					s.SlotDurationsMinutes = append(s.SlotDurationsMinutes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_durations_minutes\"")
 			}
 		case "buffer_minutes":
 			if err := func() error {
@@ -1874,6 +1904,16 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationsMinutes != nil {
+			e.FieldStart("slot_durations_minutes")
+			e.ArrStart()
+			for _, elem := range s.SlotDurationsMinutes {
+				e.Int(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		if s.BufferMinutes.Set {
 			e.FieldStart("buffer_minutes")
 			s.BufferMinutes.Encode(e)
@@ -1919,17 +1959,18 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateBookingLinkReq = [10]string{
-	0: "name",
-	1: "description",
-	2: "auto_confirm",
-	3: "slot_duration_minutes",
-	4: "buffer_minutes",
-	5: "require_email",
-	6: "meeting_link",
-	7: "availability_rules",
-	8: "custom_fields",
-	9: "event_template",
+var jsonFieldsNameOfCreateBookingLinkReq = [11]string{
+	0:  "name",
+	1:  "description",
+	2:  "auto_confirm",
+	3:  "slot_duration_minutes",
+	4:  "slot_durations_minutes",
+	5:  "buffer_minutes",
+	6:  "require_email",
+	7:  "meeting_link",
+	8:  "availability_rules",
+	9:  "custom_fields",
+	10: "event_template",
 }
 
 // Decode decodes CreateBookingLinkReq from json.
@@ -1983,6 +2024,25 @@ func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "slot_durations_minutes":
+			if err := func() error {
+				s.SlotDurationsMinutes = make([]int, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem int
+					v, err := d.Int()
+					elem = int(v)
+					if err != nil {
+						return err
+					}
+					s.SlotDurationsMinutes = append(s.SlotDurationsMinutes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_durations_minutes\"")
 			}
 		case "buffer_minutes":
 			if err := func() error {
@@ -3538,13 +3598,24 @@ func (s *GetPublicBookingLinkOK) encodeFields(e *jx.Encoder) {
 			s.RequireEmail.Encode(e)
 		}
 	}
+	{
+		if s.SlotDurationsMinutes != nil {
+			e.FieldStart("slot_durations_minutes")
+			e.ArrStart()
+			for _, elem := range s.SlotDurationsMinutes {
+				e.Int(elem)
+			}
+			e.ArrEnd()
+		}
+	}
 }
 
-var jsonFieldsNameOfGetPublicBookingLinkOK = [4]string{
+var jsonFieldsNameOfGetPublicBookingLinkOK = [5]string{
 	0: "name",
 	1: "description",
 	2: "custom_fields",
 	3: "require_email",
+	4: "slot_durations_minutes",
 }
 
 // Decode decodes GetPublicBookingLinkOK from json.
@@ -3604,6 +3675,25 @@ func (s *GetPublicBookingLinkOK) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "slot_durations_minutes":
+			if err := func() error {
+				s.SlotDurationsMinutes = make([]int, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem int
+					v, err := d.Int()
+					elem = int(v)
+					if err != nil {
+						return err
+					}
+					s.SlotDurationsMinutes = append(s.SlotDurationsMinutes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_durations_minutes\"")
 			}
 		default:
 			return d.Skip()
@@ -5192,6 +5282,16 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationsMinutes != nil {
+			e.FieldStart("slot_durations_minutes")
+			e.ArrStart()
+			for _, elem := range s.SlotDurationsMinutes {
+				e.Int(elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
 		if s.BufferMinutes.Set {
 			e.FieldStart("buffer_minutes")
 			s.BufferMinutes.Encode(e)
@@ -5237,18 +5337,19 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateBookingLinkReq = [11]string{
+var jsonFieldsNameOfUpdateBookingLinkReq = [12]string{
 	0:  "name",
 	1:  "description",
 	2:  "status",
 	3:  "auto_confirm",
 	4:  "slot_duration_minutes",
-	5:  "buffer_minutes",
-	6:  "require_email",
-	7:  "meeting_link",
-	8:  "availability_rules",
-	9:  "custom_fields",
-	10: "event_template",
+	5:  "slot_durations_minutes",
+	6:  "buffer_minutes",
+	7:  "require_email",
+	8:  "meeting_link",
+	9:  "availability_rules",
+	10: "custom_fields",
+	11: "event_template",
 }
 
 // Decode decodes UpdateBookingLinkReq from json.
@@ -5308,6 +5409,25 @@ func (s *UpdateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "slot_durations_minutes":
+			if err := func() error {
+				s.SlotDurationsMinutes = make([]int, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem int
+					v, err := d.Int()
+					elem = int(v)
+					if err != nil {
+						return err
+					}
+					s.SlotDurationsMinutes = append(s.SlotDurationsMinutes, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_durations_minutes\"")
 			}
 		case "buffer_minutes":
 			if err := func() error {
