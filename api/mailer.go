@@ -60,7 +60,7 @@ func (m *Mailer) SendBookingConfirmation(booking *Booking, link *BookingLink) er
 }
 
 // SendBookingPending sends pending notification to organizer
-func (m *Mailer) SendBookingPending(booking *Booking, link *BookingLink) error {
+func (m *Mailer) SendBookingPending(booking *Booking, link *BookingLink, organizer *User) error {
 	approveURL := fmt.Sprintf("%s/api/actions/approve?token=%s", m.baseURL, booking.ActionToken)
 	declineURL := fmt.Sprintf("%s/api/actions/decline?token=%s", m.baseURL, booking.ActionToken)
 
@@ -73,8 +73,7 @@ func (m *Mailer) SendBookingPending(booking *Booking, link *BookingLink) error {
 		"DeclineURL": declineURL,
 	})
 
-	// For now, use a placeholder - in production, fetch organizer email from user
-	return m.send("organizer@example.com", "New Booking Request: "+link.Name, body)
+	return m.send(organizer.Email, "New Booking Request: "+link.Name, body)
 }
 
 // SendBookingApproved sends approval notification to guest

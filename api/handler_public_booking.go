@@ -235,7 +235,10 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		}
 	} else {
 		if h.mailer != nil {
-			h.mailer.SendBookingPending(&booking, &link)
+			var organizer User
+			if err := h.db.First(&organizer, link.UserID).Error; err == nil {
+				h.mailer.SendBookingPending(&booking, &link, &organizer)
+			}
 		}
 	}
 
