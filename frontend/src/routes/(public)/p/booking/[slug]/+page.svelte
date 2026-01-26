@@ -13,6 +13,7 @@
 		description?: string;
 		custom_fields?: CustomField[];
 		require_email?: boolean;
+		slot_durations_minutes?: number[];
 	}
 
 	let bookingLink = $state<PublicBookingLink | null>(null);
@@ -90,7 +91,8 @@
 			description: bookingLink.description,
 			custom_fields: bookingLink.custom_fields,
 			slots,
-			require_email: bookingLink.require_email
+			require_email: bookingLink.require_email,
+			slot_durations_minutes: bookingLink.slot_durations_minutes
 		}}
 		{slug}
 	/>

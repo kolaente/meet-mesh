@@ -22,6 +22,11 @@
 
 	const publicUrl = $derived(link ? `${window.location.origin}/p/booking/${link.slug}` : '');
 
+	const formattedDurations = $derived(() => {
+		const durations = link?.slot_durations_minutes ?? (link ? [link.slot_duration_minutes] : []);
+		return durations.map((d) => `${d} min`).join(', ');
+	});
+
 	onMount(async () => {
 		try {
 			const { data: linkData } = await api.GET('/booking-links/{id}', {
@@ -117,6 +122,11 @@
 					</div>
 
 					<div class="col-span-2">
+						<p class="text-sm font-medium text-[var(--text-secondary)]">Durations</p>
+						<p class="text-[var(--text-primary)]">{formattedDurations()}</p>
+					</div>
+
+					<div class="col-span-2 md:col-span-4">
 						<p class="text-sm font-medium text-[var(--text-secondary)]">Public URL</p>
 						<a
 							href={publicUrl}

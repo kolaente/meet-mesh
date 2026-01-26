@@ -19,7 +19,7 @@
 	let status = $state<'1' | '2'>('1');
 	let description = $state('');
 	let meetingLink = $state('');
-	let slotDurationMinutes = $state('30');
+	let slotDurationsMinutes = $state<number[]>([30]);
 	let bufferMinutes = $state('0');
 	let customFields = $state<CustomField[]>([]);
 	let availabilityRules = $state<AvailabilityRule[]>([]);
@@ -44,13 +44,24 @@
 	];
 
 	const slotDurationOptions = [
-		{ value: '15', label: '15 minutes' },
-		{ value: '30', label: '30 minutes' },
-		{ value: '45', label: '45 minutes' },
-		{ value: '60', label: '60 minutes (1 hour)' },
-		{ value: '90', label: '90 minutes (1.5 hours)' },
-		{ value: '120', label: '120 minutes (2 hours)' }
+		{ value: 15, label: '15 min' },
+		{ value: 30, label: '30 min' },
+		{ value: 45, label: '45 min' },
+		{ value: 60, label: '60 min' },
+		{ value: 90, label: '90 min' },
+		{ value: 120, label: '120 min' }
 	];
+
+	function toggleDuration(duration: number) {
+		if (slotDurationsMinutes.includes(duration)) {
+			// Only allow removal if more than one duration is selected
+			if (slotDurationsMinutes.length > 1) {
+				slotDurationsMinutes = slotDurationsMinutes.filter((d) => d !== duration);
+			}
+		} else {
+			slotDurationsMinutes = [...slotDurationsMinutes, duration].sort((a, b) => a - b);
+		}
+	}
 
 	const bufferTimeOptions = [
 		{ value: '0', label: 'No buffer' },
@@ -76,7 +87,10 @@
 			status = String(data.status) as '1' | '2';
 			description = data.description || '';
 			meetingLink = data.meeting_link || '';
-			slotDurationMinutes = String(data.slot_duration_minutes);
+			// Use slot_durations_minutes if available, otherwise fallback to single duration
+			slotDurationsMinutes = data.slot_durations_minutes && data.slot_durations_minutes.length > 0
+				? data.slot_durations_minutes
+				: [data.slot_duration_minutes];
 			bufferMinutes = String(data.buffer_minutes);
 			customFields = data.custom_fields || [];
 			availabilityRules = data.availability_rules || [
@@ -125,7 +139,7 @@
 					status: Number(status) as LinkStatus,
 					description: description || undefined,
 					meeting_link: meetingLink || undefined,
-					slot_duration_minutes: Number(slotDurationMinutes),
+					slot_durations_minutes: slotDurationsMinutes,
 					buffer_minutes: Number(bufferMinutes),
 					auto_confirm: autoConfirm,
 					availability_rules: availabilityRules.length > 0 ? availabilityRules : undefined,
@@ -186,21 +200,46 @@
 					description="Video conference link (Zoom, Google Meet, etc.) to include in calendar events"
 				/>
 
-				<!-- Slot Duration & Buffer -->
-				<div class="grid grid-cols-2 gap-4">
-					<Select
-						label="Slot Duration"
-						name="slotDurationMinutes"
-						options={slotDurationOptions}
-						bind:value={slotDurationMinutes}
-					/>
-					<Select
-						label="Buffer Time"
-						name="bufferMinutes"
-						options={bufferTimeOptions}
-						bind:value={bufferMinutes}
-					/>
+				<!-- Slot Durations -->
+				<div class="space-y-2">
+					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+						Slot Durations
+					</label>
+					<p class="text-sm text-gray-500 dark:text-gray-400">
+						Select which duration options guests can choose from
+					</p>
+					<div class="flex flex-wrap gap-3 pt-1">
+						{#each slotDurationOptions as option (option.value)}
+							<label
+								class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors
+									{slotDurationsMinutes.includes(option.value)
+										? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300'
+										: 'bg-white dark:bg-neutral-800 border-gray-300 dark:border-neutral-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-neutral-500'}"
+							>
+								<input
+									type="checkbox"
+									checked={slotDurationsMinutes.includes(option.value)}
+									onchange={() => toggleDuration(option.value)}
+									class="sr-only"
+								/>
+								<span class="text-sm font-medium">{option.label}</span>
+								{#if slotDurationsMinutes.includes(option.value)}
+									<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+									</svg>
+								{/if}
+							</label>
+						{/each}
+					</div>
 				</div>
+
+				<!-- Buffer Time -->
+				<Select
+					label="Buffer Time"
+					name="bufferMinutes"
+					options={bufferTimeOptions}
+					bind:value={bufferMinutes}
+				/>
 
 				<!-- Confirmation Setting -->
 				<div class="pt-2">

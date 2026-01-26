@@ -12,6 +12,7 @@
 	import DayPicker from './DayPicker.svelte';
 	import DateRangePicker from './DateRangePicker.svelte';
 	import BookingForm from './BookingForm.svelte';
+	import DurationSelector from './DurationSelector.svelte';
 
 	type Slot = components['schemas']['Slot'];
 	type CustomField = components['schemas']['CustomField'];
@@ -25,6 +26,7 @@
 		slots: Slot[];
 		show_results?: boolean;
 		require_email?: boolean;
+		slot_durations_minutes?: number[];
 	}
 
 	interface Props {
@@ -49,18 +51,65 @@
 	let error = $state<string | undefined>();
 	let submitting = $state(false);
 
+	// Duration selection (for booking links with multiple durations)
+	let availableDurations = $derived(link.slot_durations_minutes ?? []);
+	let hasMultipleDurations = $derived(availableDurations.length > 1);
+	let selectedDuration = $state<number>(availableDurations[0] ?? 30);
+
+	// Track current slots (may be updated when duration changes)
+	let currentSlots = $state<Slot[]>(link.slots);
+
+	// Track if this is the first render to avoid refetching on initial load
+	let previousDuration = $state<number | undefined>(undefined);
+
+	// Re-fetch availability when duration changes (but not on initial load)
+	$effect(() => {
+		const currentDuration = selectedDuration;
+		if (previousDuration !== undefined && currentDuration !== previousDuration && hasMultipleDurations) {
+			refetchAvailability();
+		}
+		previousDuration = currentDuration;
+	});
+
+	async function refetchAvailability() {
+		loading = true;
+		selectedDate = undefined;
+		selectedSlot = undefined;
+
+		try {
+			const now = new Date();
+			const start = now.toISOString();
+			const end = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+			const { data } = await api.GET('/p/booking/{slug}/availability', {
+				params: {
+					path: { slug },
+					query: { start, end, duration: selectedDuration }
+				}
+			});
+
+			if (data?.slots) {
+				currentSlots = data.slots;
+			}
+		} catch (err) {
+			error = 'Failed to load availability. Please try again.';
+		} finally {
+			loading = false;
+		}
+	}
+
 	// Determine slot type from first slot
-	let slotType = $derived<SlotType>(link.slots[0]?.type ?? 1);
+	let slotType = $derived<SlotType>(currentSlots[0]?.type ?? 1);
 
 	// Extract unique available dates from slots
 	let availableDates = $derived(
-		[...new Set(link.slots.map((s) => s.start_time.split('T')[0]))]
+		[...new Set(currentSlots.map((s) => s.start_time.split('T')[0]))]
 	);
 
 	// Filter slots for selected date (for time slot type)
 	let slotsForSelectedDate = $derived.by(() => {
 		if (!selectedDate) return [];
-		return link.slots.filter((s) => s.start_time.startsWith(selectedDate!));
+		return currentSlots.filter((s) => s.start_time.startsWith(selectedDate!));
 	});
 
 	// Handle date selection
@@ -69,7 +118,7 @@
 		selectedSlot = undefined; // Clear any previously selected slot
 		if (slotType === 2) {
 			// Full day type - auto-select the slot for this date and go to form
-			selectedSlot = link.slots.find((s) => s.start_time.startsWith(date));
+			selectedSlot = currentSlots.find((s) => s.start_time.startsWith(date));
 			if (selectedSlot) {
 				step = 'form';
 			}
@@ -88,11 +137,11 @@
 	function handleDateRangeComplete() {
 		if (startDate && endDate) {
 			// Find the slot that matches this range (or create a virtual one)
-			selectedSlot = link.slots.find(
+			selectedSlot = currentSlots.find(
 				(s) =>
 					s.start_time.startsWith(startDate!) &&
 					s.end_time.startsWith(endDate!)
-			) || link.slots[0];
+			) || currentSlots[0];
 			step = 'form';
 		}
 	}
@@ -220,6 +269,17 @@
 			{#if step === 'date'}
 				<div in:fly={{ x: -50, duration: 200 }}>
 					<h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Select a Date & Time</h2>
+
+					<!-- Duration selector (shown when multiple durations available) -->
+					{#if hasMultipleDurations}
+						<div class="mb-6">
+							<p class="text-sm font-medium text-[var(--text-secondary)] mb-2">Duration</p>
+							<DurationSelector
+								durations={availableDurations}
+								bind:selectedDuration
+							/>
+						</div>
+					{/if}
 
 					<!-- Desktop: side-by-side, Mobile: stacked -->
 					<div class="flex flex-col lg:flex-row lg:gap-8">
@@ -382,7 +442,7 @@
 	</Card>
 
 	<!-- No slots available -->
-	{#if link.slots.length === 0}
+	{#if currentSlots.length === 0 && !loading}
 		<Card>
 			<div class="text-center py-8">
 				<p class="text-[var(--text-secondary)]">No available time slots at the moment.</p>

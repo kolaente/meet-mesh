@@ -565,10 +565,19 @@ export interface components {
             status: components["schemas"]["LinkStatus"];
             auto_confirm?: boolean;
             /**
-             * @description Duration of each bookable slot in minutes
+             * @description Duration of each bookable slot in minutes (deprecated, use slot_durations_minutes)
              * @default 30
              */
             slot_duration_minutes: number;
+            /**
+             * @description Available slot durations in minutes. If empty, slot_duration_minutes is used.
+             * @example [
+             *       15,
+             *       30,
+             *       60
+             *     ]
+             */
+            slot_durations_minutes?: number[];
             /**
              * @description Buffer time between slots in minutes
              * @default 0
@@ -918,6 +927,8 @@ export interface operations {
                     auto_confirm?: boolean;
                     /** @default 30 */
                     slot_duration_minutes?: number;
+                    /** @description Available slot durations in minutes */
+                    slot_durations_minutes?: number[];
                     /** @default 0 */
                     buffer_minutes?: number;
                     require_email?: boolean;
@@ -980,6 +991,7 @@ export interface operations {
                     status?: components["schemas"]["LinkStatus"];
                     auto_confirm?: boolean;
                     slot_duration_minutes?: number;
+                    slot_durations_minutes?: number[];
                     buffer_minutes?: number;
                     require_email?: boolean;
                     /** @description Video meeting link (Zoom, Google Meet, etc.) */
@@ -1358,6 +1370,8 @@ export interface operations {
                         description?: string;
                         custom_fields?: components["schemas"]["CustomField"][];
                         require_email?: boolean;
+                        /** @description Available slot durations in minutes */
+                        slot_durations_minutes?: number[];
                     };
                 };
             };
@@ -1377,6 +1391,8 @@ export interface operations {
             query: {
                 start: string;
                 end: string;
+                /** @description Filter availability by slot duration in minutes */
+                duration?: number;
             };
             header?: never;
             path: {
