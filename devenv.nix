@@ -39,4 +39,8 @@ in
       package = pkgs.go_1_25;
     };
   };
+
+  services = {
+    mailhog.enable = true;
+  };
 }

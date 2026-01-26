@@ -1,0 +1,27 @@
+# config.dev.yaml - Development configuration for local testing
+# Copy to config.yaml and customize as needed
+#
+# Start Mailhog with: devenv up
+# View emails at: http://localhost:8025
+
+server:
+  port: 9090
+  base_url: http://localhost:9090
+
+database:
+  path: ./data/meet-mesh.db
+
+oidc:
+  # Configure with your local OIDC provider (e.g., Keycloak, Authelia)
+  issuer: https://auth.example.com
+  client_id: meet-mesh
+  client_secret: your-dev-secret
+  redirect_uri: http://localhost:9090/api/auth/callback
+
+smtp:
+  # Mailhog settings - no authentication required
+  host: localhost
+  port: 1025
+  username: ""
+  password: ""
+  from: "Meet Mesh <noreply@localhost>"

@@ -13,8 +13,15 @@ oidc:
   redirect_uri: http://localhost:9090/api/auth/callback
 
 smtp:
+  # Production SMTP settings:
   host: smtp.example.com
   port: 587
   username: meet-mesh@example.com
   password: ${SMTP_PASSWORD}
   from: "Meet Mesh <meet-mesh@example.com>"
+  # For local development with Mailhog (run `devenv up`):
+  # host: localhost
+  # port: 1025
+  # username: ""   # Mailhog doesn't require auth
+  # password: ""
+  # from: "Meet Mesh <noreply@localhost>"
