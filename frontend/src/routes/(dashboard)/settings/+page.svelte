@@ -2,21 +2,14 @@
 	import { onMount } from 'svelte';
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
-	import { DashboardHeader, CalendarConnectionCard } from '$lib/components/dashboard';
-	import { Card, Button, Input, Spinner } from '$lib/components/ui';
+	import { DashboardHeader, CalendarConnectionCard, AddCalendarDialog } from '$lib/components/dashboard';
+	import { Card, Button, Spinner } from '$lib/components/ui';
 
 	type CalendarConnection = components['schemas']['CalendarConnection'];
 
 	let calendars = $state<CalendarConnection[]>([]);
 	let loading = $state(true);
-	let showAddForm = $state(false);
-	let submitting = $state(false);
-	let error = $state<string | null>(null);
-
-	// Form fields
-	let serverUrl = $state('');
-	let username = $state('');
-	let password = $state('');
+	let addDialogOpen = $state(false);
 
 	onMount(async () => {
 		await loadCalendars();
@@ -34,38 +27,9 @@
 		}
 	}
 
-	async function handleAddCalendar(event: Event) {
-		event.preventDefault();
-		submitting = true;
-		error = null;
-
-		try {
-			const { data, error: apiError } = await api.POST('/calendars', {
-				body: {
-					server_url: serverUrl,
-					username: username,
-					password: password
-				}
-			});
-
-			if (apiError) {
-				error = 'Failed to add calendar';
-				return;
-			}
-
-			if (data) {
-				calendars = [...calendars, data];
-				// Reset form
-				serverUrl = '';
-				username = '';
-				password = '';
-				showAddForm = false;
-			}
-		} catch (e) {
-			error = 'An unexpected error occurred';
-		} finally {
-			submitting = false;
-		}
+	async function handleCalendarAdded() {
+		await loadCalendars();
+		addDialogOpen = false;
 	}
 
 	async function handleDeleteCalendar(id: number) {
@@ -78,23 +42,13 @@
 			// Handle error silently for now
 		}
 	}
-
-	function cancelAddForm() {
-		showAddForm = false;
-		serverUrl = '';
-		username = '';
-		password = '';
-		error = null;
-	}
 </script>
 
 <DashboardHeader title="Settings">
 	{#snippet actions()}
-		{#if !showAddForm}
-			<Button variant="primary" onclick={() => (showAddForm = true)}>
-				{#snippet children()}Add Calendar{/snippet}
-			</Button>
-		{/if}
+		<Button variant="primary" onclick={() => (addDialogOpen = true)}>
+			{#snippet children()}Add Calendar{/snippet}
+		</Button>
 	{/snippet}
 </DashboardHeader>
 
@@ -111,64 +65,8 @@
 				<p class="text-sm text-[var(--text-secondary)]">Connect your CalDAV calendars to check availability</p>
 			</div>
 
-			<!-- Add Calendar Form -->
-			{#if showAddForm}
-				<Card class="mb-4">
-					{#snippet children()}
-						<form onsubmit={handleAddCalendar} class="space-y-4">
-							<h3 class="font-medium text-[var(--text-primary)]">Add CalDAV Calendar</h3>
-
-							{#if error}
-								<div class="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
-									{error}
-								</div>
-							{/if}
-
-							<Input
-								label="CalDAV URL"
-								name="server_url"
-								type="url"
-								bind:value={serverUrl}
-								placeholder="https://caldav.example.com/dav"
-								required
-								disabled={submitting}
-							/>
-
-							<Input
-								label="Username"
-								name="username"
-								type="text"
-								bind:value={username}
-								placeholder="your-username"
-								required
-								disabled={submitting}
-							/>
-
-							<Input
-								label="Password"
-								name="password"
-								type="password"
-								bind:value={password}
-								placeholder="your-password"
-								required
-								disabled={submitting}
-							/>
-
-							<div class="flex justify-end gap-3 pt-2">
-								<Button variant="secondary" type="button" onclick={cancelAddForm} disabled={submitting}>
-									{#snippet children()}Cancel{/snippet}
-								</Button>
-								<Button variant="primary" type="submit" loading={submitting} disabled={submitting}>
-									{#snippet children()}{submitting ? 'Adding...' : 'Add Calendar'}{/snippet}
-								</Button>
-							</div>
-						</form>
-					{/snippet}
-				</Card>
-			{/if}
-
 			<!-- Calendar List -->
-			{#if calendars.length === 0 && !showAddForm}
+			{#if calendars.length === 0}
 				<Card>
 					{#snippet children()}
 						<div class="text-center py-8">
@@ -190,7 +88,7 @@
 								Connect a CalDAV calendar to enable availability checking.
 							</p>
 							<div class="mt-6">
-								<Button variant="primary" onclick={() => (showAddForm = true)}>
+								<Button variant="primary" onclick={() => (addDialogOpen = true)}>
 									{#snippet children()}Connect your first calendar{/snippet}
 								</Button>
 							</div>
@@ -207,3 +105,9 @@
 		</section>
 	</div>
 {/if}
+
+<AddCalendarDialog
+	bind:open={addDialogOpen}
+	onSuccess={handleCalendarAdded}
+	onClose={() => addDialogOpen = false}
+/>

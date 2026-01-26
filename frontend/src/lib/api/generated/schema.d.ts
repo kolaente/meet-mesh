@@ -124,6 +124,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/calendars/discover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Discover available calendars from a CalDAV server */
+        post: operations["discoverCalendars"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/booking-links": {
         parameters: {
             query?: never;
@@ -526,6 +543,20 @@ export interface components {
                 end: string;
             }[];
         };
+        DiscoveredCalendar: {
+            /** @description Full CalDAV URL path to the calendar */
+            url: string;
+            /** @description Display name of the calendar */
+            name: string;
+            description?: string;
+            /** @description e.g. VEVENT, VTODO */
+            supported_components?: string[];
+        };
+        CalendarDiscoveryResult: {
+            success: boolean;
+            error?: string;
+            calendars: components["schemas"]["DiscoveredCalendar"][];
+        };
         BookingLink: {
             id: number;
             slug: string;
@@ -818,6 +849,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    discoverCalendars: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    server_url: string;
+                    username: string;
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Discovery result with available calendars */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarDiscoveryResult"];
                 };
             };
         };

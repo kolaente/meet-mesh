@@ -19,6 +19,7 @@ const (
 	DeleteBookingLinkOperation      OperationName = "DeleteBookingLink"
 	DeletePollOperation             OperationName = "DeletePoll"
 	DeletePollOptionOperation       OperationName = "DeletePollOption"
+	DiscoverCalendarsOperation      OperationName = "DiscoverCalendars"
 	GetBookingAvailabilityOperation OperationName = "GetBookingAvailability"
 	GetBookingLinkOperation         OperationName = "GetBookingLink"
 	GetBookingLinkBookingsOperation OperationName = "GetBookingLinkBookings"

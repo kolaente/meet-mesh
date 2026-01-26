@@ -130,6 +130,15 @@ func (UnimplementedHandler) DeletePollOption(ctx context.Context, params DeleteP
 	return ht.ErrNotImplemented
 }
 
+// DiscoverCalendars implements discoverCalendars operation.
+//
+// Discover available calendars from a CalDAV server.
+//
+// POST /calendars/discover
+func (UnimplementedHandler) DiscoverCalendars(ctx context.Context, req *DiscoverCalendarsReq) (r *CalendarDiscoveryResult, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GetBookingAvailability implements getBookingAvailability operation.
 //
 // Get real-time availability for booking link.

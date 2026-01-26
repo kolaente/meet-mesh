@@ -146,6 +146,37 @@ components:
                 type: string
                 format: date-time
 
+    DiscoveredCalendar:
+      type: object
+      required: [url, name]
+      properties:
+        url:
+          type: string
+          description: Full CalDAV URL path to the calendar
+        name:
+          type: string
+          description: Display name of the calendar
+        description:
+          type: string
+        supported_components:
+          type: array
+          items:
+            type: string
+          description: e.g. VEVENT, VTODO
+
+    CalendarDiscoveryResult:
+      type: object
+      required: [success, calendars]
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        calendars:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscoveredCalendar'
+
     BookingLink:
       type: object
       required: [id, slug, name, status]
@@ -471,6 +502,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /calendars/discover:
+    post:
+      operationId: discoverCalendars
+      summary: Discover available calendars from a CalDAV server
+      tags:
+        - calendars
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [server_url, username, password]
+              properties:
+                server_url:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Discovery result with available calendars
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarDiscoveryResult'
 
   # Booking Links endpoints
   /booking-links:

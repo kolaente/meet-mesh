@@ -94,6 +94,54 @@ type CalendarEvent struct {
 	End   time.Time
 }
 
+// DiscoveredCalendar represents a calendar found during discovery
+type DiscoveredCalendar struct {
+	URL                 string
+	Name                string
+	Description         string
+	SupportedComponents []string
+}
+
+// DiscoverCalendars discovers available calendars from a CalDAV server
+func (c *CalDAVClient) DiscoverCalendars(ctx context.Context, serverURL, username, password string) ([]DiscoveredCalendar, error) {
+	httpClient := webdav.HTTPClientWithBasicAuth(http.DefaultClient, username, password)
+
+	client, err := caldav.NewClient(httpClient, serverURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create CalDAV client: %w", err)
+	}
+
+	// Step 1: Find current user principal
+	principal, err := client.FindCurrentUserPrincipal(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find user principal: %w", err)
+	}
+
+	// Step 2: Find calendar home set
+	homeSet, err := client.FindCalendarHomeSet(ctx, principal)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find calendar home set: %w", err)
+	}
+
+	// Step 3: Find all calendars
+	calendars, err := client.FindCalendars(ctx, homeSet)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find calendars: %w", err)
+	}
+
+	result := make([]DiscoveredCalendar, len(calendars))
+	for i, cal := range calendars {
+		result[i] = DiscoveredCalendar{
+			URL:                 cal.Path,
+			Name:                cal.Name,
+			Description:         cal.Description,
+			SupportedComponents: cal.SupportedComponentSet,
+		}
+	}
+
+	return result, nil
+}
+
 // TestCalendarConnection tests a specific calendar by fetching events for the next 7 days
 func (c *CalDAVClient) TestCalendarConnection(ctx context.Context, connID uint, userID uint) ([]CalendarEvent, error) {
 	var conn CalendarConnection

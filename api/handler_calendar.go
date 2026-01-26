@@ -90,3 +90,34 @@ func (h *Handler) TestCalendar(ctx context.Context, params gen.TestCalendarParam
 		Events:  resultEvents,
 	}, nil
 }
+
+// DiscoverCalendars discovers available calendars from a CalDAV server
+func (h *Handler) DiscoverCalendars(ctx context.Context, req *gen.DiscoverCalendarsReq) (*gen.CalendarDiscoveryResult, error) {
+	calendars, err := h.caldav.DiscoverCalendars(ctx, req.ServerURL, req.Username, req.Password)
+	if err != nil {
+		return &gen.CalendarDiscoveryResult{
+			Success:   false,
+			Error:     gen.NewOptString(err.Error()),
+			Calendars: []gen.DiscoveredCalendar{},
+		}, nil
+	}
+
+	result := make([]gen.DiscoveredCalendar, len(calendars))
+	for i, cal := range calendars {
+		result[i] = gen.DiscoveredCalendar{
+			URL:  cal.URL,
+			Name: cal.Name,
+		}
+		if cal.Description != "" {
+			result[i].Description = gen.NewOptString(cal.Description)
+		}
+		if len(cal.SupportedComponents) > 0 {
+			result[i].SupportedComponents = cal.SupportedComponents
+		}
+	}
+
+	return &gen.CalendarDiscoveryResult{
+		Success:   true,
+		Calendars: result,
+	}, nil
+}

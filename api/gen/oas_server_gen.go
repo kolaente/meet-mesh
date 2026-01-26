@@ -86,6 +86,12 @@ type Handler interface {
 	//
 	// DELETE /polls/{id}/options/{optionId}
 	DeletePollOption(ctx context.Context, params DeletePollOptionParams) error
+	// DiscoverCalendars implements discoverCalendars operation.
+	//
+	// Discover available calendars from a CalDAV server.
+	//
+	// POST /calendars/discover
+	DiscoverCalendars(ctx context.Context, req *DiscoverCalendarsReq) (*CalendarDiscoveryResult, error)
 	// GetBookingAvailability implements getBookingAvailability operation.
 	//
 	// Get real-time availability for booking link.

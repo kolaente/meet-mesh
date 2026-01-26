@@ -525,6 +525,43 @@ func (s *CalendarConnection) SetWriteURL(val OptString) {
 	s.WriteURL = val
 }
 
+// Ref: #/components/schemas/CalendarDiscoveryResult
+type CalendarDiscoveryResult struct {
+	Success   bool                 `json:"success"`
+	Error     OptString            `json:"error"`
+	Calendars []DiscoveredCalendar `json:"calendars"`
+}
+
+// GetSuccess returns the value of Success.
+func (s *CalendarDiscoveryResult) GetSuccess() bool {
+	return s.Success
+}
+
+// GetError returns the value of Error.
+func (s *CalendarDiscoveryResult) GetError() OptString {
+	return s.Error
+}
+
+// GetCalendars returns the value of Calendars.
+func (s *CalendarDiscoveryResult) GetCalendars() []DiscoveredCalendar {
+	return s.Calendars
+}
+
+// SetSuccess sets the value of Success.
+func (s *CalendarDiscoveryResult) SetSuccess(val bool) {
+	s.Success = val
+}
+
+// SetError sets the value of Error.
+func (s *CalendarDiscoveryResult) SetError(val OptString) {
+	s.Error = val
+}
+
+// SetCalendars sets the value of Calendars.
+func (s *CalendarDiscoveryResult) SetCalendars(val []DiscoveredCalendar) {
+	s.Calendars = val
+}
+
 // Ref: #/components/schemas/CalendarTestResult
 type CalendarTestResult struct {
 	Success bool                           `json:"success"`
@@ -989,6 +1026,93 @@ type DeletePollNoContent struct{}
 
 // DeletePollOptionNoContent is response for DeletePollOption operation.
 type DeletePollOptionNoContent struct{}
+
+type DiscoverCalendarsReq struct {
+	ServerURL string `json:"server_url"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+}
+
+// GetServerURL returns the value of ServerURL.
+func (s *DiscoverCalendarsReq) GetServerURL() string {
+	return s.ServerURL
+}
+
+// GetUsername returns the value of Username.
+func (s *DiscoverCalendarsReq) GetUsername() string {
+	return s.Username
+}
+
+// GetPassword returns the value of Password.
+func (s *DiscoverCalendarsReq) GetPassword() string {
+	return s.Password
+}
+
+// SetServerURL sets the value of ServerURL.
+func (s *DiscoverCalendarsReq) SetServerURL(val string) {
+	s.ServerURL = val
+}
+
+// SetUsername sets the value of Username.
+func (s *DiscoverCalendarsReq) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetPassword sets the value of Password.
+func (s *DiscoverCalendarsReq) SetPassword(val string) {
+	s.Password = val
+}
+
+// Ref: #/components/schemas/DiscoveredCalendar
+type DiscoveredCalendar struct {
+	// Full CalDAV URL path to the calendar.
+	URL string `json:"url"`
+	// Display name of the calendar.
+	Name        string    `json:"name"`
+	Description OptString `json:"description"`
+	// E.g. VEVENT, VTODO.
+	SupportedComponents []string `json:"supported_components"`
+}
+
+// GetURL returns the value of URL.
+func (s *DiscoveredCalendar) GetURL() string {
+	return s.URL
+}
+
+// GetName returns the value of Name.
+func (s *DiscoveredCalendar) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *DiscoveredCalendar) GetDescription() OptString {
+	return s.Description
+}
+
+// GetSupportedComponents returns the value of SupportedComponents.
+func (s *DiscoveredCalendar) GetSupportedComponents() []string {
+	return s.SupportedComponents
+}
+
+// SetURL sets the value of URL.
+func (s *DiscoveredCalendar) SetURL(val string) {
+	s.URL = val
+}
+
+// SetName sets the value of Name.
+func (s *DiscoveredCalendar) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *DiscoveredCalendar) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetSupportedComponents sets the value of SupportedComponents.
+func (s *DiscoveredCalendar) SetSupportedComponents(val []string) {
+	s.SupportedComponents = val
+}
 
 // Ref: #/components/schemas/Error
 type Error struct {
