@@ -18,6 +18,8 @@
 	let name = $state('');
 	let status = $state<'1' | '2'>('1');
 	let description = $state('');
+	let slotDurationMinutes = $state('30');
+	let bufferMinutes = $state('0');
 	let customFields = $state<CustomField[]>([]);
 	let availabilityRules = $state<AvailabilityRule[]>([]);
 	let loading = $state(true);
@@ -39,6 +41,23 @@
 		{ value: '5', label: 'Textarea' }
 	];
 
+	const slotDurationOptions = [
+		{ value: '15', label: '15 minutes' },
+		{ value: '30', label: '30 minutes' },
+		{ value: '45', label: '45 minutes' },
+		{ value: '60', label: '60 minutes (1 hour)' },
+		{ value: '90', label: '90 minutes (1.5 hours)' },
+		{ value: '120', label: '120 minutes (2 hours)' }
+	];
+
+	const bufferTimeOptions = [
+		{ value: '0', label: 'No buffer' },
+		{ value: '5', label: '5 minutes' },
+		{ value: '10', label: '10 minutes' },
+		{ value: '15', label: '15 minutes' },
+		{ value: '30', label: '30 minutes' }
+	];
+
 	onMount(async () => {
 		try {
 			const { data } = await api.GET('/booking-links/{id}', {
@@ -54,6 +73,8 @@
 			name = data.name;
 			status = String(data.status) as '1' | '2';
 			description = data.description || '';
+			slotDurationMinutes = String(data.slot_duration_minutes);
+			bufferMinutes = String(data.buffer_minutes);
 			customFields = data.custom_fields || [];
 			availabilityRules = data.availability_rules || [
 				{ days_of_week: [1, 2, 3, 4, 5], start_time: '09:00', end_time: '17:00' }
@@ -99,6 +120,8 @@
 					name,
 					status: Number(status) as LinkStatus,
 					description: description || undefined,
+					slot_duration_minutes: Number(slotDurationMinutes),
+					buffer_minutes: Number(bufferMinutes),
 					availability_rules: availabilityRules.length > 0 ? availabilityRules : undefined,
 					custom_fields: customFields.length > 0 ? customFields : undefined
 				}
@@ -147,6 +170,22 @@
 					rows={3}
 					placeholder="A brief description of this booking link..."
 				/>
+
+				<!-- Slot Duration & Buffer -->
+				<div class="grid grid-cols-2 gap-4">
+					<Select
+						label="Slot Duration"
+						name="slotDurationMinutes"
+						options={slotDurationOptions}
+						bind:value={slotDurationMinutes}
+					/>
+					<Select
+						label="Buffer Time"
+						name="bufferMinutes"
+						options={bufferTimeOptions}
+						bind:value={bufferMinutes}
+					/>
+				</div>
 
 				<!-- Availability -->
 				<AvailabilityEditor

@@ -300,12 +300,16 @@ func (s *BookingCustomFields) init() BookingCustomFields {
 
 // Ref: #/components/schemas/BookingLink
 type BookingLink struct {
-	ID                int                `json:"id"`
-	Slug              string             `json:"slug"`
-	Name              string             `json:"name"`
-	Description       OptString          `json:"description"`
-	Status            LinkStatus         `json:"status"`
-	AutoConfirm       OptBool            `json:"auto_confirm"`
+	ID          int        `json:"id"`
+	Slug        string     `json:"slug"`
+	Name        string     `json:"name"`
+	Description OptString  `json:"description"`
+	Status      LinkStatus `json:"status"`
+	AutoConfirm OptBool    `json:"auto_confirm"`
+	// Duration of each bookable slot in minutes.
+	SlotDurationMinutes OptInt `json:"slot_duration_minutes"`
+	// Buffer time between slots in minutes.
+	BufferMinutes     OptInt             `json:"buffer_minutes"`
 	RequireEmail      OptBool            `json:"require_email"`
 	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
 	CustomFields      []CustomField      `json:"custom_fields"`
@@ -341,6 +345,16 @@ func (s *BookingLink) GetStatus() LinkStatus {
 // GetAutoConfirm returns the value of AutoConfirm.
 func (s *BookingLink) GetAutoConfirm() OptBool {
 	return s.AutoConfirm
+}
+
+// GetSlotDurationMinutes returns the value of SlotDurationMinutes.
+func (s *BookingLink) GetSlotDurationMinutes() OptInt {
+	return s.SlotDurationMinutes
+}
+
+// GetBufferMinutes returns the value of BufferMinutes.
+func (s *BookingLink) GetBufferMinutes() OptInt {
+	return s.BufferMinutes
 }
 
 // GetRequireEmail returns the value of RequireEmail.
@@ -396,6 +410,16 @@ func (s *BookingLink) SetStatus(val LinkStatus) {
 // SetAutoConfirm sets the value of AutoConfirm.
 func (s *BookingLink) SetAutoConfirm(val OptBool) {
 	s.AutoConfirm = val
+}
+
+// SetSlotDurationMinutes sets the value of SlotDurationMinutes.
+func (s *BookingLink) SetSlotDurationMinutes(val OptInt) {
+	s.SlotDurationMinutes = val
+}
+
+// SetBufferMinutes sets the value of BufferMinutes.
+func (s *BookingLink) SetBufferMinutes(val OptInt) {
+	s.BufferMinutes = val
 }
 
 // SetRequireEmail sets the value of RequireEmail.
@@ -629,13 +653,15 @@ func (s *CreateBookingCreated) SetMessage(val OptString) {
 func (*CreateBookingCreated) createBookingRes() {}
 
 type CreateBookingLinkReq struct {
-	Name              string             `json:"name"`
-	Description       OptString          `json:"description"`
-	AutoConfirm       OptBool            `json:"auto_confirm"`
-	RequireEmail      OptBool            `json:"require_email"`
-	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
-	CustomFields      []CustomField      `json:"custom_fields"`
-	EventTemplate     OptEventTemplate   `json:"event_template"`
+	Name                string             `json:"name"`
+	Description         OptString          `json:"description"`
+	AutoConfirm         OptBool            `json:"auto_confirm"`
+	SlotDurationMinutes OptInt             `json:"slot_duration_minutes"`
+	BufferMinutes       OptInt             `json:"buffer_minutes"`
+	RequireEmail        OptBool            `json:"require_email"`
+	AvailabilityRules   []AvailabilityRule `json:"availability_rules"`
+	CustomFields        []CustomField      `json:"custom_fields"`
+	EventTemplate       OptEventTemplate   `json:"event_template"`
 }
 
 // GetName returns the value of Name.
@@ -651,6 +677,16 @@ func (s *CreateBookingLinkReq) GetDescription() OptString {
 // GetAutoConfirm returns the value of AutoConfirm.
 func (s *CreateBookingLinkReq) GetAutoConfirm() OptBool {
 	return s.AutoConfirm
+}
+
+// GetSlotDurationMinutes returns the value of SlotDurationMinutes.
+func (s *CreateBookingLinkReq) GetSlotDurationMinutes() OptInt {
+	return s.SlotDurationMinutes
+}
+
+// GetBufferMinutes returns the value of BufferMinutes.
+func (s *CreateBookingLinkReq) GetBufferMinutes() OptInt {
+	return s.BufferMinutes
 }
 
 // GetRequireEmail returns the value of RequireEmail.
@@ -688,6 +724,16 @@ func (s *CreateBookingLinkReq) SetAutoConfirm(val OptBool) {
 	s.AutoConfirm = val
 }
 
+// SetSlotDurationMinutes sets the value of SlotDurationMinutes.
+func (s *CreateBookingLinkReq) SetSlotDurationMinutes(val OptInt) {
+	s.SlotDurationMinutes = val
+}
+
+// SetBufferMinutes sets the value of BufferMinutes.
+func (s *CreateBookingLinkReq) SetBufferMinutes(val OptInt) {
+	s.BufferMinutes = val
+}
+
 // SetRequireEmail sets the value of RequireEmail.
 func (s *CreateBookingLinkReq) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
@@ -709,15 +755,13 @@ func (s *CreateBookingLinkReq) SetEventTemplate(val OptEventTemplate) {
 }
 
 type CreateBookingReq struct {
-	SlotID       int                             `json:"slot_id"`
-	GuestEmail   string                          `json:"guest_email"`
-	GuestName    OptString                       `json:"guest_name"`
+	GuestEmail string    `json:"guest_email"`
+	GuestName  OptString `json:"guest_name"`
+	// Start time of the requested slot.
+	StartTime time.Time `json:"start_time"`
+	// End time of the requested slot.
+	EndTime      time.Time                       `json:"end_time"`
 	CustomFields OptCreateBookingReqCustomFields `json:"custom_fields"`
-}
-
-// GetSlotID returns the value of SlotID.
-func (s *CreateBookingReq) GetSlotID() int {
-	return s.SlotID
 }
 
 // GetGuestEmail returns the value of GuestEmail.
@@ -730,14 +774,19 @@ func (s *CreateBookingReq) GetGuestName() OptString {
 	return s.GuestName
 }
 
+// GetStartTime returns the value of StartTime.
+func (s *CreateBookingReq) GetStartTime() time.Time {
+	return s.StartTime
+}
+
+// GetEndTime returns the value of EndTime.
+func (s *CreateBookingReq) GetEndTime() time.Time {
+	return s.EndTime
+}
+
 // GetCustomFields returns the value of CustomFields.
 func (s *CreateBookingReq) GetCustomFields() OptCreateBookingReqCustomFields {
 	return s.CustomFields
-}
-
-// SetSlotID sets the value of SlotID.
-func (s *CreateBookingReq) SetSlotID(val int) {
-	s.SlotID = val
 }
 
 // SetGuestEmail sets the value of GuestEmail.
@@ -748,6 +797,16 @@ func (s *CreateBookingReq) SetGuestEmail(val string) {
 // SetGuestName sets the value of GuestName.
 func (s *CreateBookingReq) SetGuestName(val OptString) {
 	s.GuestName = val
+}
+
+// SetStartTime sets the value of StartTime.
+func (s *CreateBookingReq) SetStartTime(val time.Time) {
+	s.StartTime = val
+}
+
+// SetEndTime sets the value of EndTime.
+func (s *CreateBookingReq) SetEndTime(val time.Time) {
+	s.EndTime = val
 }
 
 // SetCustomFields sets the value of CustomFields.
@@ -1430,6 +1489,52 @@ func (o OptEventTemplate) Or(d EventTemplate) EventTemplate {
 	return d
 }
 
+// NewOptInt returns new OptInt with value set to v.
+func NewOptInt(v int) OptInt {
+	return OptInt{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptInt is optional int.
+type OptInt struct {
+	Value int
+	Set   bool
+}
+
+// IsSet returns true if OptInt was set.
+func (o OptInt) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptInt) Reset() {
+	var v int
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptInt) SetTo(v int) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptInt) Get() (v int, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptInt) Or(d int) int {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptLinkStatus returns new OptLinkStatus with value set to v.
 func NewOptLinkStatus(v LinkStatus) OptLinkStatus {
 	return OptLinkStatus{
@@ -1922,14 +2027,16 @@ func (s *SubmitVoteReqResponses) init() SubmitVoteReqResponses {
 }
 
 type UpdateBookingLinkReq struct {
-	Name              OptString          `json:"name"`
-	Description       OptString          `json:"description"`
-	Status            OptLinkStatus      `json:"status"`
-	AutoConfirm       OptBool            `json:"auto_confirm"`
-	RequireEmail      OptBool            `json:"require_email"`
-	AvailabilityRules []AvailabilityRule `json:"availability_rules"`
-	CustomFields      []CustomField      `json:"custom_fields"`
-	EventTemplate     OptEventTemplate   `json:"event_template"`
+	Name                OptString          `json:"name"`
+	Description         OptString          `json:"description"`
+	Status              OptLinkStatus      `json:"status"`
+	AutoConfirm         OptBool            `json:"auto_confirm"`
+	SlotDurationMinutes OptInt             `json:"slot_duration_minutes"`
+	BufferMinutes       OptInt             `json:"buffer_minutes"`
+	RequireEmail        OptBool            `json:"require_email"`
+	AvailabilityRules   []AvailabilityRule `json:"availability_rules"`
+	CustomFields        []CustomField      `json:"custom_fields"`
+	EventTemplate       OptEventTemplate   `json:"event_template"`
 }
 
 // GetName returns the value of Name.
@@ -1950,6 +2057,16 @@ func (s *UpdateBookingLinkReq) GetStatus() OptLinkStatus {
 // GetAutoConfirm returns the value of AutoConfirm.
 func (s *UpdateBookingLinkReq) GetAutoConfirm() OptBool {
 	return s.AutoConfirm
+}
+
+// GetSlotDurationMinutes returns the value of SlotDurationMinutes.
+func (s *UpdateBookingLinkReq) GetSlotDurationMinutes() OptInt {
+	return s.SlotDurationMinutes
+}
+
+// GetBufferMinutes returns the value of BufferMinutes.
+func (s *UpdateBookingLinkReq) GetBufferMinutes() OptInt {
+	return s.BufferMinutes
 }
 
 // GetRequireEmail returns the value of RequireEmail.
@@ -1990,6 +2107,16 @@ func (s *UpdateBookingLinkReq) SetStatus(val OptLinkStatus) {
 // SetAutoConfirm sets the value of AutoConfirm.
 func (s *UpdateBookingLinkReq) SetAutoConfirm(val OptBool) {
 	s.AutoConfirm = val
+}
+
+// SetSlotDurationMinutes sets the value of SlotDurationMinutes.
+func (s *UpdateBookingLinkReq) SetSlotDurationMinutes(val OptInt) {
+	s.SlotDurationMinutes = val
+}
+
+// SetBufferMinutes sets the value of BufferMinutes.
+func (s *UpdateBookingLinkReq) SetBufferMinutes(val OptInt) {
+	s.BufferMinutes = val
 }
 
 // SetRequireEmail sets the value of RequireEmail.

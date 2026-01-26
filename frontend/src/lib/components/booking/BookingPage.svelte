@@ -107,7 +107,8 @@
 			const response = await api.POST('/p/booking/{slug}/book', {
 				params: { path: { slug } },
 				body: {
-					slot_id: selectedSlot.id,
+					start_time: selectedSlot.start_time,
+					end_time: selectedSlot.end_time,
 					guest_email: data.email,
 					guest_name: data.name,
 					custom_fields: Object.keys(data.customFields).length > 0 ? data.customFields : undefined

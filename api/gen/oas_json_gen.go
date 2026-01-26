@@ -811,6 +811,18 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationMinutes.Set {
+			e.FieldStart("slot_duration_minutes")
+			s.SlotDurationMinutes.Encode(e)
+		}
+	}
+	{
+		if s.BufferMinutes.Set {
+			e.FieldStart("buffer_minutes")
+			s.BufferMinutes.Encode(e)
+		}
+	}
+	{
 		if s.RequireEmail.Set {
 			e.FieldStart("require_email")
 			s.RequireEmail.Encode(e)
@@ -850,18 +862,20 @@ func (s *BookingLink) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfBookingLink = [11]string{
+var jsonFieldsNameOfBookingLink = [13]string{
 	0:  "id",
 	1:  "slug",
 	2:  "name",
 	3:  "description",
 	4:  "status",
 	5:  "auto_confirm",
-	6:  "require_email",
-	7:  "availability_rules",
-	8:  "custom_fields",
-	9:  "event_template",
-	10: "created_at",
+	6:  "slot_duration_minutes",
+	7:  "buffer_minutes",
+	8:  "require_email",
+	9:  "availability_rules",
+	10: "custom_fields",
+	11: "event_template",
+	12: "created_at",
 }
 
 // Decode decodes BookingLink from json.
@@ -870,6 +884,7 @@ func (s *BookingLink) Decode(d *jx.Decoder) error {
 		return errors.New("invalid: unable to decode BookingLink to nil")
 	}
 	var requiredBitSet [2]uint8
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -938,6 +953,26 @@ func (s *BookingLink) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"auto_confirm\"")
+			}
+		case "slot_duration_minutes":
+			if err := func() error {
+				s.SlotDurationMinutes.Reset()
+				if err := s.SlotDurationMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "buffer_minutes":
+			if err := func() error {
+				s.BufferMinutes.Reset()
+				if err := s.BufferMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"buffer_minutes\"")
 			}
 		case "require_email":
 			if err := func() error {
@@ -1676,6 +1711,18 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationMinutes.Set {
+			e.FieldStart("slot_duration_minutes")
+			s.SlotDurationMinutes.Encode(e)
+		}
+	}
+	{
+		if s.BufferMinutes.Set {
+			e.FieldStart("buffer_minutes")
+			s.BufferMinutes.Encode(e)
+		}
+	}
+	{
 		if s.RequireEmail.Set {
 			e.FieldStart("require_email")
 			s.RequireEmail.Encode(e)
@@ -1709,14 +1756,16 @@ func (s *CreateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateBookingLinkReq = [7]string{
+var jsonFieldsNameOfCreateBookingLinkReq = [9]string{
 	0: "name",
 	1: "description",
 	2: "auto_confirm",
-	3: "require_email",
-	4: "availability_rules",
-	5: "custom_fields",
-	6: "event_template",
+	3: "slot_duration_minutes",
+	4: "buffer_minutes",
+	5: "require_email",
+	6: "availability_rules",
+	7: "custom_fields",
+	8: "event_template",
 }
 
 // Decode decodes CreateBookingLinkReq from json.
@@ -1724,7 +1773,8 @@ func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode CreateBookingLinkReq to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -1759,6 +1809,26 @@ func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"auto_confirm\"")
+			}
+		case "slot_duration_minutes":
+			if err := func() error {
+				s.SlotDurationMinutes.Reset()
+				if err := s.SlotDurationMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "buffer_minutes":
+			if err := func() error {
+				s.BufferMinutes.Reset()
+				if err := s.BufferMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"buffer_minutes\"")
 			}
 		case "require_email":
 			if err := func() error {
@@ -1823,8 +1893,9 @@ func (s *CreateBookingLinkReq) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00000001,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1880,10 +1951,6 @@ func (s *CreateBookingReq) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *CreateBookingReq) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("slot_id")
-		e.Int(s.SlotID)
-	}
-	{
 		e.FieldStart("guest_email")
 		e.Str(s.GuestEmail)
 	}
@@ -1894,6 +1961,14 @@ func (s *CreateBookingReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("start_time")
+		json.EncodeDateTime(e, s.StartTime)
+	}
+	{
+		e.FieldStart("end_time")
+		json.EncodeDateTime(e, s.EndTime)
+	}
+	{
 		if s.CustomFields.Set {
 			e.FieldStart("custom_fields")
 			s.CustomFields.Encode(e)
@@ -1901,11 +1976,12 @@ func (s *CreateBookingReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateBookingReq = [4]string{
-	0: "slot_id",
-	1: "guest_email",
-	2: "guest_name",
-	3: "custom_fields",
+var jsonFieldsNameOfCreateBookingReq = [5]string{
+	0: "guest_email",
+	1: "guest_name",
+	2: "start_time",
+	3: "end_time",
+	4: "custom_fields",
 }
 
 // Decode decodes CreateBookingReq from json.
@@ -1917,20 +1993,8 @@ func (s *CreateBookingReq) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "slot_id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.SlotID = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"slot_id\"")
-			}
 		case "guest_email":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.GuestEmail = string(v)
@@ -1950,6 +2014,30 @@ func (s *CreateBookingReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"guest_name\"")
+			}
+		case "start_time":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.StartTime = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"start_time\"")
+			}
+		case "end_time":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.EndTime = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"end_time\"")
 			}
 		case "custom_fields":
 			if err := func() error {
@@ -1971,7 +2059,7 @@ func (s *CreateBookingReq) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001101,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3514,6 +3602,41 @@ func (s *OptEventTemplate) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes int as json.
+func (o OptInt) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Int(int(o.Value))
+}
+
+// Decode decodes int from json.
+func (o *OptInt) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptInt to nil")
+	}
+	o.Set = true
+	v, err := d.Int()
+	if err != nil {
+		return err
+	}
+	o.Value = int(v)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptInt) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptInt) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes LinkStatus as json.
 func (o OptLinkStatus) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -4599,6 +4722,18 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.SlotDurationMinutes.Set {
+			e.FieldStart("slot_duration_minutes")
+			s.SlotDurationMinutes.Encode(e)
+		}
+	}
+	{
+		if s.BufferMinutes.Set {
+			e.FieldStart("buffer_minutes")
+			s.BufferMinutes.Encode(e)
+		}
+	}
+	{
 		if s.RequireEmail.Set {
 			e.FieldStart("require_email")
 			s.RequireEmail.Encode(e)
@@ -4632,15 +4767,17 @@ func (s *UpdateBookingLinkReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateBookingLinkReq = [8]string{
+var jsonFieldsNameOfUpdateBookingLinkReq = [10]string{
 	0: "name",
 	1: "description",
 	2: "status",
 	3: "auto_confirm",
-	4: "require_email",
-	5: "availability_rules",
-	6: "custom_fields",
-	7: "event_template",
+	4: "slot_duration_minutes",
+	5: "buffer_minutes",
+	6: "require_email",
+	7: "availability_rules",
+	8: "custom_fields",
+	9: "event_template",
 }
 
 // Decode decodes UpdateBookingLinkReq from json.
@@ -4690,6 +4827,26 @@ func (s *UpdateBookingLinkReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"auto_confirm\"")
+			}
+		case "slot_duration_minutes":
+			if err := func() error {
+				s.SlotDurationMinutes.Reset()
+				if err := s.SlotDurationMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slot_duration_minutes\"")
+			}
+		case "buffer_minutes":
+			if err := func() error {
+				s.BufferMinutes.Reset()
+				if err := s.BufferMinutes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"buffer_minutes\"")
 			}
 		case "require_email":
 			if err := func() error {

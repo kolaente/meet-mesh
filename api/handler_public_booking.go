@@ -64,45 +64,86 @@ func (h *Handler) generateAvailableSlots(link BookingLink, start, end time.Time,
 		return slots
 	}
 
+	slotDuration := time.Duration(link.SlotDurationMinutes) * time.Minute
+	bufferDuration := time.Duration(link.BufferMinutes) * time.Minute
+
 	// Generate slots for each day in the range
 	for day := start; day.Before(end); day = day.AddDate(0, 0, 1) {
 		weekday := int(day.Weekday())
 
 		for _, rule := range link.AvailabilityRules {
-			// Check if this day is in the rule's days of week
-			for _, dow := range rule.DaysOfWeek {
-				if dow == weekday {
-					// Parse start and end times
-					startTime, _ := time.Parse("15:04", rule.StartTime)
-					endTime, _ := time.Parse("15:04", rule.EndTime)
+			if !containsDay(rule.DaysOfWeek, weekday) {
+				continue
+			}
 
-					slotStart := time.Date(day.Year(), day.Month(), day.Day(),
-						startTime.Hour(), startTime.Minute(), 0, 0, day.Location())
-					slotEnd := time.Date(day.Year(), day.Month(), day.Day(),
-						endTime.Hour(), endTime.Minute(), 0, 0, day.Location())
+			// Parse availability window times
+			ruleStart, _ := time.Parse("15:04", rule.StartTime)
+			ruleEnd, _ := time.Parse("15:04", rule.EndTime)
 
-					// Check if slot conflicts with busy times
-					isBusy := false
-					for _, busy := range busyTimes {
-						if slotStart.Before(busy.End) && slotEnd.After(busy.Start) {
-							isBusy = true
-							break
-						}
-					}
+			windowStart := time.Date(day.Year(), day.Month(), day.Day(),
+				ruleStart.Hour(), ruleStart.Minute(), 0, 0, day.Location())
+			windowEnd := time.Date(day.Year(), day.Month(), day.Day(),
+				ruleEnd.Hour(), ruleEnd.Minute(), 0, 0, day.Location())
 
-					if !isBusy && slotStart.After(time.Now()) {
-						slots = append(slots, Slot{
-							Type:      SlotTypeTime,
-							StartTime: slotStart,
-							EndTime:   slotEnd,
-						})
-					}
+			// Generate individual slots within this window
+			for slotStart := windowStart; slotStart.Add(slotDuration).Before(windowEnd) || slotStart.Add(slotDuration).Equal(windowEnd); slotStart = slotStart.Add(slotDuration + bufferDuration) {
+				slotEnd := slotStart.Add(slotDuration)
+
+				// Skip past slots
+				if slotStart.Before(time.Now()) {
+					continue
 				}
+
+				// Check if slot conflicts with busy times
+				if isSlotBusy(slotStart, slotEnd, busyTimes) {
+					continue
+				}
+
+				slots = append(slots, Slot{
+					Type:      SlotTypeTime,
+					StartTime: slotStart,
+					EndTime:   slotEnd,
+				})
 			}
 		}
 	}
 
 	return slots
+}
+
+func containsDay(days []int, day int) bool {
+	for _, d := range days {
+		if d == day {
+			return true
+		}
+	}
+	return false
+}
+
+func isSlotBusy(start, end time.Time, busyTimes []TimePeriod) bool {
+	for _, busy := range busyTimes {
+		if start.Before(busy.End) && end.After(busy.Start) {
+			return true
+		}
+	}
+	return false
+}
+
+// isSlotWithinAvailability checks if a slot falls within the configured availability rules
+func (h *Handler) isSlotWithinAvailability(start, end time.Time, rules []AvailabilityRule) bool {
+	weekday := int(start.Weekday())
+	slotStartTime := start.Format("15:04")
+	slotEndTime := end.Format("15:04")
+
+	for _, rule := range rules {
+		if !containsDay(rule.DaysOfWeek, weekday) {
+			continue
+		}
+		if slotStartTime >= rule.StartTime && slotEndTime <= rule.EndTime {
+			return true
+		}
+	}
+	return false
 }
 
 // CreateBooking creates a booking
@@ -112,18 +153,42 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		return nil, err
 	}
 
-	// Verify slot exists and is available
-	var slot Slot
-	if err := h.db.Where("id = ? AND booking_link_id = ?", req.SlotID, link.ID).First(&slot).Error; err != nil {
-		return &gen.Error{Message: "Slot not available"}, nil
+	// Validate slot duration matches the booking link's configuration
+	requestedDuration := req.EndTime.Sub(req.StartTime)
+	expectedDuration := time.Duration(link.SlotDurationMinutes) * time.Minute
+	if requestedDuration != expectedDuration {
+		return &gen.Error{Message: "Invalid slot duration"}, nil
+	}
+
+	// Check the slot is not in the past
+	if req.StartTime.Before(time.Now()) {
+		return &gen.Error{Message: "Cannot book slots in the past"}, nil
+	}
+
+	// Validate that the slot falls within availability rules
+	if !h.isSlotWithinAvailability(req.StartTime, req.EndTime, link.AvailabilityRules) {
+		return &gen.Error{Message: "Slot not within available hours"}, nil
+	}
+
+	// Create slot from request times
+	slot := Slot{
+		BookingLinkID: link.ID,
+		Type:          SlotTypeTime,
+		StartTime:     req.StartTime,
+		EndTime:       req.EndTime,
 	}
 
 	// Check CalDAV availability
 	if h.caldav != nil {
-		busyTimes, err := h.caldav.GetBusyTimes(ctx, link.UserID, slot.StartTime, slot.EndTime)
+		busyTimes, err := h.caldav.GetBusyTimes(ctx, link.UserID, req.StartTime, req.EndTime)
 		if err == nil && len(busyTimes) > 0 {
 			return &gen.Error{Message: "Slot no longer available"}, nil
 		}
+	}
+
+	// Save the slot
+	if err := h.db.Create(&slot).Error; err != nil {
+		return nil, err
 	}
 
 	// Generate action token

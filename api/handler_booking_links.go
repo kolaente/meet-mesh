@@ -25,17 +25,30 @@ func (h *Handler) ListBookingLinks(ctx context.Context) ([]gen.BookingLink, erro
 func (h *Handler) CreateBookingLink(ctx context.Context, req *gen.CreateBookingLinkReq) (*gen.BookingLink, error) {
 	userID, _ := GetUserID(ctx)
 
+	// Set defaults for slot duration and buffer
+	slotDuration := 30
+	if req.SlotDurationMinutes.Set {
+		slotDuration = req.SlotDurationMinutes.Value
+	}
+
+	bufferMinutes := 0
+	if req.BufferMinutes.Set {
+		bufferMinutes = req.BufferMinutes.Value
+	}
+
 	link := BookingLink{
-		UserID:            userID,
-		Slug:              generateSlug(),
-		Name:              req.Name,
-		Description:       req.Description.Value,
-		Status:            LinkStatusActive,
-		AutoConfirm:       req.AutoConfirm.Value,
-		RequireEmail:      req.RequireEmail.Value,
-		AvailabilityRules: mapAvailabilityRulesFromGen(req.AvailabilityRules),
-		CustomFields:      mapCustomFieldsFromGen(req.CustomFields),
-		EventTemplate:     mapEventTemplateFromGen(req.EventTemplate),
+		UserID:              userID,
+		Slug:                generateSlug(),
+		Name:                req.Name,
+		Description:         req.Description.Value,
+		Status:              LinkStatusActive,
+		AutoConfirm:         req.AutoConfirm.Value,
+		SlotDurationMinutes: slotDuration,
+		BufferMinutes:       bufferMinutes,
+		RequireEmail:        req.RequireEmail.Value,
+		AvailabilityRules:   mapAvailabilityRulesFromGen(req.AvailabilityRules),
+		CustomFields:        mapCustomFieldsFromGen(req.CustomFields),
+		EventTemplate:       mapEventTemplateFromGen(req.EventTemplate),
 	}
 
 	if err := h.db.Create(&link).Error; err != nil {
@@ -90,6 +103,12 @@ func (h *Handler) UpdateBookingLink(ctx context.Context, req *gen.UpdateBookingL
 	if req.EventTemplate.Set {
 		link.EventTemplate = mapEventTemplateFromGen(req.EventTemplate)
 	}
+	if req.SlotDurationMinutes.Set {
+		link.SlotDurationMinutes = req.SlotDurationMinutes.Value
+	}
+	if req.BufferMinutes.Set {
+		link.BufferMinutes = req.BufferMinutes.Value
+	}
 
 	if err := h.db.Save(&link).Error; err != nil {
 		return nil, err
@@ -140,17 +159,19 @@ func mapBookingLinksToGen(links []BookingLink) []gen.BookingLink {
 
 func mapBookingLinkToGen(link *BookingLink) *gen.BookingLink {
 	return &gen.BookingLink{
-		ID:                int(link.ID),
-		Slug:              link.Slug,
-		Name:              link.Name,
-		Description:       gen.NewOptString(link.Description),
-		Status:            gen.LinkStatus(link.Status),
-		AutoConfirm:       gen.NewOptBool(link.AutoConfirm),
-		RequireEmail:      gen.NewOptBool(link.RequireEmail),
-		AvailabilityRules: mapAvailabilityRulesToGen(link.AvailabilityRules),
-		CustomFields:      mapCustomFieldsToGen(link.CustomFields),
-		EventTemplate:     mapEventTemplateToGen(link.EventTemplate),
-		CreatedAt:         gen.NewOptDateTime(link.CreatedAt),
+		ID:                  int(link.ID),
+		Slug:                link.Slug,
+		Name:                link.Name,
+		Description:         gen.NewOptString(link.Description),
+		Status:              gen.LinkStatus(link.Status),
+		AutoConfirm:         gen.NewOptBool(link.AutoConfirm),
+		SlotDurationMinutes: gen.NewOptInt(link.SlotDurationMinutes),
+		BufferMinutes:       gen.NewOptInt(link.BufferMinutes),
+		RequireEmail:        gen.NewOptBool(link.RequireEmail),
+		AvailabilityRules:   mapAvailabilityRulesToGen(link.AvailabilityRules),
+		CustomFields:        mapCustomFieldsToGen(link.CustomFields),
+		EventTemplate:       mapEventTemplateToGen(link.EventTemplate),
+		CreatedAt:           gen.NewOptDateTime(link.CreatedAt),
 	}
 }
 

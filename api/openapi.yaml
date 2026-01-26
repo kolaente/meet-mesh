@@ -162,6 +162,14 @@ components:
           $ref: '#/components/schemas/LinkStatus'
         auto_confirm:
           type: boolean
+        slot_duration_minutes:
+          type: integer
+          description: Duration of each bookable slot in minutes
+          default: 30
+        buffer_minutes:
+          type: integer
+          description: Buffer time between slots in minutes
+          default: 0
         require_email:
           type: boolean
         availability_rules:
@@ -500,6 +508,12 @@ paths:
                   type: string
                 auto_confirm:
                   type: boolean
+                slot_duration_minutes:
+                  type: integer
+                  default: 30
+                buffer_minutes:
+                  type: integer
+                  default: 0
                 require_email:
                   type: boolean
                 availability_rules:
@@ -566,6 +580,10 @@ paths:
                   $ref: '#/components/schemas/LinkStatus'
                 auto_confirm:
                   type: boolean
+                slot_duration_minutes:
+                  type: integer
+                buffer_minutes:
+                  type: integer
                 require_email:
                   type: boolean
                 availability_rules:
@@ -1004,15 +1022,21 @@ paths:
           application/json:
             schema:
               type: object
-              required: [slot_id, guest_email]
+              required: [guest_email, start_time, end_time]
               properties:
-                slot_id:
-                  type: integer
                 guest_email:
                   type: string
                   format: email
                 guest_name:
                   type: string
+                start_time:
+                  type: string
+                  format: date-time
+                  description: Start time of the requested slot
+                end_time:
+                  type: string
+                  format: date-time
+                  description: End time of the requested slot
                 custom_fields:
                   type: object
                   additionalProperties:

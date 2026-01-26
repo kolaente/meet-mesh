@@ -533,6 +533,16 @@ export interface components {
             description?: string;
             status: components["schemas"]["LinkStatus"];
             auto_confirm?: boolean;
+            /**
+             * @description Duration of each bookable slot in minutes
+             * @default 30
+             */
+            slot_duration_minutes: number;
+            /**
+             * @description Buffer time between slots in minutes
+             * @default 0
+             */
+            buffer_minutes: number;
             require_email?: boolean;
             availability_rules?: components["schemas"]["AvailabilityRule"][];
             custom_fields?: components["schemas"]["CustomField"][];
@@ -845,6 +855,10 @@ export interface operations {
                     name: string;
                     description?: string;
                     auto_confirm?: boolean;
+                    /** @default 30 */
+                    slot_duration_minutes?: number;
+                    /** @default 0 */
+                    buffer_minutes?: number;
                     require_email?: boolean;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
@@ -902,6 +916,8 @@ export interface operations {
                     description?: string;
                     status?: components["schemas"]["LinkStatus"];
                     auto_confirm?: boolean;
+                    slot_duration_minutes?: number;
+                    buffer_minutes?: number;
                     require_email?: boolean;
                     availability_rules?: components["schemas"]["AvailabilityRule"][];
                     custom_fields?: components["schemas"]["CustomField"][];
@@ -1330,10 +1346,19 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    slot_id: number;
                     /** Format: email */
                     guest_email: string;
                     guest_name?: string;
+                    /**
+                     * Format: date-time
+                     * @description Start time of the requested slot
+                     */
+                    start_time: string;
+                    /**
+                     * Format: date-time
+                     * @description End time of the requested slot
+                     */
+                    end_time: string;
                     custom_fields?: {
                         [key: string]: string;
                     };
