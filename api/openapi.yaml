@@ -105,6 +105,9 @@ components:
           type: string
         name:
           type: string
+        avatar_url:
+          type: string
+          description: URL to the user's avatar image, or empty if no avatar is set
 
     CalendarConnection:
       type: object

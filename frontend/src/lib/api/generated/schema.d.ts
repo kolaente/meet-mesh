@@ -525,6 +525,8 @@ export interface components {
             id: number;
             email: string;
             name?: string;
+            /** @description URL to the user's avatar image, or empty if no avatar is set */
+            avatar_url?: string;
         };
         CalendarConnection: {
             id: number;

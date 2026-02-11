@@ -1,6 +1,6 @@
 import { api } from '$lib/api/client'
 
-type User = { id: number; email: string; name?: string }
+type User = { id: number; email: string; name?: string; avatar_url?: string }
 
 let user = $state<User | null>(null)
 let loading = $state(true)

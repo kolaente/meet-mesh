@@ -69,14 +69,15 @@ type EventTemplate struct {
 
 // GORM Models
 type User struct {
-	ID           uint      `gorm:"primaryKey"`
-	OIDCSub      string    `gorm:"column:oidc_sub;uniqueIndex;not null"`
-	Email        string    `gorm:"not null"`
-	Name         string
-	CreatedAt    time.Time
-	Calendars    []CalendarConnection `gorm:"foreignKey:UserID"`
-	BookingLinks []BookingLink        `gorm:"foreignKey:UserID"`
-	Polls        []Poll               `gorm:"foreignKey:UserID"`
+	ID             uint      `gorm:"primaryKey"`
+	OIDCSub        string    `gorm:"column:oidc_sub;uniqueIndex;not null"`
+	Email          string    `gorm:"not null"`
+	Name           string
+	AvatarFilename string
+	CreatedAt      time.Time
+	Calendars      []CalendarConnection `gorm:"foreignKey:UserID"`
+	BookingLinks   []BookingLink        `gorm:"foreignKey:UserID"`
+	Polls          []Poll               `gorm:"foreignKey:UserID"`
 }
 
 type CalendarConnection struct {

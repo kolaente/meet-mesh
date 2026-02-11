@@ -2436,6 +2436,8 @@ type User struct {
 	ID    int       `json:"id"`
 	Email string    `json:"email"`
 	Name  OptString `json:"name"`
+	// URL to the user's avatar image, or empty if no avatar is set.
+	AvatarURL OptString `json:"avatar_url"`
 }
 
 // GetID returns the value of ID.
@@ -2453,6 +2455,11 @@ func (s *User) GetName() OptString {
 	return s.Name
 }
 
+// GetAvatarURL returns the value of AvatarURL.
+func (s *User) GetAvatarURL() OptString {
+	return s.AvatarURL
+}
+
 // SetID sets the value of ID.
 func (s *User) SetID(val int) {
 	s.ID = val
@@ -2466,6 +2473,11 @@ func (s *User) SetEmail(val string) {
 // SetName sets the value of Name.
 func (s *User) SetName(val OptString) {
 	s.Name = val
+}
+
+// SetAvatarURL sets the value of AvatarURL.
+func (s *User) SetAvatarURL(val OptString) {
+	s.AvatarURL = val
 }
 
 func (*User) getCurrentUserRes()    {}

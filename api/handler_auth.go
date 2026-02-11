@@ -109,6 +109,15 @@ func (h *Handler) Logout(ctx context.Context) error {
 	return nil
 }
 
+// avatarURL constructs the full avatar URL from a filename.
+// Returns empty string if no avatar is set.
+func avatarURL(filename string) string {
+	if filename == "" {
+		return ""
+	}
+	return "/api/avatars/" + filename
+}
+
 // GetCurrentUser returns the authenticated user
 func (h *Handler) GetCurrentUser(ctx context.Context) (gen.GetCurrentUserRes, error) {
 	userID, ok := GetUserID(ctx)
@@ -122,9 +131,10 @@ func (h *Handler) GetCurrentUser(ctx context.Context) (gen.GetCurrentUserRes, er
 	}
 
 	return &gen.User{
-		ID:    int(user.ID),
-		Email: user.Email,
-		Name:  gen.NewOptString(user.Name),
+		ID:        int(user.ID),
+		Email:     user.Email,
+		Name:      gen.NewOptString(user.Name),
+		AvatarURL: gen.NewOptString(avatarURL(user.AvatarFilename)),
 	}, nil
 }
 
@@ -150,8 +160,9 @@ func (h *Handler) UpdateCurrentUser(ctx context.Context, req *gen.UpdateCurrentU
 	}
 
 	return &gen.User{
-		ID:    int(user.ID),
-		Email: user.Email,
-		Name:  gen.NewOptString(user.Name),
+		ID:        int(user.ID),
+		Email:     user.Email,
+		Name:      gen.NewOptString(user.Name),
+		AvatarURL: gen.NewOptString(avatarURL(user.AvatarFilename)),
 	}, nil
 }

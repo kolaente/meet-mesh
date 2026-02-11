@@ -5772,12 +5772,19 @@ func (s *User) encodeFields(e *jx.Encoder) {
 			s.Name.Encode(e)
 		}
 	}
+	{
+		if s.AvatarURL.Set {
+			e.FieldStart("avatar_url")
+			s.AvatarURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfUser = [3]string{
+var jsonFieldsNameOfUser = [4]string{
 	0: "id",
 	1: "email",
 	2: "name",
+	3: "avatar_url",
 }
 
 // Decode decodes User from json.
@@ -5822,6 +5829,16 @@ func (s *User) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "avatar_url":
+			if err := func() error {
+				s.AvatarURL.Reset()
+				if err := s.AvatarURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"avatar_url\"")
 			}
 		default:
 			return d.Skip()
