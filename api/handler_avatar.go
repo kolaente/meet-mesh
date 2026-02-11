@@ -139,6 +139,51 @@ func (h *AvatarHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `{"avatar_url":"/api/avatars/%s"}`, filename)
 }
 
+// Delete handles DELETE /api/avatars
+func (h *AvatarHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Authenticate the user
+	userID, ok := h.authenticateRequest(r)
+	if !ok {
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
+		return
+	}
+
+	// Get current user
+	var user User
+	if err := h.db.First(&user, userID).Error; err != nil {
+		http.Error(w, "User not found", http.StatusInternalServerError)
+		return
+	}
+
+	// Nothing to delete
+	if user.AvatarFilename == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"avatar_url":""}`)
+		return
+	}
+
+	oldFilename := user.AvatarFilename
+
+	// Clear avatar in database
+	if err := h.db.Model(&user).Update("avatar_filename", "").Error; err != nil {
+		http.Error(w, "Failed to update user", http.StatusInternalServerError)
+		return
+	}
+
+	// Remove file from disk (best-effort, don't fail if file is already gone)
+	_ = os.Remove(filepath.Join(h.avatarsPath, oldFilename))
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, `{"avatar_url":""}`)
+}
+
 // authenticateRequest validates the session cookie and returns the user ID.
 func (h *AvatarHandler) authenticateRequest(r *http.Request) (uint, bool) {
 	cookie, err := r.Cookie("session")
