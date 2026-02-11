@@ -56,6 +56,9 @@ func main() {
 	// Create security handler
 	security := api.NewSecurityHandler(db, auth)
 
+	// Create avatar handler (plain HTTP, not ogen)
+	avatarHandler := api.NewAvatarHandler(db, auth, cfg.Storage.AvatarsPath)
+
 	// Create server with /api prefix so ogen strips it before routing
 	server, err := gen.NewServer(handler, security, gen.WithPathPrefix("/api"))
 	if err != nil {
@@ -65,6 +68,9 @@ func main() {
 	// Create a mux that routes /api/* to the API server
 	// and everything else to the static file server
 	mux := http.NewServeMux()
+
+	// Avatar routes (plain HTTP, not ogen - must be registered before /api/)
+	mux.HandleFunc("/api/avatars/", avatarHandler.HandleAvatars)
 
 	// API routes - the ogen server handles /api/*
 	mux.Handle("/api/", server)
