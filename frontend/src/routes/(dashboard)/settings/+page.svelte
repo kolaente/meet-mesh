@@ -3,30 +3,13 @@
 	import { api } from '$lib/api/client';
 	import type { components } from '$lib/api/types';
 	import { DashboardHeader, CalendarConnectionCard, AddCalendarDialog } from '$lib/components/dashboard';
-	import { Card, Button, Spinner, Select } from '$lib/components/ui';
-	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
+	import { Card, Button, Spinner } from '$lib/components/ui';
 
 	type CalendarConnection = components['schemas']['CalendarConnection'];
 
 	let calendars = $state<CalendarConnection[]>([]);
 	let loading = $state(true);
 	let addDialogOpen = $state(false);
-
-	const dateFormat = getDateFormat();
-
-	// Reactive bindings for select components
-	let timeFormatValue = $derived(dateFormat.timeFormat);
-	let weekStartDayValue = $derived(dateFormat.weekStartDay);
-
-	const timeFormatOptions = [
-		{ value: '12h', label: '12-hour (2:00 PM)' },
-		{ value: '24h', label: '24-hour (14:00)' }
-	];
-
-	const weekStartOptions = [
-		{ value: 'sunday', label: 'Sunday' },
-		{ value: 'monday', label: 'Monday' }
-	];
 
 	onMount(async () => {
 		await loadCalendars();
@@ -61,7 +44,7 @@
 	}
 </script>
 
-<DashboardHeader title="Settings">
+<DashboardHeader title="Calendar Settings">
 	{#snippet actions()}
 		<Button variant="primary" onclick={() => (addDialogOpen = true)}>
 			{#snippet children()}Add Calendar{/snippet}
@@ -119,56 +102,6 @@
 					{/each}
 				</div>
 			{/if}
-		</section>
-
-		<!-- Date & Time Format Section -->
-		<section>
-			<div class="mb-4">
-				<h2 class="text-lg font-medium text-text-primary">Date & Time Format</h2>
-				<p class="text-sm text-text-secondary">Customize how dates and times are displayed</p>
-			</div>
-
-			<Card>
-				{#snippet children()}
-					<div class="space-y-6">
-						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-							<div>
-								<p class="font-medium text-text-primary">Time Format</p>
-								<p class="text-sm text-text-secondary">Choose 12-hour or 24-hour time display</p>
-							</div>
-							<div class="w-full sm:w-48">
-								<Select
-									name="timeFormat"
-									options={timeFormatOptions}
-									value={timeFormatValue}
-									onchange={(value) => dateFormat.setTimeFormat(value as '12h' | '24h')}
-								/>
-							</div>
-						</div>
-
-						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-							<div>
-								<p class="font-medium text-text-primary">Week Starts On</p>
-								<p class="text-sm text-text-secondary">Choose which day starts your week</p>
-							</div>
-							<div class="w-full sm:w-48">
-								<Select
-									name="weekStartDay"
-									options={weekStartOptions}
-									value={weekStartDayValue}
-									onchange={(value) => dateFormat.setWeekStartDay(value as 'sunday' | 'monday')}
-								/>
-							</div>
-						</div>
-
-						<div class="pt-2 border-t border-border">
-							<Button variant="secondary" onclick={() => dateFormat.reset()}>
-								{#snippet children()}Reset to Browser Defaults{/snippet}
-							</Button>
-						</div>
-					</div>
-				{/snippet}
-			</Card>
 		</section>
 	</div>
 {/if}

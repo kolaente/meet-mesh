@@ -12,6 +12,10 @@ export function getAuth() {
     get loading() { return loading },
     get isAuthenticated() { return user !== null },
 
+    refreshUser(updatedUser: User) {
+      user = updatedUser
+    },
+
     async check() {
       if (checked) return
       loading = true

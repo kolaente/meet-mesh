@@ -38,8 +38,15 @@
     auth.logout()
   }
 
-  // Get user initials from email
+  // Get user initials from name or email
   function getUserInitials(): string {
+    if (auth.user?.name) {
+      const parts = auth.user.name.trim().split(/\s+/)
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase()
+      }
+      return auth.user.name.substring(0, 2).toUpperCase()
+    }
     const email = auth.user?.email ?? ''
     if (!email) return '?'
     const name = email.split('@')[0]
@@ -50,8 +57,9 @@
     return name.substring(0, 2).toUpperCase()
   }
 
-  // Get display name from email
+  // Get display name from name or email
   function getUserDisplayName(): string {
+    if (auth.user?.name) return auth.user.name
     const email = auth.user?.email ?? ''
     if (!email) return 'User'
     const name = email.split('@')[0]

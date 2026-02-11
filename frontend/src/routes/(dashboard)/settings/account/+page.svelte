@@ -51,6 +51,7 @@
 			}
 
 			if (data) {
+				auth.refreshUser(data);
 				toast.success('Profile updated');
 			}
 		} finally {
