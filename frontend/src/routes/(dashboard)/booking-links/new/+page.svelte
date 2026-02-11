@@ -264,7 +264,7 @@
 											value={String(field.type)}
 											onchange={(e: Event) =>
 												updateField(index, 'type', Number((e.target as HTMLSelectElement).value) as CustomFieldType)}
-											class="block w-full h-10 rounded-[var(--radius-md)] border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
+											class="block w-full h-10 rounded-brutalist-md border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-indigo-500 focus:ring-indigo-500"
 										>
 											{#each fieldTypeOptions as opt (opt.value)}
 												<option value={opt.value}>{opt.label}</option>

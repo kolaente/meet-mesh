@@ -113,22 +113,22 @@
 			{#snippet children()}
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Type</p>
+						<p class="text-sm font-medium text-text-secondary">Type</p>
 						<Badge variant="poll" size="md" />
 					</div>
 
 					<div>
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Status</p>
+						<p class="text-sm font-medium text-text-secondary">Status</p>
 						<Badge variant={statusVariant} size="md" />
 					</div>
 
 					<div class="col-span-2">
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Public URL</p>
+						<p class="text-sm font-medium text-text-secondary">Public URL</p>
 						<a
 							href={publicUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-[var(--sky)] hover:opacity-80 font-mono text-sm"
+							class="text-accent-sky hover:opacity-80 font-mono text-sm"
 						>
 							{publicUrl}
 						</a>
@@ -136,8 +136,8 @@
 
 					{#if poll?.description}
 						<div class="col-span-2 md:col-span-4">
-							<p class="text-sm font-medium text-[var(--text-secondary)]">Description</p>
-							<p class="text-[var(--text-primary)]">{poll?.description}</p>
+							<p class="text-sm font-medium text-text-secondary">Description</p>
+							<p class="text-text-primary">{poll?.description}</p>
 						</div>
 					{/if}
 				</div>
@@ -150,16 +150,16 @@
 		<!-- Votes -->
 		<Card>
 			{#snippet header()}
-				<h2 class="text-lg font-medium text-[var(--text-primary)]">
+				<h2 class="text-lg font-medium text-text-primary">
 					Votes ({votes.length})
 				</h2>
 			{/snippet}
 
 			{#snippet children()}
 				{#if votes.length === 0}
-					<p class="text-[var(--text-secondary)] text-center py-4">No votes yet</p>
+					<p class="text-text-secondary text-center py-4">No votes yet</p>
 				{:else}
-					<div class="divide-y divide-[var(--border-color)]">
+					<div class="divide-y divide-border">
 						{#each votes as vote (vote.id)}
 							<VoteRow {vote} slots={options} />
 						{/each}

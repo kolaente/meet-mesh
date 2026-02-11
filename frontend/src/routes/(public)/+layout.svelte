@@ -6,7 +6,7 @@
   let { children } = $props()
 </script>
 
-<div class="min-h-screen bg-[var(--bg-primary)]">
+<div class="min-h-screen bg-bg-primary">
   <div class="max-w-3xl mx-auto px-4 py-8">
     {#key page.url.pathname}
       <div in:fade={pageIn} out:fade={pageOut}>

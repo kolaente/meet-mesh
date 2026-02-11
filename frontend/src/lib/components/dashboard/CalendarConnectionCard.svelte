@@ -68,20 +68,20 @@
 		<div class="space-y-3">
 			<div class="flex items-start justify-between gap-2">
 				<div class="min-w-0 flex-1">
-					<h3 class="font-medium text-[var(--text-primary)] truncate">{getProviderName(calendar.server_url)}</h3>
-					<p class="text-sm text-[var(--text-secondary)] truncate">{calendar.username}</p>
+					<h3 class="font-medium text-text-primary truncate">{getProviderName(calendar.server_url)}</h3>
+					<p class="text-sm text-text-secondary truncate">{calendar.username}</p>
 				</div>
 				<div class="flex items-center gap-2">
 					<Badge variant="caldav" size="xs" />
 				</div>
 			</div>
 
-			<div class="text-sm text-[var(--text-secondary)]">
+			<div class="text-sm text-text-secondary">
 				<span class="font-mono text-xs truncate block">{calendar.server_url}</span>
 			</div>
 
 			{#if calendar.calendar_urls && calendar.calendar_urls.length > 0}
-				<div class="text-sm text-[var(--text-secondary)]">
+				<div class="text-sm text-text-secondary">
 					<span class="font-medium">{calendar.calendar_urls.length}</span>
 					calendar{calendar.calendar_urls.length === 1 ? '' : 's'} synced
 				</div>
@@ -126,7 +126,7 @@
 		{#if testing}
 			<div class="flex flex-col items-center justify-center py-8">
 				<Spinner size="lg" />
-				<p class="mt-4 text-[var(--text-secondary)]">Testing calendar connection...</p>
+				<p class="mt-4 text-text-secondary">Testing calendar connection...</p>
 			</div>
 		{:else if testResult}
 			{#if testResult.success}
@@ -137,7 +137,7 @@
 						</svg>
 						<span class="font-medium">Connection successful</span>
 					</div>
-					<p class="text-[var(--text-secondary)]">
+					<p class="text-text-secondary">
 						Found {testResult.events.length} event{testResult.events.length === 1 ? '' : 's'} in the next 7 days
 					</p>
 					{#if testResult.events.length > 0}
@@ -145,8 +145,8 @@
 							<ul class="divide-y divide-gray-200 dark:divide-neutral-700">
 								{#each testResult.events as event}
 									<li class="px-4 py-3">
-										<p class="font-medium text-[var(--text-primary)]">{event.title}</p>
-										<p class="text-sm text-[var(--text-secondary)]">
+										<p class="font-medium text-text-primary">{event.title}</p>
+										<p class="text-sm text-text-secondary">
 											{formatDateTime(event.start)} - {formatDateTime(event.end)}
 										</p>
 									</li>
@@ -163,7 +163,7 @@
 						</svg>
 						<span class="font-medium">Connection failed</span>
 					</div>
-					<p class="text-[var(--text-secondary)]">{testResult.error}</p>
+					<p class="text-text-secondary">{testResult.error}</p>
 				</div>
 			{/if}
 		{/if}

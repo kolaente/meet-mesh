@@ -112,27 +112,27 @@
 			{#snippet children()}
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Type</p>
+						<p class="text-sm font-medium text-text-secondary">Type</p>
 						<Badge variant="booking" size="md" />
 					</div>
 
 					<div>
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Status</p>
+						<p class="text-sm font-medium text-text-secondary">Status</p>
 						<Badge variant={statusVariant} size="md" />
 					</div>
 
 					<div class="col-span-2">
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Durations</p>
-						<p class="text-[var(--text-primary)]">{formattedDurations()}</p>
+						<p class="text-sm font-medium text-text-secondary">Durations</p>
+						<p class="text-text-primary">{formattedDurations()}</p>
 					</div>
 
 					<div class="col-span-2 md:col-span-4">
-						<p class="text-sm font-medium text-[var(--text-secondary)]">Public URL</p>
+						<p class="text-sm font-medium text-text-secondary">Public URL</p>
 						<a
 							href={publicUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-[var(--sky)] hover:opacity-80 font-mono text-sm"
+							class="text-accent-sky hover:opacity-80 font-mono text-sm"
 						>
 							{publicUrl}
 						</a>
@@ -140,19 +140,19 @@
 
 					{#if link?.description}
 						<div class="col-span-2 md:col-span-4">
-							<p class="text-sm font-medium text-[var(--text-secondary)]">Description</p>
-							<p class="text-[var(--text-primary)]">{link?.description}</p>
+							<p class="text-sm font-medium text-text-secondary">Description</p>
+							<p class="text-text-primary">{link?.description}</p>
 						</div>
 					{/if}
 
 					{#if link?.meeting_link}
 						<div class="col-span-2 md:col-span-4">
-							<p class="text-sm font-medium text-[var(--text-secondary)]">Meeting Link</p>
+							<p class="text-sm font-medium text-text-secondary">Meeting Link</p>
 							<a
 								href={link.meeting_link}
 								target="_blank"
 								rel="noopener noreferrer"
-								class="text-[var(--sky)] hover:opacity-80 font-mono text-sm"
+								class="text-accent-sky hover:opacity-80 font-mono text-sm"
 							>
 								{link.meeting_link}
 							</a>
@@ -165,16 +165,16 @@
 		<!-- Bookings -->
 		<Card>
 			{#snippet header()}
-				<h2 class="text-lg font-medium text-[var(--text-primary)]">
+				<h2 class="text-lg font-medium text-text-primary">
 					Bookings ({bookings.length})
 				</h2>
 			{/snippet}
 
 			{#snippet children()}
 				{#if bookings.length === 0}
-					<p class="text-[var(--text-secondary)] text-center py-4">No bookings yet</p>
+					<p class="text-text-secondary text-center py-4">No bookings yet</p>
 				{:else}
-					<div class="divide-y divide-[var(--border-color)]">
+					<div class="divide-y divide-border">
 						{#each bookings as booking (booking.id)}
 							<BookingRow {booking} onUpdate={handleBookingUpdate} />
 						{/each}

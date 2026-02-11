@@ -161,7 +161,7 @@
 	{#snippet children()}
 		{#if step === 'credentials'}
 			<div class="space-y-4">
-				<p class="text-[var(--text-secondary)] text-sm">
+				<p class="text-text-secondary text-sm">
 					Enter your CalDAV server credentials to connect your calendars.
 				</p>
 
@@ -203,11 +203,11 @@
 		{:else if step === 'discovering'}
 			<div class="flex flex-col items-center justify-center py-8">
 				<Spinner size="lg" />
-				<p class="mt-4 text-[var(--text-secondary)]">Discovering calendars...</p>
+				<p class="mt-4 text-text-secondary">Discovering calendars...</p>
 			</div>
 		{:else if step === 'selection'}
 			<div class="space-y-4">
-				<p class="text-[var(--text-secondary)] text-sm">
+				<p class="text-text-secondary text-sm">
 					Select which calendars to use for availability checking, and optionally choose one for
 					writing new events.
 				</p>
@@ -220,10 +220,10 @@
 					</div>
 				{/if}
 
-				<div class="max-h-64 overflow-y-auto rounded-lg border-2 border-[var(--border-color)]">
+				<div class="max-h-64 overflow-y-auto rounded-lg border-2 border-border">
 					{#each discoveredCalendars as calendar}
 						<div
-							class="flex items-center justify-between px-4 py-3 border-b border-[var(--border-color)] last:border-b-0"
+							class="flex items-center justify-between px-4 py-3 border-b border-border last:border-b-0"
 						>
 							<div class="flex items-center gap-3 flex-1 min-w-0">
 								<Checkbox
@@ -231,11 +231,11 @@
 									onchange={() => toggleCalendarSelection(calendar.url)}
 								/>
 								<div class="min-w-0">
-									<p class="font-medium text-[var(--text-primary)] truncate">
+									<p class="font-medium text-text-primary truncate">
 										{calendar.name}
 									</p>
 									{#if calendar.description}
-										<p class="text-xs text-[var(--text-secondary)] truncate">
+										<p class="text-xs text-text-secondary truncate">
 											{calendar.description}
 										</p>
 									{/if}
@@ -245,8 +245,8 @@
 								type="button"
 								class="ml-2 px-2 py-1 text-xs rounded-md transition-colors {writeCalendarUrl ===
 								calendar.url
-									? 'bg-[var(--sky)] text-white'
-									: 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'}"
+									? 'bg-accent-sky text-white'
+									: 'bg-bg-tertiary text-text-secondary hover:bg-bg-secondary'}"
 								onclick={() => setWriteCalendar(calendar.url)}
 								title={writeCalendarUrl === calendar.url
 									? 'Click to remove as write calendar'
@@ -258,7 +258,7 @@
 					{/each}
 				</div>
 
-				<div class="text-xs text-[var(--text-muted)] space-y-1">
+				<div class="text-xs text-text-muted space-y-1">
 					<p>
 						<strong>Availability:</strong> Selected calendars will be checked for busy times when generating
 						available slots.
@@ -272,7 +272,7 @@
 		{:else if step === 'saving'}
 			<div class="flex flex-col items-center justify-center py-8">
 				<Spinner size="lg" />
-				<p class="mt-4 text-[var(--text-secondary)]">Saving calendar connection...</p>
+				<p class="mt-4 text-text-secondary">Saving calendar connection...</p>
 			</div>
 		{/if}
 	{/snippet}

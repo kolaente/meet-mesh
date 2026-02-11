@@ -78,8 +78,8 @@
 		<!-- Calendar Connections Section -->
 		<section>
 			<div class="mb-4">
-				<h2 class="text-lg font-medium text-[var(--text-primary)]">Calendar Connections</h2>
-				<p class="text-sm text-[var(--text-secondary)]">Connect your CalDAV calendars to check availability</p>
+				<h2 class="text-lg font-medium text-text-primary">Calendar Connections</h2>
+				<p class="text-sm text-text-secondary">Connect your CalDAV calendars to check availability</p>
 			</div>
 
 			<!-- Calendar List -->
@@ -88,7 +88,7 @@
 					{#snippet children()}
 						<div class="text-center py-8">
 							<svg
-								class="mx-auto h-12 w-12 text-[var(--text-muted)]"
+								class="mx-auto h-12 w-12 text-text-muted"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -100,8 +100,8 @@
 									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 								/>
 							</svg>
-							<h3 class="mt-2 text-sm font-medium text-[var(--text-primary)]">No calendars connected</h3>
-							<p class="mt-1 text-sm text-[var(--text-secondary)]">
+							<h3 class="mt-2 text-sm font-medium text-text-primary">No calendars connected</h3>
+							<p class="mt-1 text-sm text-text-secondary">
 								Connect a CalDAV calendar to enable availability checking.
 							</p>
 							<div class="mt-6">
@@ -124,8 +124,8 @@
 		<!-- Date & Time Format Section -->
 		<section>
 			<div class="mb-4">
-				<h2 class="text-lg font-medium text-[var(--text-primary)]">Date & Time Format</h2>
-				<p class="text-sm text-[var(--text-secondary)]">Customize how dates and times are displayed</p>
+				<h2 class="text-lg font-medium text-text-primary">Date & Time Format</h2>
+				<p class="text-sm text-text-secondary">Customize how dates and times are displayed</p>
 			</div>
 
 			<Card>
@@ -133,8 +133,8 @@
 					<div class="space-y-6">
 						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 							<div>
-								<p class="font-medium text-[var(--text-primary)]">Time Format</p>
-								<p class="text-sm text-[var(--text-secondary)]">Choose 12-hour or 24-hour time display</p>
+								<p class="font-medium text-text-primary">Time Format</p>
+								<p class="text-sm text-text-secondary">Choose 12-hour or 24-hour time display</p>
 							</div>
 							<div class="w-full sm:w-48">
 								<Select
@@ -148,8 +148,8 @@
 
 						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 							<div>
-								<p class="font-medium text-[var(--text-primary)]">Week Starts On</p>
-								<p class="text-sm text-[var(--text-secondary)]">Choose which day starts your week</p>
+								<p class="font-medium text-text-primary">Week Starts On</p>
+								<p class="text-sm text-text-secondary">Choose which day starts your week</p>
 							</div>
 							<div class="w-full sm:w-48">
 								<Select
@@ -161,7 +161,7 @@
 							</div>
 						</div>
 
-						<div class="pt-2 border-t border-[var(--border-color)]">
+						<div class="pt-2 border-t border-border">
 							<Button variant="secondary" onclick={() => dateFormat.reset()}>
 								{#snippet children()}Reset to Browser Defaults{/snippet}
 							</Button>

@@ -222,7 +222,7 @@
 
 				{#snippet children()}
 					{#if recentBookings.length === 0}
-						<p class="text-[var(--text-muted)] text-center py-4">No bookings yet</p>
+						<p class="text-text-muted text-center py-4">No bookings yet</p>
 					{:else}
 						<div class="booking-list">
 							{#each recentBookings as booking (booking.id)}
