@@ -127,3 +127,31 @@ func (h *Handler) GetCurrentUser(ctx context.Context) (gen.GetCurrentUserRes, er
 		Name:  gen.NewOptString(user.Name),
 	}, nil
 }
+
+// UpdateCurrentUser updates the authenticated user's profile
+func (h *Handler) UpdateCurrentUser(ctx context.Context, req *gen.UpdateCurrentUserReq) (gen.UpdateCurrentUserRes, error) {
+	userID, ok := GetUserID(ctx)
+	if !ok {
+		return &gen.Error{Message: "Not authenticated"}, nil
+	}
+
+	var user User
+	if err := h.db.First(&user, userID).Error; err != nil {
+		return &gen.Error{Message: "User not found"}, nil
+	}
+
+	// Apply updates
+	if req.Name.Set {
+		user.Name = req.Name.Value
+	}
+
+	if err := h.db.Save(&user).Error; err != nil {
+		return &gen.Error{Message: "Failed to update user"}, nil
+	}
+
+	return &gen.User{
+		ID:    int(user.ID),
+		Email: user.Email,
+		Name:  gen.NewOptString(user.Name),
+	}, nil
+}
