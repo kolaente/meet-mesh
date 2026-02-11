@@ -159,7 +159,11 @@
 			<div class="sidebar-footer">
 				<div class="user-card">
 					<div class="user-avatar">
-						{auth.user?.email?.charAt(0).toUpperCase() ?? 'U'}
+						{#if auth.user?.avatar_url}
+							<img src={auth.user.avatar_url} alt="Avatar" class="user-avatar-img" />
+						{:else}
+							{auth.user?.email?.charAt(0).toUpperCase() ?? 'U'}
+						{/if}
 					</div>
 					<div class="user-info">
 						<div class="user-email">{auth.user?.email ?? ''}</div>
@@ -357,6 +361,13 @@
 		color: white;
 		font-weight: 700;
 		font-size: 0.8rem;
+		overflow: hidden;
+	}
+
+	.user-avatar-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
 	.user-info {

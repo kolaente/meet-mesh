@@ -125,7 +125,13 @@
       <DropdownMenu.Trigger>
         {#snippet child({ props })}
           <button {...props} class="user-card">
-            <div class="user-avatar">{getUserInitials()}</div>
+            <div class="user-avatar">
+              {#if auth.user?.avatar_url}
+                <img src={auth.user.avatar_url} alt="Avatar" class="user-avatar-img" />
+              {:else}
+                {getUserInitials()}
+              {/if}
+            </div>
             <div class="user-info">
               <div class="user-name">{getUserDisplayName()}</div>
               <div class="user-email">{auth.user?.email ?? ''}</div>
@@ -313,6 +319,13 @@
     font-weight: 700;
     font-size: 0.8rem;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .user-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .user-info {
