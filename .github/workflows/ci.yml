@@ -69,6 +69,19 @@ jobs:
         with:
           go-version: stable
           cache-dependency-path: api/go.sum
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
       - name: Verify codegen is up to date
         run: make verify-codegen
 
