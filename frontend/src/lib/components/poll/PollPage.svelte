@@ -19,6 +19,8 @@
 		slots: Slot[];
 		show_results?: boolean;
 		require_email?: boolean;
+		organizer_name?: string;
+		organizer_avatar_url?: string;
 	}
 
 	interface Props {
@@ -103,6 +105,20 @@
 </script>
 
 <div class="max-w-2xl mx-auto">
+	<!-- Organizer identity -->
+	{#if link.organizer_name}
+		<div class="flex items-center justify-center gap-2 mb-4">
+			<div class="w-8 h-8 rounded-full overflow-hidden bg-accent-orange flex items-center justify-center shrink-0">
+				{#if link.organizer_avatar_url}
+					<img src={link.organizer_avatar_url} alt={link.organizer_name} class="w-full h-full object-cover" />
+				{:else}
+					<span class="text-white font-bold text-sm">{link.organizer_name.charAt(0).toUpperCase()}</span>
+				{/if}
+			</div>
+			<span class="text-sm font-semibold text-text-secondary">{link.organizer_name}</span>
+		</div>
+	{/if}
+
 	<!-- Header -->
 	<div class="text-center mb-8">
 		<h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{link.name}</h1>

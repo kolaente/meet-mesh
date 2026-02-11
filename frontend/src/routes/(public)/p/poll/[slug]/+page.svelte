@@ -15,6 +15,8 @@
 		options: PollOption[];
 		show_results?: boolean;
 		require_email?: boolean;
+		organizer_name?: string;
+		organizer_avatar_url?: string;
 	}
 
 	let poll = $state<PublicPoll | null>(null);
@@ -77,7 +79,9 @@
 			custom_fields: poll.custom_fields,
 			slots: poll.options,
 			show_results: poll.show_results,
-			require_email: poll.require_email
+			require_email: poll.require_email,
+			organizer_name: poll.organizer_name,
+			organizer_avatar_url: poll.organizer_avatar_url
 		}}
 		{slug}
 	/>
