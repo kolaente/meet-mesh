@@ -42,9 +42,9 @@
 	<!-- Yes bar -->
 	<div class="flex items-center gap-2">
 		<span class="w-12 text-xs font-medium text-gray-600 dark:text-gray-400">Yes</span>
-		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-[var(--radius-sm)] overflow-hidden">
+		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-brutalist-sm overflow-hidden">
 			<div
-				class="h-full bg-indigo-500 rounded-[var(--radius-sm)] transition-all duration-300"
+				class="h-full bg-indigo-500 rounded-brutalist-sm transition-all duration-300"
 				style="width: {getBarWidth(counts.yes)}"
 			></div>
 		</div>
@@ -54,9 +54,9 @@
 	<!-- No bar -->
 	<div class="flex items-center gap-2">
 		<span class="w-12 text-xs font-medium text-gray-600 dark:text-gray-400">No</span>
-		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-[var(--radius-sm)] overflow-hidden">
+		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-brutalist-sm overflow-hidden">
 			<div
-				class="h-full bg-red-400 rounded-[var(--radius-sm)] transition-all duration-300"
+				class="h-full bg-red-400 rounded-brutalist-sm transition-all duration-300"
 				style="width: {getBarWidth(counts.no)}"
 			></div>
 		</div>
@@ -66,9 +66,9 @@
 	<!-- Maybe bar -->
 	<div class="flex items-center gap-2">
 		<span class="w-12 text-xs font-medium text-gray-600 dark:text-gray-400">Maybe</span>
-		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-[var(--radius-sm)] overflow-hidden">
+		<div class="flex-1 h-5 bg-gray-100 dark:bg-neutral-800 rounded-brutalist-sm overflow-hidden">
 			<div
-				class="h-full bg-amber-400 rounded-[var(--radius-sm)] transition-all duration-300"
+				class="h-full bg-amber-400 rounded-brutalist-sm transition-all duration-300"
 				style="width: {getBarWidth(counts.maybe)}"
 			></div>
 		</div>

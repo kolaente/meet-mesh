@@ -40,21 +40,21 @@
 		if (isSelected) {
 			switch (optionValue) {
 				case 1: // Yes
-					return `${base} bg-[var(--emerald)] text-white hover:opacity-90 focus:ring-[var(--emerald)]`;
+					return `${base} bg-accent-emerald text-white hover:opacity-90 focus:ring-accent-emerald`;
 				case 2: // No
-					return `${base} bg-[var(--rose)] text-white hover:opacity-90 focus:ring-[var(--rose)]`;
+					return `${base} bg-accent-rose text-white hover:opacity-90 focus:ring-accent-rose`;
 				case 3: // Maybe
-					return `${base} bg-[var(--amber)] text-white hover:opacity-90 focus:ring-[var(--amber)]`;
+					return `${base} bg-accent-amber text-white hover:opacity-90 focus:ring-accent-amber`;
 			}
 		}
 
 		// Unselected/ghost style
-		return `${base} bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] border-y border-[var(--border-color)] first:border-l first:rounded-l-[var(--radius-md)] last:border-r last:rounded-r-[var(--radius-md)]`;
+		return `${base} bg-bg-secondary text-text-primary hover:bg-bg-tertiary border-y border-border first:border-l first:rounded-l-brutalist-md last:border-r last:rounded-r-brutalist-md`;
 	}
 </script>
 
 <div
-	class="inline-flex w-full sm:w-auto rounded-[var(--radius-md)] shadow-sm {className}"
+	class="inline-flex w-full sm:w-auto rounded-brutalist-md shadow-sm {className}"
 	role="group"
 	aria-label="Vote selection"
 >
@@ -65,12 +65,12 @@
 			onclick={() => handleClick(option.value)}
 			class="{getButtonClasses(option.value)} flex-1 sm:flex-none"
 			class:border-l={!isSelected && option.value !== 1}
-			class:border-[var(--border-color)]={!isSelected}
+			class:border-border={!isSelected}
 			class:border-y={!isSelected}
 			class:border-r={!isSelected && option.value === 3}
 			class:first:border-l={!isSelected}
-			class:rounded-l-[var(--radius-md)]={option.value === 1}
-			class:rounded-r-[var(--radius-md)]={option.value === 3}
+			class:rounded-l-brutalist-md={option.value === 1}
+			class:rounded-r-brutalist-md={option.value === 3}
 			aria-pressed={isSelected}
 		>
 			{option.label}

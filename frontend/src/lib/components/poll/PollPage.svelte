@@ -114,7 +114,7 @@
 	<!-- Error message -->
 	{#if error}
 		<div
-			class="mb-6 p-4 bg-red-50 border border-red-200 rounded-[var(--radius-md)] text-red-700"
+			class="mb-6 p-4 bg-red-50 border border-red-200 rounded-brutalist-md text-red-700"
 			transition:fade
 		>
 			{error}

@@ -34,8 +34,8 @@
 </script>
 
 <form onsubmit={handleSubmit} class="space-y-4 {className}">
-	<div class="border-t border-[var(--border-color)] pt-4">
-		<h3 class="text-base font-medium text-[var(--text-primary)] mb-4">Your Information</h3>
+	<div class="border-t border-border pt-4">
+		<h3 class="text-base font-medium text-text-primary mb-4">Your Information</h3>
 
 		<!-- Name field -->
 		<Input
