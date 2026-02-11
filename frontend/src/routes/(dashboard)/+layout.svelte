@@ -44,9 +44,9 @@
 <style>
   .main-content {
     flex: 1;
-    margin-left: var(--sidebar-width);
+    margin-left: var(--spacing-sidebar);
     padding: 1.5rem 2rem;
-    background: var(--bg-primary);
+    background: var(--color-bg-primary);
     min-height: 100vh;
   }
 

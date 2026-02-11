@@ -278,17 +278,17 @@
 	.card-title {
 		font-size: 0.9rem;
 		font-weight: 700;
-		color: var(--text-primary);
+		color: var(--color-text-primary);
 	}
 
 	.card-badge {
 		font-size: 0.7rem;
 		font-weight: 700;
 		padding: 0.25rem 0.6rem;
-		border-radius: var(--radius);
-		background: var(--amber);
+		border-radius: var(--radius-brutalist);
+		background: var(--color-accent-amber);
 		color: white;
-		border: 1px solid var(--border-color);
+		border: 1px solid var(--color-border);
 	}
 
 	/* Remove default Card padding for components with their own padding */

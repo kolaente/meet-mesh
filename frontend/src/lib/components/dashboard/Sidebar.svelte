@@ -136,9 +136,9 @@
 
 <style>
   .sidebar {
-    width: var(--sidebar-width);
-    background: var(--bg-secondary);
-    border-right: var(--border);
+    width: var(--spacing-sidebar);
+    background: var(--color-bg-secondary);
+    border-right: 2px solid var(--color-border);
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
@@ -147,7 +147,7 @@
     top: 0;
     bottom: 0;
     z-index: 100;
-    transition: transform var(--transition), background var(--transition);
+    transition: transform 0.15s ease, background 0.15s ease;
   }
 
   /* Logo */
@@ -157,7 +157,7 @@
     gap: 0.75rem;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
-    border-bottom: var(--border-light);
+    border-bottom: 1px solid var(--color-border);
     text-decoration: none;
     cursor: pointer;
   }
@@ -165,14 +165,14 @@
   .logo-icon {
     width: 40px;
     height: 40px;
-    background: var(--cyan);
-    border: var(--border);
-    border-radius: var(--radius);
+    background: var(--color-accent-sky);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-brutalist);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--transition), border-color var(--transition);
+    box-shadow: var(--shadow-brutalist-sm);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
   }
 
   :global([data-theme="dark"]) .logo-icon {
@@ -189,7 +189,7 @@
   .logo-text {
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-text-primary);
     letter-spacing: -0.03em;
   }
 
@@ -206,26 +206,26 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.7rem 0.75rem;
-    border-radius: var(--radius);
-    color: var(--text-secondary);
+    border-radius: var(--radius-brutalist);
+    color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
-    transition: all var(--transition);
+    transition: all 0.15s ease;
     border: 2px solid transparent;
     cursor: pointer;
   }
 
   .nav-item:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
   }
 
   .nav-item.active {
-    background: var(--cyan);
+    background: var(--color-accent-sky);
     color: white;
-    border-color: var(--border-color);
-    box-shadow: var(--shadow-sm);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-brutalist-sm);
   }
 
   :global([data-theme="dark"]) .nav-item.active {
@@ -241,19 +241,19 @@
 
   .nav-badge {
     margin-left: auto;
-    background: var(--pink);
+    background: var(--color-accent-rose);
     color: white;
     font-size: 0.7rem;
     font-weight: 700;
     padding: 0.15rem 0.5rem;
     border-radius: 99px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--color-border);
   }
 
   /* Sidebar footer */
   .sidebar-footer {
     padding-top: 1rem;
-    border-top: var(--border-light);
+    border-top: 1px solid var(--color-border);
   }
 
   .user-card {
@@ -261,8 +261,8 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem;
-    border-radius: var(--radius);
-    transition: background var(--transition);
+    border-radius: var(--radius-brutalist);
+    transition: background 0.15s ease;
     cursor: pointer;
     width: 100%;
     border: none;
@@ -271,15 +271,15 @@
   }
 
   .user-card:hover {
-    background: var(--bg-tertiary);
+    background: var(--color-bg-tertiary);
   }
 
   .user-avatar {
     width: 36px;
     height: 36px;
-    border-radius: var(--radius);
-    background: var(--orange);
-    border: var(--border);
+    border-radius: var(--radius-brutalist);
+    background: var(--color-accent-amber);
+    border: 2px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -297,7 +297,7 @@
   .user-name {
     font-weight: 600;
     font-size: 0.85rem;
-    color: var(--text-primary);
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -305,7 +305,7 @@
 
   .user-email {
     font-size: 0.7rem;
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -314,22 +314,22 @@
   .user-chevron {
     width: 16px;
     height: 16px;
-    color: var(--text-muted);
+    color: var(--color-text-muted);
     flex-shrink: 0;
-    transition: color var(--transition);
+    transition: color 0.15s ease;
   }
 
   .user-card:hover .user-chevron {
-    color: var(--text-primary);
+    color: var(--color-text-primary);
   }
 
   :global(.user-menu-content) {
     min-width: 200px;
-    background: var(--bg-secondary);
-    border: var(--border);
-    border-radius: var(--radius);
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-brutalist);
     padding: 0.35rem;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-brutalist);
     z-index: 200;
   }
 
@@ -356,12 +356,12 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.6rem 0.75rem;
-    border-radius: calc(var(--radius) - 2px);
-    color: var(--text-secondary);
+    border-radius: calc(var(--radius-brutalist) - 2px);
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition);
+    transition: all 0.15s ease;
     border: none;
     background: transparent;
     width: 100%;
@@ -369,8 +369,8 @@
 
   :global(.user-menu-item:hover),
   :global(.user-menu-item[data-highlighted]) {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
   }
 
   :global(.user-menu-item svg) {
