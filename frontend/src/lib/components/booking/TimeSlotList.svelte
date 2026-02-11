@@ -39,16 +39,16 @@
 			type="button"
 			onclick={() => handleSelect(slot)}
 			in:fly={{ x: 50, duration: 200, delay: index * 50 }}
-			class="w-full px-4 py-3 min-h-[48px] text-left rounded-[var(--radius-md)] border transition-colors active:scale-[0.98]
+			class="w-full px-4 py-3 min-h-[48px] text-left rounded-brutalist-md border transition-colors active:scale-[0.98]
 				{isSelected(slot)
-					? 'bg-[var(--sky)] text-white border-[var(--sky)]'
-					: 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--border-color)] hover:border-[var(--sky)] hover:bg-[var(--bg-tertiary)]'}"
+					? 'bg-accent-sky text-white border-accent-sky'
+					: 'bg-bg-secondary text-text-primary border-border hover:border-accent-sky hover:bg-bg-tertiary'}"
 		>
 			<span class="font-medium text-sm sm:text-base">{formatTimeRange(slot)}</span>
 		</button>
 	{/each}
 
 	{#if slots.length === 0}
-		<p class="text-center text-[var(--text-tertiary)] py-4 text-sm sm:text-base">No available time slots for this day.</p>
+		<p class="text-center text-text-tertiary py-4 text-sm sm:text-base">No available time slots for this day.</p>
 	{/if}
 </div>

@@ -33,7 +33,7 @@
 </script>
 
 <div class="space-y-4">
-	<span class="block text-sm font-medium text-[var(--text-secondary)]">Availability</span>
+	<span class="block text-sm font-medium text-text-secondary">Availability</span>
 
 	<!-- Visual calendar display -->
 	<WeekAvailabilityDisplay {rules} />
@@ -41,7 +41,7 @@
 	<!-- Rule forms -->
 	<div class="space-y-3">
 		{#each rules as rule, index (index)}
-			<div class="p-3 bg-[var(--bg-secondary)] rounded-lg">
+			<div class="p-3 bg-bg-secondary rounded-lg">
 				<AvailabilityRuleForm
 					{rule}
 					onchange={(r) => updateRule(index, r)}
@@ -55,7 +55,7 @@
 	<button
 		type="button"
 		onclick={addRule}
-		class="text-sm text-[var(--sky)] hover:text-[var(--sky-hover)] font-medium transition-colors"
+		class="text-sm text-accent-sky hover:text-accent-sky-hover font-medium transition-colors"
 	>
 		+ Add another time window
 	</button>

@@ -67,7 +67,7 @@
 				bind:value={startDate}
 				min={minDate}
 				max={endDate || maxDate}
-				class="block w-full rounded-[var(--radius-md)] border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
+				class="block w-full rounded-brutalist-md border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
 			/>
 		</div>
 
@@ -79,7 +79,7 @@
 				bind:value={endDate}
 				min={startDate || minDate}
 				max={maxDate}
-				class="block w-full rounded-[var(--radius-md)] border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
+				class="block w-full rounded-brutalist-md border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-500"
 			/>
 		</div>
 	</div>
@@ -89,7 +89,7 @@
 	{/if}
 
 	{#if dateRangeDisplay}
-		<div class="bg-gray-50 dark:bg-neutral-800 rounded-[var(--radius-md)] p-3 border border-gray-200 dark:border-neutral-700">
+		<div class="bg-gray-50 dark:bg-neutral-800 rounded-brutalist-md p-3 border border-gray-200 dark:border-neutral-700">
 			<p class="text-sm text-gray-600 dark:text-gray-400">
 				Selected range: <span class="font-medium text-gray-900 dark:text-gray-100">{dateRangeDisplay}</span>
 			</p>

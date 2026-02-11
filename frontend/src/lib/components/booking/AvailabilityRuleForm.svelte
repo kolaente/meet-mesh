@@ -54,10 +54,10 @@
 				<button
 					type="button"
 					onclick={() => toggleDay(day.value)}
-					class="px-2.5 py-1.5 text-xs font-medium rounded-[var(--radius-sm)] transition-colors border
+					class="px-2.5 py-1.5 text-xs font-medium rounded-brutalist-sm transition-colors border
 						{rule.days_of_week.includes(day.value)
 						? 'bg-indigo-500 text-white border-indigo-500'
-						: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-[var(--bg-tertiary)]'}"
+						: 'bg-bg-secondary text-text-secondary border-border hover:bg-bg-tertiary'}"
 				>
 					{day.label}
 				</button>
@@ -69,7 +69,7 @@
 			<button
 				type="button"
 				onclick={onremove}
-				class="p-1 text-[var(--text-muted)] hover:text-[var(--rose)] transition-colors flex-shrink-0"
+				class="p-1 text-text-muted hover:text-accent-rose transition-colors flex-shrink-0"
 				aria-label="Remove availability rule"
 			>
 				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,17 +89,17 @@
 		<select
 			value={rule.start_time}
 			onchange={(e) => updateTime('start_time', e.currentTarget.value)}
-			class="block w-28 h-9 rounded-[var(--radius-sm)] border border-[var(--border-color)] bg-[var(--bg-secondary)] px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--sky)] focus:border-[var(--sky)]"
+			class="block w-28 h-9 rounded-brutalist-sm border border-border bg-bg-secondary px-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-sky focus:border-accent-sky"
 		>
 			{#each timeOptions as time}
 				<option value={time}>{time}</option>
 			{/each}
 		</select>
-		<span class="text-sm text-[var(--text-muted)]">to</span>
+		<span class="text-sm text-text-muted">to</span>
 		<select
 			value={rule.end_time}
 			onchange={(e) => updateTime('end_time', e.currentTarget.value)}
-			class="block w-28 h-9 rounded-[var(--radius-sm)] border border-[var(--border-color)] bg-[var(--bg-secondary)] px-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--sky)] focus:border-[var(--sky)]"
+			class="block w-28 h-9 rounded-brutalist-sm border border-border bg-bg-secondary px-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-sky focus:border-accent-sky"
 		>
 			{#each timeOptions as time}
 				<option value={time}>{time}</option>

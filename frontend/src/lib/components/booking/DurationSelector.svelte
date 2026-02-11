@@ -39,8 +39,8 @@
 			onclick={() => handleSelect(duration)}
 			class="px-4 py-2 text-sm font-medium rounded-full border transition-colors
 				{isSelected(duration)
-					? 'bg-[var(--sky)] text-white border-[var(--sky)]'
-					: 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--border-color)] hover:border-[var(--sky)] hover:bg-[var(--bg-tertiary)]'}"
+					? 'bg-accent-sky text-white border-accent-sky'
+					: 'bg-bg-secondary text-text-primary border-border hover:border-accent-sky hover:bg-bg-tertiary'}"
 		>
 			{formatDuration(duration)}
 		</button>

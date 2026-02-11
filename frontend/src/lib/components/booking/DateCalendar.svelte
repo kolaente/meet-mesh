@@ -92,7 +92,7 @@
 		<button
 			type="button"
 			onclick={prevMonth}
-			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-[var(--radius-md)] transition-colors"
+			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-brutalist-md transition-colors"
 			aria-label="Previous month"
 		>
 			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -105,7 +105,7 @@
 		<button
 			type="button"
 			onclick={nextMonth}
-			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-[var(--radius-md)] transition-colors"
+			class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-brutalist-md transition-colors"
 			aria-label="Next month"
 		>
 			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -137,7 +137,7 @@
 					type="button"
 					onclick={() => available && selectDate(day)}
 					disabled={!available}
-					class="aspect-square min-h-[40px] sm:min-h-0 flex flex-col items-center justify-center relative rounded-[var(--radius-md)] text-xs sm:text-sm transition-colors
+					class="aspect-square min-h-[40px] sm:min-h-0 flex flex-col items-center justify-center relative rounded-brutalist-md text-xs sm:text-sm transition-colors
 						{selected
 							? 'bg-indigo-600 text-white'
 							: available
