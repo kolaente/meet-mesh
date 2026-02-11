@@ -9,10 +9,15 @@ COPY frontend/pnpm-lock.yaml frontend/package.json ./
 RUN npm install -g corepack && corepack enable && \
     pnpm install --frozen-lockfile
 COPY frontend/ ./
+# Copy openapi.yaml for API type generation
+COPY api/openapi.yaml /api/openapi.yaml
 RUN pnpm build
 
 # Stage 2: Build Go backend with xgo for cross-compilation with CGO
 FROM --platform=$BUILDPLATFORM ghcr.io/techknowlogick/xgo:go-1.25.x AS backend-builder
+
+# Install xgo tool
+RUN go install src.techknowlogick.com/xgo@latest
 
 WORKDIR /go/src/github.com/kolaente/meet-mesh
 
@@ -28,13 +33,13 @@ COPY --from=frontend-builder /build/build ./api/embedded/dist/
 
 ARG TARGETOS TARGETARCH TARGETVARIANT
 
-# Build with xgo for the target platform
+# Build with xgo for the target platform (static linking for scratch image)
 RUN cd api && \
-    /usr/local/bin/xgo \
+    xgo \
         -targets "${TARGETOS}/${TARGETARCH}/${TARGETVARIANT}" \
         -dest /build \
         -out meet-mesh \
-        -ldflags="-s -w" \
+        -ldflags='-s -w -linkmode external -extldflags "-static"' \
         ./cmd && \
     mv /build/meet-mesh-* /build/meet-mesh
 

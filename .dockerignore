@@ -1,0 +1,31 @@
+# Git
+.git
+.gitignore
+
+# Development
+*.md
+docs/
+.beans/
+
+# Build artifacts
+meet-mesh
+frontend/node_modules
+frontend/build
+api/embedded/dist
+api/data
+
+# Config files (should be mounted)
+config.yaml
+config.dev.yaml
+data/
+
+# IDE
+.idea/
+.vscode/
+
+# Devenv
+.devenv/
+devenv.lock
+devenv.nix
+devenv.yaml
+
