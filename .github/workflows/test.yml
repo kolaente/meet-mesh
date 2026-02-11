@@ -1,16 +1,7 @@
 name: Test
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-concurrency:
-  group: ${{ github.ref == 'refs/heads/main' &&
-    format('{0}-{1}', github.workflow, github.run_id) ||
-    format('{0}-{1}', github.workflow, github.event.pull_request.number || github.ref) }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   api-setup:
