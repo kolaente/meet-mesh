@@ -81,12 +81,23 @@ func (m *Mailer) renderTemplate(name string, data any) string {
 	return buf.String()
 }
 
+// organizerAvatarURL returns the absolute URL for the organizer's avatar,
+// or empty string if no avatar is set.
+func (m *Mailer) organizerAvatarURL(organizer *User) string {
+	if organizer == nil || organizer.AvatarFilename == "" {
+		return ""
+	}
+	return m.baseURL + "/api/avatars/" + organizer.AvatarFilename
+}
+
 // SendBookingConfirmation sends confirmation to guest
-func (m *Mailer) SendBookingConfirmation(booking *Booking, link *BookingLink) error {
+func (m *Mailer) SendBookingConfirmation(booking *Booking, link *BookingLink, organizer *User) error {
 	body := m.renderTemplate("booking_confirmed_guest", map[string]any{
-		"LinkName":  link.Name,
-		"GuestName": booking.GuestName,
-		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":           link.Name,
+		"GuestName":          booking.GuestName,
+		"Time":               booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 	return m.send(booking.GuestEmail, "Booking Confirmed: "+link.Name, body)
 }
@@ -109,26 +120,30 @@ func (m *Mailer) SendBookingPending(booking *Booking, link *BookingLink, organiz
 }
 
 // SendBookingApproved sends approval notification to guest
-func (m *Mailer) SendBookingApproved(booking *Booking, link *BookingLink) error {
+func (m *Mailer) SendBookingApproved(booking *Booking, link *BookingLink, organizer *User) error {
 	body := m.renderTemplate("booking_approved", map[string]any{
-		"LinkName":  link.Name,
-		"GuestName": booking.GuestName,
-		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":           link.Name,
+		"GuestName":          booking.GuestName,
+		"Time":               booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 	return m.send(booking.GuestEmail, "Booking Approved: "+link.Name, body)
 }
 
 // SendBookingConfirmationWithICS sends confirmation to guest with ICS attachment
-func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
+func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingLink, organizer *User) error {
 	body := m.renderTemplate("booking_confirmed_guest", map[string]any{
-		"LinkName":    link.Name,
-		"GuestName":   booking.GuestName,
-		"Time":        booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
-		"MeetingLink": link.MeetingLink,
+		"LinkName":           link.Name,
+		"GuestName":          booking.GuestName,
+		"Time":               booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"MeetingLink":        link.MeetingLink,
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 
 	// Generate ICS data
-	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizerEmail)
+	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizer.Email)
 	if err != nil {
 		log.Printf("[WARN] Failed to generate ICS for booking %d: %v", booking.ID, err)
 		// Send email without attachment
@@ -145,16 +160,18 @@ func (m *Mailer) SendBookingConfirmationWithICS(booking *Booking, link *BookingL
 }
 
 // SendBookingApprovedWithICS sends approval notification to guest with ICS attachment
-func (m *Mailer) SendBookingApprovedWithICS(booking *Booking, link *BookingLink, organizerEmail string) error {
+func (m *Mailer) SendBookingApprovedWithICS(booking *Booking, link *BookingLink, organizer *User) error {
 	body := m.renderTemplate("booking_approved", map[string]any{
-		"LinkName":    link.Name,
-		"GuestName":   booking.GuestName,
-		"Time":        booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
-		"MeetingLink": link.MeetingLink,
+		"LinkName":           link.Name,
+		"GuestName":          booking.GuestName,
+		"Time":               booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"MeetingLink":        link.MeetingLink,
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 
 	// Generate ICS data
-	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizerEmail)
+	icsData, err := GenerateICSData(booking, &booking.Slot, link.EventTemplate, organizer.Email)
 	if err != nil {
 		log.Printf("[WARN] Failed to generate ICS for booking %d: %v", booking.ID, err)
 		// Send email without attachment
@@ -171,20 +188,24 @@ func (m *Mailer) SendBookingApprovedWithICS(booking *Booking, link *BookingLink,
 }
 
 // SendBookingDeclined sends decline notification to guest
-func (m *Mailer) SendBookingDeclined(booking *Booking, link *BookingLink) error {
+func (m *Mailer) SendBookingDeclined(booking *Booking, link *BookingLink, organizer *User) error {
 	body := m.renderTemplate("booking_declined", map[string]any{
-		"LinkName":  link.Name,
-		"GuestName": booking.GuestName,
-		"Time":      booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":           link.Name,
+		"GuestName":          booking.GuestName,
+		"Time":               booking.Slot.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 	return m.send(booking.GuestEmail, "Booking Declined: "+link.Name, body)
 }
 
 // SendPollWinner sends winner notification to all voters
-func (m *Mailer) SendPollWinner(poll *Poll, option *PollOption, votes []Vote) error {
+func (m *Mailer) SendPollWinner(poll *Poll, option *PollOption, votes []Vote, organizer *User) error {
 	body := m.renderTemplate("poll_winner", map[string]any{
-		"LinkName": poll.Name,
-		"Time":     option.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"LinkName":           poll.Name,
+		"Time":               option.StartTime.Format("Monday, January 2 at 3:04 PM"),
+		"OrganizerName":      organizer.Name,
+		"OrganizerAvatarURL": m.organizerAvatarURL(organizer),
 	})
 
 	for _, vote := range votes {
@@ -199,6 +220,11 @@ const emailTemplates = `
 {{define "booking_confirmed_guest"}}
 <html>
 <body>
+{{if .OrganizerAvatarURL}}
+<div style="margin-bottom: 16px;">
+  <img src="{{.OrganizerAvatarURL}}" alt="{{.OrganizerName}}" width="48" height="48" style="border-radius: 50%; width: 48px; height: 48px; object-fit: cover;" />
+</div>
+{{end}}
 <h1>Booking Confirmed!</h1>
 <p>Hi {{.GuestName}},</p>
 <p>Your booking for <strong>{{.LinkName}}</strong> has been confirmed.</p>
@@ -231,6 +257,11 @@ const emailTemplates = `
 {{define "booking_approved"}}
 <html>
 <body>
+{{if .OrganizerAvatarURL}}
+<div style="margin-bottom: 16px;">
+  <img src="{{.OrganizerAvatarURL}}" alt="{{.OrganizerName}}" width="48" height="48" style="border-radius: 50%; width: 48px; height: 48px; object-fit: cover;" />
+</div>
+{{end}}
 <h1>Booking Approved!</h1>
 <p>Hi {{.GuestName}},</p>
 <p>Great news! Your booking for <strong>{{.LinkName}}</strong> has been approved.</p>
@@ -248,6 +279,11 @@ const emailTemplates = `
 {{define "booking_declined"}}
 <html>
 <body>
+{{if .OrganizerAvatarURL}}
+<div style="margin-bottom: 16px;">
+  <img src="{{.OrganizerAvatarURL}}" alt="{{.OrganizerName}}" width="48" height="48" style="border-radius: 50%; width: 48px; height: 48px; object-fit: cover;" />
+</div>
+{{end}}
 <h1>Booking Update</h1>
 <p>Hi {{.GuestName}},</p>
 <p>Unfortunately, your booking request for <strong>{{.LinkName}}</strong> could not be accommodated.</p>
@@ -259,6 +295,11 @@ const emailTemplates = `
 {{define "poll_winner"}}
 <html>
 <body>
+{{if .OrganizerAvatarURL}}
+<div style="margin-bottom: 16px;">
+  <img src="{{.OrganizerAvatarURL}}" alt="{{.OrganizerName}}" width="48" height="48" style="border-radius: 50%; width: 48px; height: 48px; object-fit: cover;" />
+</div>
+{{end}}
 <h1>Date Selected!</h1>
 <p>The organizer has selected a date for <strong>{{.LinkName}}</strong>.</p>
 <p><strong>Selected time:</strong> {{.Time}}</p>

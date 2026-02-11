@@ -38,7 +38,7 @@ func (h *Handler) ApproveBooking(ctx context.Context, params gen.ApproveBookingP
 
 	// Send confirmation email with ICS
 	if h.mailer != nil {
-		_ = h.mailer.SendBookingApprovedWithICS(&booking, &booking.BookingLink, organizer.Email)
+		_ = h.mailer.SendBookingApprovedWithICS(&booking, &booking.BookingLink, &organizer)
 	}
 
 	// Create calendar event
@@ -76,9 +76,13 @@ func (h *Handler) DeclineBooking(ctx context.Context, params gen.DeclineBookingP
 		return nil, err
 	}
 
+	// Get organizer for email
+	var organizer User
+	h.db.First(&organizer, booking.BookingLink.UserID)
+
 	// Send decline email
 	if h.mailer != nil {
-		_ = h.mailer.SendBookingDeclined(&booking, &booking.BookingLink)
+		_ = h.mailer.SendBookingDeclined(&booking, &booking.BookingLink, &organizer)
 	}
 
 	return mapBookingToGen(&booking), nil

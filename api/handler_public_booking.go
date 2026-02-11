@@ -286,7 +286,7 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 	// Send notification email and create calendar event if auto-confirmed
 	if link.AutoConfirm {
 		if h.mailer != nil {
-			_ = h.mailer.SendBookingConfirmationWithICS(&booking, &link, organizer.Email)
+			_ = h.mailer.SendBookingConfirmationWithICS(&booking, &link, &organizer)
 		}
 		// Create calendar event
 		if h.caldav != nil {

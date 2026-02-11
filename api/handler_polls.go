@@ -193,9 +193,13 @@ func (h *Handler) PickPollWinner(ctx context.Context, req *gen.PickPollWinnerReq
 	var votes []Vote
 	h.db.Where("poll_id = ?", poll.ID).Find(&votes)
 
+	// Get organizer for email
+	var organizer User
+	h.db.First(&organizer, poll.UserID)
+
 	// Send winner notification
 	if h.mailer != nil {
-		_ = h.mailer.SendPollWinner(&poll, &option, votes)
+		_ = h.mailer.SendPollWinner(&poll, &option, votes, &organizer)
 	}
 
 	return nil
