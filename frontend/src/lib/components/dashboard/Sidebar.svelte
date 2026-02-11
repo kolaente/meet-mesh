@@ -20,12 +20,16 @@
   ]
 
   const settingsItems: NavItem[] = [
+    { href: '/settings/account', label: 'Account', icon: 'user' },
     { href: '/settings', label: 'Calendar', icon: 'calendar' }
   ]
 
   function isActive(href: string): boolean {
     if (href === '/') {
       return page.url.pathname === '/'
+    }
+    if (href === '/settings') {
+      return page.url.pathname === '/settings'
     }
     return page.url.pathname.startsWith(href)
   }
@@ -90,9 +94,14 @@
       </a>
     {/each}
 
+    <div class="nav-section-label">Settings</div>
     {#each settingsItems as item}
       <a href={item.href} class="nav-item" class:active={isActive(item.href)}>
-        {#if item.icon === 'calendar'}
+        {#if item.icon === 'user'}
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        {:else if item.icon === 'calendar'}
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
@@ -248,6 +257,15 @@
     padding: 0.15rem 0.5rem;
     border-radius: 99px;
     border: 1px solid var(--color-border);
+  }
+
+  .nav-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    padding: 1rem 0.75rem 0.35rem;
   }
 
   /* Sidebar footer */
