@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
   import { getAuth } from '$lib/stores/auth.svelte'
+  import { DropdownMenu } from 'bits-ui'
 
   const auth = getAuth()
 
@@ -103,13 +104,33 @@
 
   <!-- User section -->
   <div class="sidebar-footer">
-    <button class="user-card" onclick={handleLogout} title="Click to logout">
-      <div class="user-avatar">{getUserInitials()}</div>
-      <div class="user-info">
-        <div class="user-name">{getUserDisplayName()}</div>
-        <div class="user-email">{auth.user?.email ?? ''}</div>
-      </div>
-    </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        {#snippet child({ props })}
+          <button {...props} class="user-card">
+            <div class="user-avatar">{getUserInitials()}</div>
+            <div class="user-info">
+              <div class="user-name">{getUserDisplayName()}</div>
+              <div class="user-email">{auth.user?.email ?? ''}</div>
+            </div>
+            <svg class="user-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+            </svg>
+          </button>
+        {/snippet}
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content class="user-menu-content" side="top" sideOffset={8} align="start">
+          <DropdownMenu.Item class="user-menu-item" onSelect={handleLogout}>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Log out
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   </div>
 </aside>
 
@@ -288,6 +309,74 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .user-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: color var(--transition);
+  }
+
+  .user-card:hover .user-chevron {
+    color: var(--text-primary);
+  }
+
+  :global(.user-menu-content) {
+    min-width: 200px;
+    background: var(--bg-secondary);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 0.35rem;
+    box-shadow: var(--shadow);
+    z-index: 200;
+  }
+
+  :global(.user-menu-content[data-state="open"]) {
+    animation: menuIn 0.15s ease;
+  }
+
+  :global(.user-menu-content[data-state="closed"]) {
+    animation: menuOut 0.1s ease;
+  }
+
+  @keyframes menuIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes menuOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(4px); }
+  }
+
+  :global(.user-menu-item) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: calc(var(--radius) - 2px);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    border: none;
+    background: transparent;
+    width: 100%;
+  }
+
+  :global(.user-menu-item:hover),
+  :global(.user-menu-item[data-highlighted]) {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  :global(.user-menu-item svg) {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
   }
 
   /* Responsive - hide on mobile (below 640px), MobileMenu handles that */
