@@ -1091,6 +1091,12 @@ paths:
                     items:
                       type: integer
                     description: Available slot durations in minutes
+                  organizer_name:
+                    type: string
+                    description: Display name of the organizer
+                  organizer_avatar_url:
+                    type: string
+                    description: URL to the organizer's avatar image
         '404':
           description: Not found
           content:
@@ -1233,6 +1239,12 @@ paths:
                     type: boolean
                   require_email:
                     type: boolean
+                  organizer_name:
+                    type: string
+                    description: Display name of the organizer
+                  organizer_avatar_url:
+                    type: string
+                    description: URL to the organizer's avatar image
         '404':
           description: Not found
           content:

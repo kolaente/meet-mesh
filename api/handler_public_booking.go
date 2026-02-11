@@ -30,12 +30,18 @@ func (h *Handler) GetPublicBookingLink(ctx context.Context, params gen.GetPublic
 		durations = []int{link.SlotDurationMinutes}
 	}
 
+	// Fetch organizer for public display
+	var organizer User
+	h.db.First(&organizer, link.UserID)
+
 	return &gen.GetPublicBookingLinkOK{
 		Name:                 link.Name,
 		Description:          gen.NewOptString(link.Description),
 		CustomFields:         mapCustomFieldsToGen(link.CustomFields),
 		RequireEmail:         gen.NewOptBool(link.RequireEmail),
 		SlotDurationsMinutes: durations,
+		OrganizerName:        gen.NewOptString(organizer.Name),
+		OrganizerAvatarURL:   gen.NewOptString(avatarURL(organizer.AvatarFilename)),
 	}, nil
 }
 

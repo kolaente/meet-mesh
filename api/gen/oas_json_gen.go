@@ -3608,14 +3608,28 @@ func (s *GetPublicBookingLinkOK) encodeFields(e *jx.Encoder) {
 			e.ArrEnd()
 		}
 	}
+	{
+		if s.OrganizerName.Set {
+			e.FieldStart("organizer_name")
+			s.OrganizerName.Encode(e)
+		}
+	}
+	{
+		if s.OrganizerAvatarURL.Set {
+			e.FieldStart("organizer_avatar_url")
+			s.OrganizerAvatarURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfGetPublicBookingLinkOK = [5]string{
+var jsonFieldsNameOfGetPublicBookingLinkOK = [7]string{
 	0: "name",
 	1: "description",
 	2: "custom_fields",
 	3: "require_email",
 	4: "slot_durations_minutes",
+	5: "organizer_name",
+	6: "organizer_avatar_url",
 }
 
 // Decode decodes GetPublicBookingLinkOK from json.
@@ -3694,6 +3708,26 @@ func (s *GetPublicBookingLinkOK) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"slot_durations_minutes\"")
+			}
+		case "organizer_name":
+			if err := func() error {
+				s.OrganizerName.Reset()
+				if err := s.OrganizerName.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"organizer_name\"")
+			}
+		case "organizer_avatar_url":
+			if err := func() error {
+				s.OrganizerAvatarURL.Reset()
+				if err := s.OrganizerAvatarURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"organizer_avatar_url\"")
 			}
 		default:
 			return d.Skip()
@@ -3800,15 +3834,29 @@ func (s *GetPublicPollOK) encodeFields(e *jx.Encoder) {
 			s.RequireEmail.Encode(e)
 		}
 	}
+	{
+		if s.OrganizerName.Set {
+			e.FieldStart("organizer_name")
+			s.OrganizerName.Encode(e)
+		}
+	}
+	{
+		if s.OrganizerAvatarURL.Set {
+			e.FieldStart("organizer_avatar_url")
+			s.OrganizerAvatarURL.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfGetPublicPollOK = [6]string{
+var jsonFieldsNameOfGetPublicPollOK = [8]string{
 	0: "name",
 	1: "description",
 	2: "custom_fields",
 	3: "options",
 	4: "show_results",
 	5: "require_email",
+	6: "organizer_name",
+	7: "organizer_avatar_url",
 }
 
 // Decode decodes GetPublicPollOK from json.
@@ -3896,6 +3944,26 @@ func (s *GetPublicPollOK) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"require_email\"")
+			}
+		case "organizer_name":
+			if err := func() error {
+				s.OrganizerName.Reset()
+				if err := s.OrganizerName.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"organizer_name\"")
+			}
+		case "organizer_avatar_url":
+			if err := func() error {
+				s.OrganizerAvatarURL.Reset()
+				if err := s.OrganizerAvatarURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"organizer_avatar_url\"")
 			}
 		default:
 			return d.Skip()

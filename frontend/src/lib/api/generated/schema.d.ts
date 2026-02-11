@@ -1411,6 +1411,10 @@ export interface operations {
                         require_email?: boolean;
                         /** @description Available slot durations in minutes */
                         slot_durations_minutes?: number[];
+                        /** @description Display name of the organizer */
+                        organizer_name?: string;
+                        /** @description URL to the organizer's avatar image */
+                        organizer_avatar_url?: string;
                     };
                 };
             };
@@ -1533,6 +1537,10 @@ export interface operations {
                         options: components["schemas"]["PollOption"][];
                         show_results?: boolean;
                         require_email?: boolean;
+                        /** @description Display name of the organizer */
+                        organizer_name?: string;
+                        /** @description URL to the organizer's avatar image */
+                        organizer_avatar_url?: string;
                     };
                 };
             };

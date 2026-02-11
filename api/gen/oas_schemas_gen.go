@@ -1273,6 +1273,10 @@ type GetPublicBookingLinkOK struct {
 	RequireEmail OptBool       `json:"require_email"`
 	// Available slot durations in minutes.
 	SlotDurationsMinutes []int `json:"slot_durations_minutes"`
+	// Display name of the organizer.
+	OrganizerName OptString `json:"organizer_name"`
+	// URL to the organizer's avatar image.
+	OrganizerAvatarURL OptString `json:"organizer_avatar_url"`
 }
 
 // GetName returns the value of Name.
@@ -1300,6 +1304,16 @@ func (s *GetPublicBookingLinkOK) GetSlotDurationsMinutes() []int {
 	return s.SlotDurationsMinutes
 }
 
+// GetOrganizerName returns the value of OrganizerName.
+func (s *GetPublicBookingLinkOK) GetOrganizerName() OptString {
+	return s.OrganizerName
+}
+
+// GetOrganizerAvatarURL returns the value of OrganizerAvatarURL.
+func (s *GetPublicBookingLinkOK) GetOrganizerAvatarURL() OptString {
+	return s.OrganizerAvatarURL
+}
+
 // SetName sets the value of Name.
 func (s *GetPublicBookingLinkOK) SetName(val string) {
 	s.Name = val
@@ -1325,6 +1339,16 @@ func (s *GetPublicBookingLinkOK) SetSlotDurationsMinutes(val []int) {
 	s.SlotDurationsMinutes = val
 }
 
+// SetOrganizerName sets the value of OrganizerName.
+func (s *GetPublicBookingLinkOK) SetOrganizerName(val OptString) {
+	s.OrganizerName = val
+}
+
+// SetOrganizerAvatarURL sets the value of OrganizerAvatarURL.
+func (s *GetPublicBookingLinkOK) SetOrganizerAvatarURL(val OptString) {
+	s.OrganizerAvatarURL = val
+}
+
 func (*GetPublicBookingLinkOK) getPublicBookingLinkRes() {}
 
 type GetPublicPollOK struct {
@@ -1334,6 +1358,10 @@ type GetPublicPollOK struct {
 	Options      []PollOption  `json:"options"`
 	ShowResults  OptBool       `json:"show_results"`
 	RequireEmail OptBool       `json:"require_email"`
+	// Display name of the organizer.
+	OrganizerName OptString `json:"organizer_name"`
+	// URL to the organizer's avatar image.
+	OrganizerAvatarURL OptString `json:"organizer_avatar_url"`
 }
 
 // GetName returns the value of Name.
@@ -1366,6 +1394,16 @@ func (s *GetPublicPollOK) GetRequireEmail() OptBool {
 	return s.RequireEmail
 }
 
+// GetOrganizerName returns the value of OrganizerName.
+func (s *GetPublicPollOK) GetOrganizerName() OptString {
+	return s.OrganizerName
+}
+
+// GetOrganizerAvatarURL returns the value of OrganizerAvatarURL.
+func (s *GetPublicPollOK) GetOrganizerAvatarURL() OptString {
+	return s.OrganizerAvatarURL
+}
+
 // SetName sets the value of Name.
 func (s *GetPublicPollOK) SetName(val string) {
 	s.Name = val
@@ -1394,6 +1432,16 @@ func (s *GetPublicPollOK) SetShowResults(val OptBool) {
 // SetRequireEmail sets the value of RequireEmail.
 func (s *GetPublicPollOK) SetRequireEmail(val OptBool) {
 	s.RequireEmail = val
+}
+
+// SetOrganizerName sets the value of OrganizerName.
+func (s *GetPublicPollOK) SetOrganizerName(val OptString) {
+	s.OrganizerName = val
+}
+
+// SetOrganizerAvatarURL sets the value of OrganizerAvatarURL.
+func (s *GetPublicPollOK) SetOrganizerAvatarURL(val OptString) {
+	s.OrganizerAvatarURL = val
 }
 
 func (*GetPublicPollOK) getPublicPollRes() {}

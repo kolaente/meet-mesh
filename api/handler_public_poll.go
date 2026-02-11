@@ -22,13 +22,19 @@ func (h *Handler) GetPublicPoll(ctx context.Context, params gen.GetPublicPollPar
 		return nil, err
 	}
 
+	// Fetch organizer for public display
+	var organizer User
+	h.db.First(&organizer, poll.UserID)
+
 	return &gen.GetPublicPollOK{
-		Name:         poll.Name,
-		Description:  gen.NewOptString(poll.Description),
-		CustomFields: mapCustomFieldsToGen(poll.CustomFields),
-		Options:      mapPollOptionsToGen(poll.PollOptions),
-		ShowResults:  gen.NewOptBool(poll.ShowResults),
-		RequireEmail: gen.NewOptBool(poll.RequireEmail),
+		Name:               poll.Name,
+		Description:        gen.NewOptString(poll.Description),
+		CustomFields:       mapCustomFieldsToGen(poll.CustomFields),
+		Options:            mapPollOptionsToGen(poll.PollOptions),
+		ShowResults:        gen.NewOptBool(poll.ShowResults),
+		RequireEmail:       gen.NewOptBool(poll.RequireEmail),
+		OrganizerName:      gen.NewOptString(organizer.Name),
+		OrganizerAvatarURL: gen.NewOptString(avatarURL(organizer.AvatarFilename)),
 	}, nil
 }
 
