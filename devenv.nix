@@ -4,6 +4,9 @@ let
   unstable = import inputs.nixpkgs-unstable { system = pkgs.stdenv.system; };
 in
 {
+  packages = [
+    unstable.golangci-lint
+  ];
 
   languages = {
     javascript = {

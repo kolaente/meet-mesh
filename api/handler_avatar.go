@@ -69,7 +69,7 @@ func (h *AvatarHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing avatar file", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Validate content type
 	contentType := header.Header.Get("Content-Type")
@@ -137,7 +137,7 @@ func (h *AvatarHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	// Return the avatar URL as JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"avatar_url":"/api/avatars/%s"}`, filename)
+	_, _ = fmt.Fprintf(w, `{"avatar_url":"/api/avatars/%s"}`, filename)
 }
 
 // Delete handles DELETE /api/avatars
@@ -165,7 +165,7 @@ func (h *AvatarHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	if user.AvatarFilename == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"avatar_url":""}`)
+		_, _ = fmt.Fprint(w, `{"avatar_url":""}`)
 		return
 	}
 
@@ -182,7 +182,7 @@ func (h *AvatarHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, `{"avatar_url":""}`)
+	_, _ = fmt.Fprint(w, `{"avatar_url":""}`)
 }
 
 // authenticateRequest validates the session cookie and returns the user ID.

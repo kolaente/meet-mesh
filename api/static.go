@@ -24,7 +24,7 @@ func NewStaticHandler() http.Handler {
 		// Check if file exists
 		f, err := distFS.Open(strings.TrimPrefix(path, "/"))
 		if err == nil {
-			f.Close()
+			_ = f.Close()
 			fileServer.ServeHTTP(w, r)
 			return
 		}

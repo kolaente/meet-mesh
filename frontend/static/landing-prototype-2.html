@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Mesh - Split Screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f5f3f0;
+            --bg-dark: #1a1a1a;
+            --text-light: #1a1a1a;
+            --text-dark: #f5f3f0;
+            --sky: #0ea5e9;
+            --sky-light: #38bdf8;
+            --sky-dark: #0284c7;
+            --violet: #8b5cf6;
+            --violet-light: #a78bfa;
+            --violet-dark: #7c3aed;
+            --amber: #f59e0b;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --shadow-light: #1a1a1a;
+            --shadow-dark: #000000;
+            --border: 2px solid var(--text-light);
+            --radius: 8px;
+            --shadow: 3px 3px 0 var(--shadow-light);
+            --shadow-hover: 5px 5px 0 var(--shadow-light);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-light: #1a1a1a;
+            --text-light: #f5f3f0;
+            --shadow-light: #000000;
+            --border: 2px solid var(--text-light);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 56px;
+            height: 56px;
+            background: var(--bg-light);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-light);
+        }
+
+        .theme-toggle .moon { display: block; }
+        .theme-toggle .sun { display: none; }
+        [data-theme="dark"] .theme-toggle .moon { display: none; }
+        [data-theme="dark"] .theme-toggle .sun { display: block; }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .split-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .split-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        /* Diagonal Split Effect */
+        .split-left {
+            background: var(--sky);
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+            margin-right: -8%;
+            z-index: 2;
+        }
+
+        .split-right {
+            background: var(--violet);
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+            margin-left: -8%;
+            z-index: 1;
+        }
+
+        .split-left:hover {
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+            margin-right: -13%;
+        }
+
+        .split-right:hover {
+            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+            margin-left: -13%;
+        }
+
+        .split-content {
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            z-index: 10;
+        }
+
+        .split-left .split-content {
+            margin-right: 40px;
+        }
+
+        .split-right .split-content {
+            margin-left: 40px;
+        }
+
+        .split-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid #fff;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        .split-side:hover .split-icon {
+            transform: translate(-3px, -3px) rotate(-3deg);
+            box-shadow: 7px 7px 0 rgba(0,0,0,0.2);
+        }
+
+        .split-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+
+        .split-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            line-height: 1.1;
+        }
+
+        .split-description {
+            font-size: 1.125rem;
+            font-weight: 500;
+            opacity: 0.95;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .split-cta {
+            display: inline-block;
+            padding: 16px 32px;
+            background: #fff;
+            color: var(--sky);
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: 3px solid #fff;
+            border-radius: var(--radius);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .split-right .split-cta {
+            color: var(--violet);
+        }
+
+        .split-cta:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+        }
+
+        .split-cta:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* Pattern Overlays */
+        .pattern-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .split-left .pattern-overlay {
+            background-image:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(255,255,255,0.3) 20px,
+                    rgba(255,255,255,0.3) 22px
+                );
+        }
+
+        .split-right .pattern-overlay {
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.4) 2px, transparent 2px),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4) 2px, transparent 2px),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.4) 1px, transparent 1px);
+            background-size: 60px 60px, 80px 80px, 40px 40px;
+        }
+
+        /* Central Brand Badge */
+        .brand-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            background: var(--bg-light);
+            border: 4px solid var(--text-light);
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 6px 6px 0 var(--shadow-light);
+            transition: var(--transition);
+        }
+
+        .brand-badge:hover {
+            transform: translate(-50%, -50%) rotate(-5deg) scale(1.05);
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-light);
+            line-height: 1;
+        }
+
+        .brand-tagline {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 40px;
+            background: var(--bg-light);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+
+        .section-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--amber);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .feature-column-header {
+            padding: 24px;
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-column:first-child .feature-column-header {
+            background: linear-gradient(135deg, var(--sky) 0%, var(--sky-dark) 100%);
+            color: #fff;
+        }
+
+        .feature-column:last-child .feature-column-header {
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
+            color: #fff;
+        }
+
+        .feature-column-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-column-title svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: var(--bg-light);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            border: var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 2px 2px 0 var(--shadow-light);
+        }
+
+        .feature-column:first-child .feature-card-icon {
+            background: rgba(14, 165, 233, 0.15);
+        }
+
+        .feature-column:last-child .feature-card-icon {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .feature-card-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .feature-column:first-child .feature-card-icon svg {
+            fill: var(--sky);
+        }
+
+        .feature-column:last-child .feature-card-icon svg {
+            fill: var(--violet);
+        }
+
+        .feature-card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .feature-card-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Self-Hosted Section */
+        .self-hosted {
+            padding: 120px 40px;
+            background: var(--text-light);
+            color: var(--bg-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .self-hosted {
+            background: #0f0f0f;
+        }
+
+        .self-hosted-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .self-hosted-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .self-hosted-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--emerald);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--bg-light);
+            border-radius: var(--radius);
+            box-shadow: 3px 3px 0 rgba(255,255,255,0.3);
+            margin-bottom: 24px;
+        }
+
+        .self-hosted-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
+        .self-hosted-subtitle {
+            font-size: 1.25rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .benefit-card {
+            padding: 32px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius);
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .benefit-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .benefit-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-4px);
+        }
+
+        .benefit-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--emerald);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 3px 3px 0 rgba(255,255,255,0.2);
+        }
+
+        .benefit-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: #fff;
+        }
+
+        .benefit-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .benefit-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Decorative elements */
+        .self-hosted-decoration {
+            position: absolute;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .decoration-1 {
+            top: 10%;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            border: 4px solid #fff;
+            border-radius: 50%;
+        }
+
+        .decoration-2 {
+            bottom: 10%;
+            right: 5%;
+            width: 150px;
+            height: 150px;
+            border: 4px solid #fff;
+            transform: rotate(45deg);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 40px;
+            background: var(--bg-light);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .cta-description {
+            font-size: 1.125rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 36px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .cta-button:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .cta-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .cta-button-primary {
+            background: var(--text-light);
+            color: var(--bg-light);
+        }
+
+        .cta-button-secondary {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        .cta-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            background: var(--text-light);
+            color: var(--bg-light);
+            text-align: center;
+        }
+
+        [data-theme="dark"] footer {
+            background: #0f0f0f;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: var(--bg-light);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .split-container {
+                flex-direction: column;
+            }
+
+            .split-left, .split-right {
+                clip-path: none;
+                margin: 0;
+                min-height: 50vh;
+            }
+
+            .split-left:hover, .split-right:hover {
+                clip-path: none;
+                margin: 0;
+            }
+
+            .split-content {
+                margin: 0 !important;
+            }
+
+            .brand-badge {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                margin: -70px auto;
+                z-index: 100;
+            }
+
+            .brand-badge:hover {
+                transform: rotate(-5deg) scale(1.05);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .split-title {
+                font-size: 2rem;
+            }
+
+            .section-title, .self-hosted-title, .cta-title {
+                font-size: 2rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+
+        .split-side .pattern-overlay {
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="moon" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="split-container">
+            <!-- Left Side - Booking Links -->
+            <div class="split-side split-left">
+                <div class="pattern-overlay"></div>
+                <div class="split-content">
+                    <div class="split-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="split-title">Booking Links</h2>
+                    <p class="split-description">
+                        Calendly-style 1:1 scheduling with real-time calendar availability.
+                        Share your link, let guests pick a time that works.
+                    </p>
+                    <a href="#booking-features" class="split-cta">Explore Booking</a>
+                </div>
+            </div>
+
+            <!-- Central Brand Badge -->
+            <div class="brand-badge">
+                <span class="brand-logo">MM</span>
+                <span class="brand-tagline">Meet Mesh</span>
+            </div>
+
+            <!-- Right Side - Group Polls -->
+            <div class="split-side split-right">
+                <div class="pattern-overlay"></div>
+                <div class="split-content">
+                    <div class="split-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                    </div>
+                    <h2 class="split-title">Group Polls</h2>
+                    <p class="split-description">
+                        Doodle-style many-to-many coordination with voting.
+                        Find the perfect time for everyone to meet.
+                    </p>
+                    <a href="#poll-features" class="split-cta">Explore Polls</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Features</span>
+            <h2 class="section-title">Two Powerful Tools. One Platform.</h2>
+            <p class="section-subtitle">Everything you need to schedule meetings, your way.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Booking Links Column -->
+            <div class="feature-column" id="booking-features">
+                <div class="feature-column-header animate-on-scroll stagger-1">
+                    <h3 class="feature-column-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
+                        </svg>
+                        Booking Links
+                    </h3>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-2">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Real-Time Availability</h4>
+                    <p class="feature-card-description">
+                        Syncs with your CalDAV calendar to show only times you're actually free. No double bookings, ever.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-3">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Shareable Links</h4>
+                    <p class="feature-card-description">
+                        Custom URLs for each booking type. Share via email, embed on your website, or add to your signature.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-4">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Email Confirmations</h4>
+                    <p class="feature-card-description">
+                        Automatic emails with calendar invites. Guests can reschedule or cancel with one click.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Group Polls Column -->
+            <div class="feature-column" id="poll-features">
+                <div class="feature-column-header animate-on-scroll stagger-1">
+                    <h3 class="feature-column-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Group Polls
+                    </h3>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-2">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Multi-Person Coordination</h4>
+                    <p class="feature-card-description">
+                        Perfect for team meetings, events, or any gathering. Everyone votes on times that work for them.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-3">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Simple Voting</h4>
+                    <p class="feature-card-description">
+                        Yes/No/If-Needed voting makes it easy to find consensus. See at a glance which times work best.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-on-scroll stagger-4">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
+                        </svg>
+                    </div>
+                    <h4 class="feature-card-title">Final Selection</h4>
+                    <p class="feature-card-description">
+                        Lock in the winning time and notify all participants. Calendar invites sent automatically.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Self-Hosted Section -->
+    <section class="self-hosted">
+        <div class="self-hosted-decoration decoration-1"></div>
+        <div class="self-hosted-decoration decoration-2"></div>
+
+        <div class="self-hosted-content">
+            <div class="self-hosted-header animate-on-scroll">
+                <span class="self-hosted-label">Self-Hosted</span>
+                <h2 class="self-hosted-title">Your Data. Your Server. Your Rules.</h2>
+                <p class="self-hosted-subtitle">
+                    Meet Mesh runs entirely on your infrastructure. No third-party services, no data sharing, no surprises.
+                </p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card animate-on-scroll stagger-1">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                        </svg>
+                    </div>
+                    <h4 class="benefit-title">Complete Privacy</h4>
+                    <p class="benefit-description">
+                        Your calendar data never leaves your server. Full GDPR compliance out of the box.
+                    </p>
+                </div>
+
+                <div class="benefit-card animate-on-scroll stagger-2">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                        </svg>
+                    </div>
+                    <h4 class="benefit-title">Full Control</h4>
+                    <p class="benefit-description">
+                        Configure OIDC, SMTP, and CalDAV to your exact needs. Integrate with your existing stack.
+                    </p>
+                </div>
+
+                <div class="benefit-card animate-on-scroll stagger-3">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10H6v-2h8v2zm4-4H6v-2h12v2z"/>
+                        </svg>
+                    </div>
+                    <h4 class="benefit-title">Single Binary</h4>
+                    <p class="benefit-description">
+                        One executable, one config file. Deploy anywhere in minutes with Docker or bare metal.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container animate-on-scroll">
+            <h2 class="cta-title">Ready to Own Your Scheduling?</h2>
+            <p class="cta-description">
+                Deploy Meet Mesh today and take control of your calendar. Free, open source, and built for privacy.
+            </p>
+            <div class="cta-buttons">
+                <a href="#" class="cta-button cta-button-primary">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Get Started
+                </a>
+                <a href="#" class="cta-button cta-button-secondary">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"/>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">Meet Mesh</div>
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">GitHub</a>
+                <a href="#">Demo</a>
+            </div>
+            <div class="footer-copyright">Self-hosted scheduling, your way.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll, .feature-card, .benefit-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

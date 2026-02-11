@@ -9,9 +9,7 @@ linters:
     - govet
     - staticcheck
     - unused
-    - gosimple
     - ineffassign
-    - typecheck
   exclusions:
     generated: lax
     paths:

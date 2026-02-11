@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meet Mesh - Typography Forward</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #f5f3f0;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #ebe8e4;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --border-color: #1a1a1a;
+
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --sky: #0ea5e9;
+      --violet: #8b5cf6;
+      --rose: #f43f5e;
+
+      --shadow: 3px 3px 0 var(--border-color);
+      --shadow-hover: 5px 5px 0 var(--border-color);
+      --shadow-sm: 2px 2px 0 var(--border-color);
+      --border: 2px solid var(--border-color);
+      --radius: 8px;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #0a0a0a;
+      --bg-tertiary: #111111;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a0a0a0;
+      --text-muted: #606060;
+      --border-color: #333333;
+      --shadow: 3px 3px 0 #000000;
+      --shadow-hover: 5px 5px 0 #000000;
+      --shadow-sm: 2px 2px 0 #000000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1000;
+      width: 48px;
+      height: 48px;
+      border: var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .theme-toggle:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      padding: 80px 40px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Giant Typography */
+    .mega-text {
+      font-weight: 900;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .mega-text.hero-main {
+      font-size: clamp(80px, 20vw, 280px);
+      display: block;
+      opacity: 0;
+      transform: translateY(60px);
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .mega-text.line-1 { animation-delay: 0.1s; }
+    .mega-text.line-2 {
+      animation-delay: 0.2s;
+      color: var(--sky);
+    }
+
+    .mega-text.outlined {
+      -webkit-text-stroke: 3px var(--text-primary);
+      color: transparent;
+    }
+
+    [data-theme="dark"] .mega-text.outlined {
+      -webkit-text-stroke-color: var(--text-primary);
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating Cards */
+    .floating-card {
+      position: absolute;
+      background: var(--bg-secondary);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 20px;
+      opacity: 0;
+      animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .floating-card:hover {
+      transform: translate(-4px, -4px) !important;
+      box-shadow: 8px 8px 0 var(--border-color);
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8) rotate(-8deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(var(--rotate, 0deg));
+      }
+    }
+
+    .card-1 {
+      top: 15%;
+      right: 8%;
+      --rotate: 4deg;
+      animation-delay: 0.6s;
+    }
+
+    .card-2 {
+      bottom: 20%;
+      left: 5%;
+      --rotate: -3deg;
+      animation-delay: 0.8s;
+    }
+
+    .card-3 {
+      top: 45%;
+      right: 3%;
+      --rotate: -6deg;
+      animation-delay: 1s;
+    }
+
+    /* Card UI Elements */
+    .card-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-sky { background: var(--sky); color: white; }
+    .badge-emerald { background: var(--emerald); color: white; }
+    .badge-violet { background: var(--violet); color: white; }
+
+    .time-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .time-slot {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .time-slot:hover {
+      background: var(--sky);
+      color: white;
+    }
+
+    .time-slot.selected {
+      background: var(--sky);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Poll UI */
+    .poll-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+
+    .poll-option:last-child {
+      border-bottom: none;
+    }
+
+    .poll-votes {
+      display: flex;
+      gap: 2px;
+    }
+
+    .vote-pip {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    .vote-pip.maybe {
+      background: var(--amber);
+    }
+
+    .poll-date {
+      font-size: 12px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeInUp 0.6s 1.2s forwards;
+    }
+
+    .scroll-indicator span {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+
+    .scroll-arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--text-secondary);
+      border-bottom: 2px solid var(--text-secondary);
+      transform: rotate(45deg);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: rotate(45deg) translateY(0); }
+      40% { transform: rotate(45deg) translateY(8px); }
+      60% { transform: rotate(45deg) translateY(4px); }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Section 2 - Features as Typography */
+    .section-features {
+      min-height: 100vh;
+      padding: 120px 40px;
+      position: relative;
+    }
+
+    .feature-word {
+      font-size: clamp(60px, 15vw, 200px);
+      font-weight: 900;
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      opacity: 0;
+      transform: translateX(-100px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .feature-word.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .feature-word.right {
+      text-align: right;
+      transform: translateX(100px);
+    }
+
+    .feature-word.right.visible {
+      transform: translateX(0);
+    }
+
+    .feature-word .highlight {
+      color: var(--sky);
+    }
+
+    .feature-word .highlight-amber {
+      color: var(--amber);
+    }
+
+    .feature-word .highlight-emerald {
+      color: var(--emerald);
+    }
+
+    .feature-word .highlight-violet {
+      color: var(--violet);
+    }
+
+    .feature-description {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 20px 0 60px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .feature-word.visible + .feature-description {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-description.right {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    /* Section 3 - Self-Hosted Message */
+    .section-selfhosted {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .selfhosted-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(150px, 40vw, 500px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      color: var(--bg-tertiary);
+      white-space: nowrap;
+      z-index: 0;
+      user-select: none;
+    }
+
+    [data-theme="dark"] .selfhosted-bg {
+      color: #222;
+    }
+
+    .selfhosted-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    .selfhosted-headline {
+      font-size: clamp(48px, 10vw, 140px);
+      font-weight: 900;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .selfhosted-headline.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .selfhosted-headline .accent {
+      display: block;
+      color: var(--rose);
+    }
+
+    .selfhosted-subline {
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .selfhosted-headline.visible ~ .selfhosted-subline {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Feature Icons floating */
+    .floating-icon {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: var(--bg-secondary);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .selfhosted-headline.visible ~ .floating-icon {
+      opacity: 1;
+    }
+
+    .icon-1 {
+      top: 20%;
+      left: 10%;
+      transform: rotate(-10deg);
+      transition-delay: 0.4s;
+    }
+
+    .icon-2 {
+      top: 15%;
+      right: 15%;
+      transform: rotate(8deg);
+      transition-delay: 0.5s;
+    }
+
+    .icon-3 {
+      bottom: 25%;
+      left: 15%;
+      transform: rotate(5deg);
+      transition-delay: 0.6s;
+    }
+
+    .icon-4 {
+      bottom: 20%;
+      right: 10%;
+      transform: rotate(-8deg);
+      transition-delay: 0.7s;
+    }
+
+    /* Section 4 - CTA */
+    .section-cta {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 40px;
+      position: relative;
+    }
+
+    .cta-text {
+      font-size: clamp(36px, 8vw, 100px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      text-align: center;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cta-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-button {
+      margin-top: 50px;
+      padding: 20px 48px;
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--sky);
+      color: white;
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .cta-text.visible ~ .cta-button {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.3s;
+    }
+
+    .cta-button:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 6px 6px 0 var(--border-color);
+    }
+
+    .cta-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    /* Marquee */
+    .marquee-section {
+      padding: 40px 0;
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      overflow: hidden;
+    }
+
+    .marquee {
+      display: flex;
+      animation: marquee 20s linear infinite;
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 60px;
+      padding: 0 30px;
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .marquee-content span {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .marquee-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--sky);
+      border-radius: 50%;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* Footer */
+    footer {
+      padding: 60px 40px;
+      text-align: center;
+      border-top: var(--border);
+    }
+
+    .footer-logo {
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .footer-tagline {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 60px 20px;
+      }
+
+      .floating-card {
+        display: none;
+      }
+
+      .section-features {
+        padding: 80px 20px;
+      }
+
+      .feature-description {
+        font-size: 16px;
+      }
+
+      .floating-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+      }
+
+      .section-cta {
+        padding: 60px 20px;
+      }
+
+      .cta-button {
+        padding: 16px 32px;
+        font-size: 16px;
+      }
+    }
+
+    /* Kinetic scroll effects */
+    .kinetic-word {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .kinetic-word:hover {
+      transform: skewX(-5deg) scale(1.02);
+    }
+
+    /* Noise texture overlay */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    [data-theme="dark"] .noise-overlay {
+      opacity: 0.05;
+    }
+  </style>
+</head>
+<body>
+  <div class="noise-overlay"></div>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <span class="theme-icon">&#9790;</span>
+  </button>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="mega-text hero-main line-1">Meet</span>
+      <span class="mega-text hero-main line-2">Mesh</span>
+    </div>
+
+    <!-- Floating UI Cards -->
+    <div class="floating-card card-1">
+      <div class="card-title">
+        Book a Call
+        <span class="card-badge badge-sky">1:1</span>
+      </div>
+      <div class="time-slots">
+        <div class="time-slot">9:00 AM</div>
+        <div class="time-slot selected">10:30 AM</div>
+        <div class="time-slot">2:00 PM</div>
+      </div>
+    </div>
+
+    <div class="floating-card card-2">
+      <div class="card-title">
+        Team Offsite
+        <span class="card-badge badge-emerald">Poll</span>
+      </div>
+      <div class="poll-option">
+        <span class="poll-date">Jan 15</span>
+        <div class="poll-votes">
+          <div class="vote-pip"></div>
+          <div class="vote-pip"></div>
+          <div class="vote-pip"></div>
+          <div class="vote-pip maybe"></div>
+        </div>
+      </div>
+      <div class="poll-option">
+        <span class="poll-date">Jan 22</span>
+        <div class="poll-votes">
+          <div class="vote-pip"></div>
+          <div class="vote-pip"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="floating-card card-3">
+      <div class="card-title">
+        Confirmed
+        <span class="card-badge badge-violet">Done</span>
+      </div>
+      <div style="font-size: 13px; color: var(--text-secondary);">
+        <div style="font-weight: 600; color: var(--text-primary);">Design Review</div>
+        <div style="margin-top: 4px;">Tomorrow at 2:00 PM</div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee-section">
+    <div class="marquee">
+      <div class="marquee-content">
+        <span><span class="marquee-dot"></span> Booking Links</span>
+        <span><span class="marquee-dot"></span> Group Polls</span>
+        <span><span class="marquee-dot"></span> CalDAV Sync</span>
+        <span><span class="marquee-dot"></span> Self-Hosted</span>
+        <span><span class="marquee-dot"></span> Real-Time Availability</span>
+        <span><span class="marquee-dot"></span> No Account Needed</span>
+      </div>
+      <div class="marquee-content">
+        <span><span class="marquee-dot"></span> Booking Links</span>
+        <span><span class="marquee-dot"></span> Group Polls</span>
+        <span><span class="marquee-dot"></span> CalDAV Sync</span>
+        <span><span class="marquee-dot"></span> Self-Hosted</span>
+        <span><span class="marquee-dot"></span> Real-Time Availability</span>
+        <span><span class="marquee-dot"></span> No Account Needed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features as Typography -->
+  <section class="section-features">
+    <div class="feature-word" data-animate>
+      <span class="kinetic-word">Book</span> <span class="highlight kinetic-word">1:1</span>
+    </div>
+    <p class="feature-description">
+      Share your availability. Guests pick a time that works.
+      Calendar syncs automatically via CalDAV.
+    </p>
+
+    <div class="feature-word right" data-animate>
+      <span class="highlight-emerald kinetic-word">Poll</span> <span class="kinetic-word">Groups</span>
+    </div>
+    <p class="feature-description right">
+      Coordinating many people? Create a poll.
+      Everyone votes. You pick the winner.
+    </p>
+
+    <div class="feature-word" data-animate>
+      <span class="kinetic-word">Real</span><span class="highlight-amber kinetic-word">-Time</span>
+    </div>
+    <p class="feature-description">
+      Always shows actual availability.
+      Connected directly to your calendar.
+    </p>
+
+    <div class="feature-word right" data-animate>
+      <span class="highlight-violet kinetic-word">Zero</span> <span class="kinetic-word">Friction</span>
+    </div>
+    <p class="feature-description right">
+      No accounts for guests. Just pick a time and go.
+      It should be this simple.
+    </p>
+  </section>
+
+  <!-- Self-Hosted Section -->
+  <section class="section-selfhosted">
+    <div class="selfhosted-bg">YOUR SERVER</div>
+    <div class="selfhosted-content">
+      <h2 class="selfhosted-headline" data-animate>
+        Your Data.
+        <span class="accent">Your Rules.</span>
+      </h2>
+      <p class="selfhosted-subline">
+        Deploy on your infrastructure. Connect your calendars.
+        No third-party tracking. No vendor lock-in.
+      </p>
+
+      <div class="floating-icon icon-1">&#128274;</div>
+      <div class="floating-icon icon-2">&#9881;</div>
+      <div class="floating-icon icon-3">&#128230;</div>
+      <div class="floating-icon icon-4">&#10003;</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-cta">
+    <h2 class="cta-text" data-animate>
+      Ready to take control of<br>
+      your scheduling?
+    </h2>
+    <button class="cta-button">Get Started</button>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">Meet Mesh</div>
+    <div class="footer-tagline">Self-hosted scheduling, simplified.</div>
+  </footer>
+
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+
+    function setTheme(dark) {
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      themeIcon.innerHTML = dark ? '&#9728;' : '&#9790;';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+
+    // Check saved preference or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      setTheme(!isDark);
+    });
+
+    // Scroll-triggered animations
+    const animatedElements = document.querySelectorAll('[data-animate]');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.2,
+      rootMargin: '0px 0px -100px 0px'
+    });
+
+    animatedElements.forEach(el => observer.observe(el));
+
+    // Parallax effect on scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+
+          // Move floating cards slightly
+          const cards = document.querySelectorAll('.floating-card');
+          cards.forEach((card, i) => {
+            const speed = 0.05 + (i * 0.02);
+            card.style.transform = `translateY(${scrolled * speed}px) rotate(${card.style.getPropertyValue('--rotate') || '0deg'})`;
+          });
+
+          // Background text parallax
+          const bgText = document.querySelector('.selfhosted-bg');
+          if (bgText) {
+            const rect = bgText.getBoundingClientRect();
+            const center = window.innerHeight / 2;
+            const offset = (rect.top + rect.height / 2 - center) * 0.1;
+            bgText.style.transform = `translate(-50%, calc(-50% + ${offset}px))`;
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Add hover effect to kinetic words
+    document.querySelectorAll('.kinetic-word').forEach(word => {
+      word.addEventListener('mouseenter', () => {
+        word.style.color = word.classList.contains('highlight') ||
+                          word.classList.contains('highlight-amber') ||
+                          word.classList.contains('highlight-emerald') ||
+                          word.classList.contains('highlight-violet')
+                          ? '' : 'var(--sky)';
+      });
+      word.addEventListener('mouseleave', () => {
+        if (!word.classList.contains('highlight') &&
+            !word.classList.contains('highlight-amber') &&
+            !word.classList.contains('highlight-emerald') &&
+            !word.classList.contains('highlight-violet')) {
+          word.style.color = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
