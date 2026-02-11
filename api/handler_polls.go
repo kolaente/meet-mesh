@@ -195,7 +195,7 @@ func (h *Handler) PickPollWinner(ctx context.Context, req *gen.PickPollWinnerReq
 
 	// Send winner notification
 	if h.mailer != nil {
-		h.mailer.SendPollWinner(&poll, &option, votes)
+		_ = h.mailer.SendPollWinner(&poll, &option, votes)
 	}
 
 	return nil

@@ -51,7 +51,7 @@ func (h *Handler) SubmitVote(ctx context.Context, req *gen.SubmitVoteReq, params
 	responses := make(map[uint]VoteResponseType)
 	for optionIDStr, resp := range req.Responses {
 		var optionID uint
-		fmt.Sscanf(optionIDStr, "%d", &optionID)
+		_, _ = fmt.Sscanf(optionIDStr, "%d", &optionID)
 		responses[optionID] = VoteResponseType(resp)
 	}
 

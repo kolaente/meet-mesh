@@ -39,7 +39,7 @@ func (h *Handler) ApproveViaEmail(ctx context.Context) (gen.ApproveViaEmailRes, 
 
 	// Send confirmation email with ICS
 	if h.mailer != nil {
-		h.mailer.SendBookingApprovedWithICS(&booking, &booking.BookingLink, organizer.Email)
+		_ = h.mailer.SendBookingApprovedWithICS(&booking, &booking.BookingLink, organizer.Email)
 	}
 
 	// Create calendar event
@@ -84,7 +84,7 @@ func (h *Handler) DeclineViaEmail(ctx context.Context) (gen.DeclineViaEmailRes, 
 
 	// Send decline email
 	if h.mailer != nil {
-		h.mailer.SendBookingDeclined(&booking, &booking.BookingLink)
+		_ = h.mailer.SendBookingDeclined(&booking, &booking.BookingLink)
 	}
 
 	return &gen.DeclineViaEmailOK{

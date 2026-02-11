@@ -90,9 +90,7 @@ func (h *Handler) GetBookingAvailability(ctx context.Context, params gen.GetBook
 	}, nil
 }
 
-func (h *Handler) generateAvailableSlots(link BookingLink, start, end time.Time, busyTimes []TimePeriod) []Slot {
-	return h.generateAvailableSlotsWithDuration(link, start, end, busyTimes, link.SlotDurationMinutes)
-}
+
 
 func (h *Handler) generateAvailableSlotsWithDuration(link BookingLink, start, end time.Time, busyTimes []TimePeriod, durationMinutes int) []Slot {
 	var slots []Slot
@@ -244,7 +242,7 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 
 	// Generate action token
 	tokenBytes := make([]byte, 32)
-	rand.Read(tokenBytes)
+	_, _ = rand.Read(tokenBytes)
 	actionToken := hex.EncodeToString(tokenBytes)
 
 	status := BookingStatusPending
@@ -282,7 +280,7 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 	// Send notification email and create calendar event if auto-confirmed
 	if link.AutoConfirm {
 		if h.mailer != nil {
-			h.mailer.SendBookingConfirmationWithICS(&booking, &link, organizer.Email)
+			_ = h.mailer.SendBookingConfirmationWithICS(&booking, &link, organizer.Email)
 		}
 		// Create calendar event
 		if h.caldav != nil {
@@ -294,7 +292,7 @@ func (h *Handler) CreateBooking(ctx context.Context, req *gen.CreateBookingReq, 
 		}
 	} else {
 		if h.mailer != nil {
-			h.mailer.SendBookingPending(&booking, &link, &organizer)
+			_ = h.mailer.SendBookingPending(&booking, &link, &organizer)
 		}
 	}
 

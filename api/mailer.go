@@ -77,7 +77,7 @@ func (m *Mailer) sendWithAttachment(to, subject, body string, attachments ...*Em
 
 func (m *Mailer) renderTemplate(name string, data any) string {
 	var buf bytes.Buffer
-	m.templates.ExecuteTemplate(&buf, name, data)
+	_ = m.templates.ExecuteTemplate(&buf, name, data)
 	return buf.String()
 }
 
@@ -189,7 +189,7 @@ func (m *Mailer) SendPollWinner(poll *Poll, option *PollOption, votes []Vote) er
 
 	for _, vote := range votes {
 		if vote.GuestEmail != "" {
-			m.send(vote.GuestEmail, "Date Selected: "+poll.Name, body)
+			_ = m.send(vote.GuestEmail, "Date Selected: "+poll.Name, body)
 		}
 	}
 	return nil

@@ -153,7 +153,7 @@ func (h *Handler) GetBookingLinkBookings(ctx context.Context, params gen.GetBook
 // Helper functions
 func generateSlug() string {
 	b := make([]byte, 8)
-	rand.Read(b)
+	_, _ = rand.Read(b)
 	return base64.URLEncoding.EncodeToString(b)[:10]
 }
 
