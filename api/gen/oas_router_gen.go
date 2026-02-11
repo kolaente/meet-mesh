@@ -226,8 +226,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							switch r.Method {
 							case "GET":
 								s.handleGetCurrentUserRequest([0]string{}, elemIsEscaped, w, r)
+							case "PUT":
+								s.handleUpdateCurrentUserRequest([0]string{}, elemIsEscaped, w, r)
 							default:
-								s.notAllowed(w, r, "GET")
+								s.notAllowed(w, r, "GET,PUT")
 							}
 
 							return
@@ -1200,6 +1202,15 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								r.name = GetCurrentUserOperation
 								r.summary = "Get current user"
 								r.operationID = "getCurrentUser"
+								r.operationGroup = ""
+								r.pathPattern = "/auth/me"
+								r.args = args
+								r.count = 0
+								return r, true
+							case "PUT":
+								r.name = UpdateCurrentUserOperation
+								r.summary = "Update current user profile"
+								r.operationID = "updateCurrentUser"
 								r.operationGroup = ""
 								r.pathPattern = "/auth/me"
 								r.args = args

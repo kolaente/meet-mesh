@@ -212,6 +212,12 @@ type Handler interface {
 	//
 	// PUT /booking-links/{id}
 	UpdateBookingLink(ctx context.Context, req *UpdateBookingLinkReq, params UpdateBookingLinkParams) (*BookingLink, error)
+	// UpdateCurrentUser implements updateCurrentUser operation.
+	//
+	// Update current user profile.
+	//
+	// PUT /auth/me
+	UpdateCurrentUser(ctx context.Context, req *UpdateCurrentUserReq) (UpdateCurrentUserRes, error)
 	// UpdatePoll implements updatePoll operation.
 	//
 	// Update a poll.

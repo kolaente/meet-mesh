@@ -319,6 +319,15 @@ func (UnimplementedHandler) UpdateBookingLink(ctx context.Context, req *UpdateBo
 	return r, ht.ErrNotImplemented
 }
 
+// UpdateCurrentUser implements updateCurrentUser operation.
+//
+// Update current user profile.
+//
+// PUT /auth/me
+func (UnimplementedHandler) UpdateCurrentUser(ctx context.Context, req *UpdateCurrentUserReq) (r UpdateCurrentUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // UpdatePoll implements updatePoll operation.
 //
 // Update a poll.

@@ -83,6 +83,7 @@ var operationRolesCookieAuth = map[string][]string{
 	RemoveCalendarOperation:         []string{},
 	TestCalendarOperation:           []string{},
 	UpdateBookingLinkOperation:      []string{},
+	UpdateCurrentUserOperation:      []string{},
 	UpdatePollOperation:             []string{},
 }
 

@@ -36,3 +36,7 @@ type GetPublicPollRes interface {
 type TestCalendarRes interface {
 	testCalendarRes()
 }
+
+type UpdateCurrentUserRes interface {
+	updateCurrentUserRes()
+}

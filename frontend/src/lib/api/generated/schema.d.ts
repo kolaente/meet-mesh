@@ -64,7 +64,8 @@ export interface paths {
         };
         /** Get current user */
         get: operations["getCurrentUser"];
-        put?: never;
+        /** Update current user profile */
+        put: operations["updateCurrentUser"];
         post?: never;
         delete?: never;
         options?: never;
@@ -744,6 +745,42 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Current user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Display name for the organizer */
+                    name?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated user */
             200: {
                 headers: {
                     [name: string]: unknown;

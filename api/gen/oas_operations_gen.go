@@ -40,5 +40,6 @@ const (
 	SubmitVoteOperation             OperationName = "SubmitVote"
 	TestCalendarOperation           OperationName = "TestCalendar"
 	UpdateBookingLinkOperation      OperationName = "UpdateBookingLink"
+	UpdateCurrentUserOperation      OperationName = "UpdateCurrentUser"
 	UpdatePollOperation             OperationName = "UpdatePoll"
 )

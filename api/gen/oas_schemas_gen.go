@@ -1186,6 +1186,7 @@ func (*Error) getPollResultsRes()       {}
 func (*Error) getPublicBookingLinkRes() {}
 func (*Error) getPublicPollRes()        {}
 func (*Error) testCalendarRes()         {}
+func (*Error) updateCurrentUserRes()    {}
 
 // Ref: #/components/schemas/EventTemplate
 type EventTemplate struct {
@@ -2346,6 +2347,21 @@ func (s *UpdateBookingLinkReq) SetEventTemplate(val OptEventTemplate) {
 	s.EventTemplate = val
 }
 
+type UpdateCurrentUserReq struct {
+	// Display name for the organizer.
+	Name OptString `json:"name"`
+}
+
+// GetName returns the value of Name.
+func (s *UpdateCurrentUserReq) GetName() OptString {
+	return s.Name
+}
+
+// SetName sets the value of Name.
+func (s *UpdateCurrentUserReq) SetName(val OptString) {
+	s.Name = val
+}
+
 type UpdatePollReq struct {
 	Name         OptString     `json:"name"`
 	Description  OptString     `json:"description"`
@@ -2452,7 +2468,8 @@ func (s *User) SetName(val OptString) {
 	s.Name = val
 }
 
-func (*User) getCurrentUserRes() {}
+func (*User) getCurrentUserRes()    {}
+func (*User) updateCurrentUserRes() {}
 
 // Ref: #/components/schemas/Vote
 type Vote struct {

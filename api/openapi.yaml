@@ -423,6 +423,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+    put:
+      operationId: updateCurrentUser
+      summary: Update current user profile
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Display name for the organizer
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /calendars:
     get:
       operationId: listCalendars
