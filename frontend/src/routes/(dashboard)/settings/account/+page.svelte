@@ -5,15 +5,42 @@
 	import { getDateFormat } from '$lib/stores/dateFormat.svelte';
 	import { getToasts } from '$lib/stores/toast.svelte';
 	import { DashboardHeader } from '$lib/components/dashboard';
-	import { Card, Button, Input, Select, Spinner } from '$lib/components/ui';
+	import { Card, Button, Input, Select, Spinner, AvatarUpload } from '$lib/components/ui';
 
 	const auth = getAuth();
 	const dateFormat = getDateFormat();
 	const toast = getToasts();
 
 	let displayName = $state('');
+	let avatarUrl = $state('');
 	let saving = $state(false);
 	let loading = $state(true);
+
+	function getUserInitials(): string {
+		const name = auth.user?.name || auth.user?.email || '';
+		if (!name) return '?';
+		if (name.includes('@')) {
+			const local = name.split('@')[0];
+			const parts = local.split(/[._-]/);
+			if (parts.length >= 2) {
+				return (parts[0][0] + parts[1][0]).toUpperCase();
+			}
+			return local.substring(0, 2).toUpperCase();
+		}
+		const parts = name.split(/\s+/);
+		if (parts.length >= 2) {
+			return (parts[0][0] + parts[1][0]).toUpperCase();
+		}
+		return name.substring(0, 2).toUpperCase();
+	}
+
+	function handleAvatarChange(newUrl: string) {
+		avatarUrl = newUrl;
+		// Update auth store so sidebar reflects the change immediately
+		if (auth.user) {
+			auth.refreshUser({ ...auth.user, avatar_url: newUrl || undefined });
+		}
+	}
 
 	// Reactive bindings for date format selects
 	let timeFormatValue = $derived(dateFormat.timeFormat);
@@ -34,6 +61,7 @@
 		const { data } = await api.GET('/auth/me');
 		if (data) {
 			displayName = data.name ?? '';
+			avatarUrl = data.avatar_url ?? '';
 		}
 		loading = false;
 	});
@@ -78,8 +106,14 @@
 			<Card>
 				{#snippet children()}
 					<div class="space-y-6">
-						<div class="flex flex-col sm:flex-row sm:items-start gap-4">
-							<div class="flex-1">
+						<!-- Avatar and Name -->
+						<div class="flex flex-col sm:flex-row sm:items-start gap-6">
+							<AvatarUpload
+								avatarUrl={avatarUrl}
+								initials={getUserInitials()}
+								onchange={handleAvatarChange}
+							/>
+							<div class="flex-1 space-y-4">
 								<Input
 									name="displayName"
 									label="Display Name"
@@ -87,17 +121,14 @@
 									bind:value={displayName}
 									placeholder="Enter your name"
 								/>
+								<Input
+									name="email"
+									label="Email"
+									description="Your email address is managed by your identity provider and cannot be changed here."
+									value={auth.user?.email ?? ''}
+									disabled={true}
+								/>
 							</div>
-						</div>
-
-						<div>
-							<Input
-								name="email"
-								label="Email"
-								description="Your email address is managed by your identity provider and cannot be changed here."
-								value={auth.user?.email ?? ''}
-								disabled={true}
-							/>
 						</div>
 
 						<div class="flex justify-end pt-2 border-t border-border">
