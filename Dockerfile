@@ -38,3 +38,23 @@ RUN cd api && \
         ./cmd && \
     mv /build/meet-mesh-* /build/meet-mesh
 
+# Stage 3: Final minimal image
+FROM scratch
+
+LABEL org.opencontainers.image.authors="konrad@kolaente.de"
+LABEL org.opencontainers.image.source="https://github.com/kolaente/meet-mesh"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.title="Meet Mesh"
+
+WORKDIR /app/meet-mesh
+ENTRYPOINT ["/app/meet-mesh/meet-mesh"]
+EXPOSE 8080
+USER 1000
+
+ENV MEET_MESH_DATABASE_PATH=/data/meet-mesh.db
+
+# Copy the binary
+COPY --from=backend-builder /build/meet-mesh meet-mesh
+
+# Copy SSL certificates for HTTPS
+COPY --from=backend-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
