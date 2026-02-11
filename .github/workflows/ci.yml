@@ -22,6 +22,8 @@ jobs:
         with:
           go-version: stable
           cache-dependency-path: api/go.sum
+      - name: Create placeholder frontend dist
+        run: mkdir -p api/embedded/dist && touch api/embedded/dist/index.html
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
