@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"golang.org/x/image/draw"
 	_ "golang.org/x/image/webp"
@@ -238,4 +239,61 @@ func encodeJPEG(img image.Image, quality int) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+// Serve handles GET /api/avatars/{filename}
+// This endpoint is public (no auth) since avatars appear on public pages.
+func (h *AvatarHandler) Serve(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract filename from path: /api/avatars/{filename}
+	filename := filepath.Base(r.URL.Path)
+
+	// Sanitize: only allow valid filenames
+	if filename == "" || filename == "." || filename == ".." {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Ensure filename doesn't contain path separators
+	if filepath.Dir(filename) != "." {
+		http.NotFound(w, r)
+		return
+	}
+
+	filePath := filepath.Join(h.avatarsPath, filename)
+
+	// Check if file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Set cache headers - filenames are content-hashed so we can cache forever
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	w.Header().Set("Content-Type", "image/jpeg")
+
+	http.ServeFile(w, r, filePath)
+}
+
+// HandleAvatars is the main handler for /api/avatars/ that dispatches by method.
+func (h *AvatarHandler) HandleAvatars(w http.ResponseWriter, r *http.Request) {
+	// /api/avatars/ with no filename = upload or delete
+	// /api/avatars/{filename} = serve
+	filename := strings.TrimPrefix(r.URL.Path, "/api/avatars/")
+	filename = strings.TrimPrefix(filename, "/api/avatars")
+
+	switch {
+	case r.Method == http.MethodPost:
+		h.Upload(w, r)
+	case r.Method == http.MethodDelete:
+		h.Delete(w, r)
+	case r.Method == http.MethodGet && filename != "" && filename != "/":
+		h.Serve(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
