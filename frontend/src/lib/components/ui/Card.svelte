@@ -12,10 +12,10 @@
 </script>
 
 <div
-	class="bg-[var(--bg-secondary)] rounded-[var(--radius-lg)] border-[length:var(--border-width)] border-[var(--border-color)] shadow-[var(--shadow)] overflow-hidden {className}"
+	class="bg-bg-secondary rounded-brutalist-lg border-2 border-border shadow-brutalist overflow-hidden {className}"
 >
 	{#if header}
-		<div class="flex items-center justify-between px-5 py-4 border-b-[length:var(--border-width)] border-[var(--border-color)] bg-[var(--bg-tertiary)]">
+		<div class="flex items-center justify-between px-5 py-4 border-b-2 border-border bg-bg-tertiary">
 			{@render header()}
 		</div>
 	{/if}
@@ -25,7 +25,7 @@
 	</div>
 
 	{#if footer}
-		<div class="px-5 py-4 border-t-[length:var(--border-width)] border-[var(--border-color)] bg-[var(--bg-tertiary)] rounded-b-[var(--radius-lg)]">
+		<div class="px-5 py-4 border-t-2 border-border bg-bg-tertiary rounded-b-brutalist-lg">
 			{@render footer()}
 		</div>
 	{/if}

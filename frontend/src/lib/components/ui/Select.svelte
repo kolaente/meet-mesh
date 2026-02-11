@@ -35,7 +35,7 @@
 
 <div class="space-y-1.5">
 	{#if label}
-		<label for={selectId} class="block text-sm font-medium text-[var(--text-secondary)]">
+		<label for={selectId} class="block text-sm font-medium text-text-secondary">
 			{label}
 		</label>
 	{/if}
@@ -51,14 +51,14 @@
 			id={selectId}
 			aria-invalid={!!error}
 			aria-describedby={errorId}
-			class="flex min-h-[44px] h-auto sm:h-10 w-full items-center justify-between rounded-[var(--radius)] border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] px-3 py-2.5 sm:py-2 text-base sm:text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--sky)] focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50
+			class="flex min-h-[44px] h-auto sm:h-10 w-full items-center justify-between rounded-brutalist border-2 border-border bg-bg-secondary px-3 py-2.5 sm:py-2 text-base sm:text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-sky focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50
 			{error ? 'border-red-500 focus:ring-red-500' : ''}"
 		>
-			<span class={selectedOption ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)] opacity-50'}>
+			<span class={selectedOption ? 'text-text-primary' : 'text-text-primary opacity-50'}>
 				{selectedOption?.label ?? placeholder}
 			</span>
 			<svg
-				class="h-4 w-4 text-[var(--text-primary)] opacity-50 flex-shrink-0"
+				class="h-4 w-4 text-text-primary opacity-50 flex-shrink-0"
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 20 20"
 				fill="currentColor"
@@ -74,7 +74,7 @@
 
 		<Select.Portal>
 			<Select.Content
-				class="z-50 min-w-[8rem] max-h-[50vh] overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--bg-secondary)] shadow-[var(--shadow)] animate-in fade-in-0 zoom-in-95"
+				class="z-50 min-w-[8rem] max-h-[50vh] overflow-hidden rounded-brutalist-md border border-border bg-bg-secondary shadow-brutalist animate-in fade-in-0 zoom-in-95"
 				sideOffset={4}
 			>
 				<Select.Viewport class="p-1 overflow-y-auto">
@@ -82,13 +82,13 @@
 						<Select.Item
 							value={option.value}
 							label={option.label}
-							class="relative flex cursor-pointer select-none items-center rounded-[var(--radius-sm)] py-3 sm:py-2 pl-8 pr-3 text-base sm:text-sm text-[var(--text-primary)] outline-none transition-colors hover:bg-[var(--bg-tertiary)] focus:bg-[var(--bg-tertiary)] active:bg-[var(--bg-tertiary)] data-[highlighted]:bg-[var(--sky)] data-[highlighted]:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+							class="relative flex cursor-pointer select-none items-center rounded-brutalist-sm py-3 sm:py-2 pl-8 pr-3 text-base sm:text-sm text-text-primary outline-none transition-colors hover:bg-bg-tertiary focus:bg-bg-tertiary active:bg-bg-tertiary data-[highlighted]:bg-accent-sky data-[highlighted]:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
 						>
 							{#snippet children({ selected })}
 								{#if selected}
 									<span class="absolute left-2 flex h-4 w-4 items-center justify-center">
 										<svg
-											class="h-4 w-4 text-[var(--sky)]"
+											class="h-4 w-4 text-accent-sky"
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 20 20"
 											fill="currentColor"

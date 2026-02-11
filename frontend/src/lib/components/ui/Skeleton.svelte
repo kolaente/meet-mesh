@@ -16,7 +16,7 @@
 </script>
 
 <div
-	class="animate-pulse bg-slate-200 rounded-[var(--radius-sm)] {className}"
+	class="animate-pulse bg-slate-200 rounded-brutalist-sm {className}"
 	style={style || undefined}
 	aria-hidden="true"
 ></div>

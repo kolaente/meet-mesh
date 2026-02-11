@@ -26,7 +26,7 @@
 
 <div
 	role="alert"
-	class="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border shadow-[var(--shadow-md)] {variantClasses[variant]}"
+	class="flex items-center gap-3 px-4 py-3 rounded-brutalist-md border shadow-md {variantClasses[variant]}"
 	transition:fly={{ x: 300, duration: 300 }}
 >
 	<svg
