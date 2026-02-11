@@ -7,9 +7,7 @@
 		DashboardHeader,
 		StatsCard,
 		BookingRow,
-		QuickActions,
-		MiniCalendar,
-		ActivityFeed
+		QuickActions
 	} from '$lib/components/dashboard';
 	import { Card, Button, Spinner } from '$lib/components/ui';
 
@@ -24,39 +22,6 @@
 
 	const pendingBookings = $derived(recentBookings.filter((b) => b.status === 1).length);
 	const totalBookings = $derived(recentBookings.length);
-
-	// Extract event dates from bookings for the mini calendar
-	const eventDates = $derived(
-		recentBookings.map((b) => new Date(b.slot.start_time))
-	);
-
-	// Sample activity data (would come from API in a real implementation)
-	const sampleActivities = [
-		{
-			type: 'booking' as const,
-			text: 'Sarah Johnson requested a booking',
-			time: '2 minutes ago',
-			boldParts: ['Sarah Johnson']
-		},
-		{
-			type: 'vote' as const,
-			text: '3 new votes on Team Offsite poll',
-			time: '15 minutes ago',
-			boldParts: ['3 new votes']
-		},
-		{
-			type: 'poll' as const,
-			text: 'You created Q1 Planning poll',
-			time: '1 hour ago',
-			boldParts: ['Q1 Planning']
-		},
-		{
-			type: 'booking' as const,
-			text: 'Booking with Alex Rivera confirmed',
-			time: '3 hours ago',
-			boldParts: ['Alex Rivera']
-		}
-	];
 
 	onMount(async () => {
 		try {
@@ -282,38 +247,6 @@
 					</div>
 				{/snippet}
 				</Card>
-
-				<!-- Mini Calendar -->
-				<Card>
-					{#snippet header()}
-						<div class="flex items-center justify-between w-full">
-							<span class="card-title">Calendar</span>
-							<a href="/calendar" class="card-link">View full</a>
-						</div>
-					{/snippet}
-
-					{#snippet children()}
-					<div class="component-fullbleed">
-						<MiniCalendar events={eventDates} />
-					</div>
-				{/snippet}
-				</Card>
-
-				<!-- Activity Feed -->
-				<Card>
-					{#snippet header()}
-						<div class="flex items-center justify-between w-full">
-							<span class="card-title">Recent Activity</span>
-							<a href="#" class="card-link">View all</a>
-						</div>
-					{/snippet}
-
-					{#snippet children()}
-					<div class="component-fullbleed">
-						<ActivityFeed activities={sampleActivities} />
-					</div>
-				{/snippet}
-				</Card>
 			</div>
 		</div>
 	</div>
@@ -356,17 +289,6 @@
 		background: var(--amber);
 		color: white;
 		border: 1px solid var(--border-color);
-	}
-
-	.card-link {
-		font-size: 0.8rem;
-		color: var(--sky);
-		text-decoration: none;
-		font-weight: 600;
-	}
-
-	.card-link:hover {
-		text-decoration: underline;
 	}
 
 	/* Remove default Card padding for components with their own padding */
