@@ -12,6 +12,7 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	OIDC     OIDCConfig     `yaml:"oidc"`
 	SMTP     SMTPConfig     `yaml:"smtp"`
+	Storage  StorageConfig  `yaml:"storage"`
 }
 
 type ServerConfig struct {
@@ -38,6 +39,16 @@ type SMTPConfig struct {
 	From     string `yaml:"from"`
 }
 
+type StorageConfig struct {
+	AvatarsPath string `yaml:"avatars_path"`
+}
+
+func (c *Config) SetDefaults() {
+	if c.Storage.AvatarsPath == "" {
+		c.Storage.AvatarsPath = "./data/avatars"
+	}
+}
+
 func LoadConfig(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -51,6 +62,8 @@ func LoadConfig(path string) (*Config, error) {
 	if err := yaml.Unmarshal([]byte(expanded), &cfg); err != nil {
 		return nil, err
 	}
+
+	cfg.SetDefaults()
 
 	return &cfg, nil
 }

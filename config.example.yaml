@@ -25,3 +25,6 @@ smtp:
   # username: ""   # Mailhog doesn't require auth
   # password: ""
   # from: "Meet Mesh <noreply@localhost>"
+
+storage:
+  avatars_path: ./data/avatars

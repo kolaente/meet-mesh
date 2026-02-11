@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/kolaente/meet-mesh/api"
 	gen "github.com/kolaente/meet-mesh/api/gen"
@@ -26,6 +27,11 @@ func main() {
 	db, err := api.InitDatabase(&cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to init database: %v", err)
+	}
+
+	// Ensure avatar storage directory exists
+	if err := os.MkdirAll(cfg.Storage.AvatarsPath, 0755); err != nil {
+		log.Fatalf("Failed to create avatar storage directory: %v", err)
 	}
 
 	// Initialize auth service
