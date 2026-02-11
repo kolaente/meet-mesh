@@ -39,6 +39,8 @@ jobs:
         with:
           go-version: stable
           cache-dependency-path: api/go.sum
+      - name: Create placeholder frontend dist
+        run: mkdir -p api/embedded/dist && touch api/embedded/dist/index.html
       - name: Run tests
         run: make test
 
@@ -53,6 +55,8 @@ jobs:
         with:
           go-version: stable
           cache-dependency-path: api/go.sum
+      - name: Create placeholder frontend dist
+        run: mkdir -p api/embedded/dist && touch api/embedded/dist/index.html
       - name: Build API
         run: make build-api
 
